@@ -1,0 +1,37 @@
+<div class="container">
+  <h2>Cadastro de Usuário</h2>
+
+  <!-- Escolha do tipo de usuário -->
+  <label for="tipoUsuario">Tipo de Usuário:</label>
+  <select [(ngModel)]="tipoUsuarioSelecionado" name="tipoUsuario" class="form-control">
+    <option value="administrador">Administrador</option>
+    <option value="professor">Professor</option>
+    <option value="aluno">Aluno</option>
+  </select>
+
+  <hr />
+
+  <h4>Informações do Usuário</h4>
+
+  <!-- Campos comuns -->
+  <input type="text" class="form-control my-2" placeholder="Nome" [(ngModel)]="usuario.nome" name="nome" required />
+  <input type="email" class="form-control my-2" placeholder="Email" [(ngModel)]="usuario.email" name="email" required />
+  <input type="password" class="form-control my-2" placeholder="Senha" [(ngModel)]="usuario.senha" name="senha" required />
+  <input type="text" class="form-control my-2" placeholder="CPF" [(ngModel)]="usuario.cpf" name="cpf" required />
+
+  <!-- Campos específicos -->
+  <div *ngIf="tipoUsuarioSelecionado === 'administrador'">
+    <input type="text" class="form-control my-2" placeholder="Setor" [(ngModel)]="usuario.setor" name="setor" required />
+  </div>
+
+  <div *ngIf="tipoUsuarioSelecionado === 'professor'">
+    <input type="text" class="form-control my-2" placeholder="Departamento" [(ngModel)]="usuario.departamento" name="departamento" required />
+  </div>
+
+  <div *ngIf="tipoUsuarioSelecionado === 'aluno'">
+    <input type="text" class="form-control my-2" placeholder="Curso" [(ngModel)]="usuario.curso" name="curso" required />
+  </div>
+
+  <!-- Botão -->
+  <button (click)="salvarUsuario()" class="btn btn-primary btn-block my-3">Salvar Usuário</button>
+</div>

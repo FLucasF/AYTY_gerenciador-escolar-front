@@ -1,0 +1,39 @@
+<div class="container">
+  <h2>Usuários Cadastrados</h2>
+
+  <!-- Filtro por tipo de usuário -->
+  <label for="tipoUsuario">Filtrar por tipo:</label>
+  <select [(ngModel)]="tipoUsuarioSelecionado" name="tipoUsuario" (change)="carregarUsuarios()" class="form-control">
+    <option value="todos">Todos</option>
+    <option value="administrador">Administrador</option>
+    <option value="professor">Professor</option>
+    <option value="aluno">Aluno</option>
+  </select>
+
+  <hr />
+
+  <!-- Botão para cadastrar novo usuário -->
+  <button (click)="irParaCadastro()" class="btn btn-success">Adicionar Novo Usuário</button>
+
+  <hr />
+
+  <!-- Listagem -->
+  <h3>Usuários cadastrados:</h3>
+  <ul class="list-group">
+    <li class="list-group-item d-flex justify-content-between align-items-center" *ngFor="let user of filtrarUsuarios()">
+      <span>
+        {{ user.nome }} - {{ user.email }} 
+        <span *ngIf="user.tipo === 'aluno'">- CPF: {{ user.cpf }}</span>
+        <span *ngIf="user.tipo === 'administrador'">- Setor: {{ user.setor }}</span>
+        <span *ngIf="user.tipo === 'professor'">- Departamento: {{ user.departamento }}</span>
+        <span *ngIf="user.tipo === 'aluno'">- Curso: {{ user.curso }}</span>
+      </span>
+
+      <!-- Botões de ação -->
+      <div>
+        <button class="btn btn-warning btn-sm">Editar</button>
+        <button (click)="excluirUsuario(user)" class="btn btn-danger btn-sm">Excluir</button>
+      </div>
+    </li>
+  </ul>
+</div>
