@@ -1,11 +1,8 @@
-import { Turma } from './turma.model';
+import { Usuario } from "./usuario.model";
+import { Turma } from "./turma.model";
 
-export interface Professor {
-  id?: number;
-  nome: string;
-  email: string;
-  senha: string;
+export interface Professor extends Usuario {
   departamento: string;
+  siape: string;
   turmas?: Turma[];
-  tipo: 'professor';
 }

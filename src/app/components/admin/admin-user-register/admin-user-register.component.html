@@ -1,37 +1,140 @@
-<div class="container">
-  <h2>Cadastro de Usuário</h2>
+<body class="home">
+  <div class="container-fluid display-table" style="width: 100%; padding: 0; margin: 0;">
+      <div class="row display-table-row">
+          
+          <!-- Sidebar -->
+          <!-- Sidebar -->
+          <div class="col-md-2 col-sm-2 hidden-xs display-table-cell v-align box" id="navigation">
+            <div class="navi">
+              <ul>
+                <li>
+                  <a routerLink="/admin"><i class="fa fa-home"></i> <span class="hidden-xs hidden-sm">Painel</span></a>
+                </li>
+                <li>
+                  <a routerLink="/admin/cadastro"><i class="fa fa-user-plus"></i> <span class="hidden-xs hidden-sm">Cadastrar Usuário</span></a>
+                </li>
+                <li>
+                  <a routerLink="/admin/turmas"><i class="fa fa-users"></i> <span class="hidden-xs hidden-sm">Gerenciar Turmas</span></a>
+                </li>
+                <li>
+                  <a routerLink="/board"><i class="fa fa-clipboard"></i> <span class="hidden-xs hidden-sm">Board</span></a>
+                </li>
+                <li>
+                  <a routerLink="/logout"><i class="fa fa-sign-out-alt"></i> <span class="hidden-xs hidden-sm">Sair</span></a>
+                </li>
+              </ul>
+            </div>
+          </div>
 
-  <!-- Escolha do tipo de usuário -->
-  <label for="tipoUsuario">Tipo de Usuário:</label>
-  <select [(ngModel)]="tipoUsuarioSelecionado" name="tipoUsuario" class="form-control">
-    <option value="administrador">Administrador</option>
-    <option value="professor">Professor</option>
-    <option value="aluno">Aluno</option>
-  </select>
 
-  <hr />
+          <!-- Conteúdo Principal -->
+          <div class="col-md-10 col-sm-10 display-table-cell v-align" style="padding: 20px;">
+              <div class="user-dashboard">
+                  <h1>Cadastrar Usuário</h1>
 
-  <h4>Informações do Usuário</h4>
+                  <div class="row">
+                      <div class="col-md-12">
+                          <div class="panel panel-default">
+                              
+                              <!-- Cabeçalho -->
+                              <div class="panel-heading">
+                                  <h3 class="panel-title">Cadastro de Usuário</h3>
+                              </div>
 
-  <!-- Campos comuns -->
-  <input type="text" class="form-control my-2" placeholder="Nome" [(ngModel)]="usuario.nome" name="nome" required />
-  <input type="email" class="form-control my-2" placeholder="Email" [(ngModel)]="usuario.email" name="email" required />
-  <input type="password" class="form-control my-2" placeholder="Senha" [(ngModel)]="usuario.senha" name="senha" required />
-  <input type="text" class="form-control my-2" placeholder="CPF" [(ngModel)]="usuario.cpf" name="cpf" required />
+                              <!-- Corpo -->
+                              <div class="panel-body">
 
-  <!-- Campos específicos -->
-  <div *ngIf="tipoUsuarioSelecionado === 'administrador'">
-    <input type="text" class="form-control my-2" placeholder="Setor" [(ngModel)]="usuario.setor" name="setor" required />
-  </div>
+                                  <!-- Seleção do tipo de usuário -->
+                                  <div class="form-group">
+                                      <label>Tipo de Usuário:</label>
+                                      <select [(ngModel)]="tipoUsuarioSelecionado" name="tipoUsuario" class="form-control">
+                                          <option value="administrador">Administrador</option>
+                                          <option value="professor">Professor</option>
+                                          <option value="aluno">Aluno</option>
+                                      </select>
+                                  </div>
 
-  <div *ngIf="tipoUsuarioSelecionado === 'professor'">
-    <input type="text" class="form-control my-2" placeholder="Departamento" [(ngModel)]="usuario.departamento" name="departamento" required />
-  </div>
+                                  <hr />
 
-  <div *ngIf="tipoUsuarioSelecionado === 'aluno'">
-    <input type="text" class="form-control my-2" placeholder="Curso" [(ngModel)]="usuario.curso" name="curso" required />
-  </div>
+                                  <!-- Campos comuns -->
+                                  <div class="form-group">
+                                      <label>Nome</label>
+                                      <input type="text" class="form-control" [(ngModel)]="getUsuario().nome" name="nome" required>
+                                  </div>
+                                  <div class="form-group">
+                                      <label>Email</label>
+                                      <input type="email" class="form-control" [(ngModel)]="getUsuario().email" name="email" required>
+                                  </div>
+                                  <div class="form-group">
+                                      <label>Senha</label>
+                                      <input type="password" class="form-control" [(ngModel)]="getUsuario().senha" name="senha" required>
+                                  </div>
 
-  <!-- Botão -->
-  <button (click)="salvarUsuario()" class="btn btn-primary btn-block my-3">Salvar Usuário</button>
-</div>
+                                  <!-- Campos específicos para Administrador -->
+                                  <div *ngIf="tipoUsuarioSelecionado === 'administrador'">
+                                      <div class="form-group">
+                                          <label>Setor</label>
+                                          <input type="text" class="form-control" [(ngModel)]="getUsuario().setor" name="setor" required>
+                                      </div>
+                                      <div class="form-group">
+                                          <label>SIAPE</label>
+                                          <input type="text" class="form-control" [(ngModel)]="getUsuario().siape" name="siape">
+                                      </div>
+                                  </div>
+
+                                  <!-- Campos específicos para Professor -->
+                                  <div *ngIf="tipoUsuarioSelecionado === 'professor'">
+                                      <div class="form-group">
+                                          <label>Departamento</label>
+                                          <input type="text" class="form-control" [(ngModel)]="getUsuario().departamento" name="departamento" required>
+                                      </div>
+                                      <div class="form-group">
+                                          <label>SIAPE</label>
+                                          <input type="text" class="form-control" [(ngModel)]="getUsuario().siape" name="siape">
+                                      </div>
+                                      <div class="form-group">
+                                          <label>Turmas</label>
+                                          <select multiple class="form-control" [(ngModel)]="getUsuario().turmas">
+                                              <option *ngFor="let turma of turmasDisponiveis" [ngValue]="turma.id">
+                                                  {{ turma.nome }} (Código: {{ turma.codigo }})
+                                              </option>
+                                          </select>
+                                      </div>
+                                  </div>
+
+                                  <!-- Campos específicos para Aluno -->
+                                  <div *ngIf="tipoUsuarioSelecionado === 'aluno'">
+                                      <div class="form-group">
+                                          <label>CPF</label>
+                                          <input type="text" class="form-control" [(ngModel)]="getUsuario().cpf" name="cpf" required>
+                                      </div>
+                                      <div class="form-group">
+                                          <label>Curso</label>
+                                          <input type="text" class="form-control" [(ngModel)]="getUsuario().curso" name="curso" required>
+                                      </div>
+                                      <div class="form-group">
+                                          <label>Turmas</label>
+                                          <select multiple class="form-control" [(ngModel)]="getUsuario().turmas">
+                                              <option *ngFor="let turma of turmasDisponiveis" [ngValue]="turma.id">
+                                                  {{ turma.nome }} (Código: {{ turma.codigo }})
+                                              </option>
+                                          </select>
+                                      </div>
+                                  </div>
+
+                                  <hr />
+
+                                  <!-- Botão de Cadastro -->
+                                  <button (click)="salvarUsuario()" class="btn btn-success btn-block">
+                                      <i class="fa fa-check"></i> Cadastrar Usuário
+                                  </button>
+
+                              </div> <!-- /panel-body -->
+                          </div> <!-- /panel-default -->
+                      </div> <!-- /col-md-12 -->
+                  </div> <!-- /row -->
+              </div> <!-- /user-dashboard -->
+          </div> <!-- /col-md-10 -->
+      </div> <!-- /row -->
+  </div> <!-- /container-fluid -->
+</body>

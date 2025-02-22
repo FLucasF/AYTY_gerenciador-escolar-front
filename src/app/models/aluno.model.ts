@@ -1,12 +1,7 @@
-import { Turma } from './turma.model';
+import { Usuario } from "./usuario.model";
+import { Turma } from "./turma.model";
 
-export interface Aluno {
-  id?: number;
-  nome: string;
-  email: string;
-  senha: string;
-  cpf: string;
+export interface Aluno extends Usuario {
   curso: string;
   turmas?: Turma[];
-  tipo: 'aluno';
 }

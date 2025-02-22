@@ -1,23 +1,231 @@
+/* Estilo geral */
 body {
-    background-image: url(https://static.pexels.com/photos/371633/pexels-photo-371633.jpeg);
-    background-repeat: no-repeat;
-    background-size: 100%;
+    font-family: 'Lato', sans-serif;
+    background: #f6f7fa;
+    margin: 0;
+    padding: 0;
 }
 
-footer {
+/* Sidebar */
+#navigation {
+    background: #0e1a35;
+    height: 100vh;
+    padding: 0;
+}
+
+.display-table {
+    display: table;
+    width: 100%;
+    height: 100vh;
+}
+
+.display-table-row {
+    display: table-row;
+    height: 100%;
+}
+
+.display-table-cell {
+    display: table-cell;
+    float: none;
+    height: 100%;
+}
+
+.v-align {
+    vertical-align: top;
+}
+
+/* Menu lateral */
+.navi ul {
+    padding: 0;
+    list-style: none;
+}
+
+.navi a {
+    display: block;
+    padding: 18px;
+    font-size: 16px;
+    color: white;
+    border-bottom: 1px solid #0d172e;
+    transition: all 0.3s ease;
+}
+
+.navi a:hover,
+.navi .active a {
+    background: #122143;
+    border-left: 5px solid #5584ff;
+}
+
+/* Header */
+header {
+    background: #ffffff;
+    padding: 15px;
+    box-shadow: 0 1px 12px rgba(0, 0, 0, 0.04);
+}
+
+/* Input de busca */
+.search input {
+    border: 1px solid #d4d9e3;
+    padding: 10px;
+    width: 100%;
+    border-radius: 5px;
+}
+
+/* Painel principal */
+.user-dashboard {
+    padding: 30px;
+}
+
+.user-dashboard h1 {
+    font-size: 28px;
+    font-weight: bold;
+    color: #0e1a35;
+}
+
+/* Lista de usuários */
+.list-group-item {
+    border: 1px solid #ddd;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #ffffff;
+    transition: all 0.3s ease;
+}
+
+.list-group-item:hover {
+    background: #f0f4ff;
+}
+
+.list-group-item .btn {
+    margin-left: 10px;
+}
+
+/* Botões */
+.btn {
+    border-radius: 5px;
+}
+
+.btn-sm {
+    padding: 5px 10px;
+    font-size: 14px;
+}
+
+/* Estilo para os botões principais */
+.btn-success {
+    background-color: #28a745;
+    border: none;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+}
+
+.btn-warning {
+    background-color: #ffc107;
+    border: none;
+}
+
+.btn-warning:hover {
+    background-color: #e0a800;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    border: none;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+}
+
+/* Paginação */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     margin-top: 20px;
-    padding-top: 20px;
+    gap: 5px;
 }
 
-.bg__card__navbar {
-    background-color: #000000;
+.pagination-container button {
+    padding: 8px 12px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
-.bg__card__footer {
-    background-color: #000000 !important;
+.pagination-container button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
 }
 
-#add__new__list {
-    top: -38px;
-    right: 0px;
+.pagination-container button:hover:not(:disabled) {
+    background-color: #0056b3;
+}
+
+/* Modal de edição de usuário */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-container {
+    background: #fff;
+    padding: 20px;
+    width: 400px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.modal-body {
+    padding: 15px 0;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 10px;
+    border-top: 1px solid #ddd;
+}
+
+.modal-footer button {
+    margin-left: 10px;
+}
+
+/* Fechar botão do modal */
+.close {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #333;
+}
+
+.close:hover {
+    color: #dc3545;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .modal-container {
+        width: 90%;
+    }
 }

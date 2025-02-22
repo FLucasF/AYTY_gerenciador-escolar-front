@@ -1,75 +1,100 @@
-<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
-
-<body>
-  <div id="throbber" style="display:none; min-height:120px;"></div>
-  <div id="noty-holder"></div>
-
-  <div id="wrapper">
-
-    <!-- Navigation -->
-    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <i class="fa fa-bars" aria-hidden="true" style="color: white;"></i>
-            </button>
-            <div class="navbar-brand">   
-            </div>
-        </div>
-
-        <form action="" class="navbar-form navbar-left">
-            <div class="input-group">
-              <div class="input-group-btn">
-                  <button class="btn  search-btn-icon">
-                   <i class="fa fa-search" aria-hidden="true"></i>                  
-                  </button>
-               </div>
-              <input type="Search" placeholder="Search..." class="form-control-serch search-box" />   
-            </div>     
-        </form>
-
-        <!-- Top Menu Items -->
-        <div class="items">
-          <ul class="nav navbar-right top-nav">        
-            <li class="editpro">
-              <i class="fasett fa-cog" aria-hidden="true" class="menu-button" id="menu-button"></i> 
-              <h5 class="pull-left login-person-head">Welcome WaLiA SaAB</h5> 
-            </li>
-          </ul>
-        </div>
-
-        <!-- Sidebar Menu Items -->
-        <div class="collapse navbar-collapse navbar-ex1-collapse" style="background-color: #616060; border:1px solid #616060;">
-            <ul class="nav navbar-nav side-nav">
-                <li>
-                   <a class="active" href="#" data-toggle="collapse" data-target="#submenu-1"><i class="fa fa-home" aria-hidden="true"></i>   <span style="color:white;">  Home </span></a>
-                </li>
-                <li>
-                    <a class="#" href="#" data-toggle="collapse" data-target="#submenu-1"><i class="fa fa-user-o" aria-hidden="true"></i>   <span style="color:white;">  Profile </span></a>
-                </li>
-                <li>
-                    <a class="#" href="#" data-toggle="collapse" data-target="#submenu-1"><i class="fa fa-calendar" aria-hidden="true"></i>   <span style="color:white;"> Events </span></a>
-                </li>
-                <li>
-                    <a class="#" href="#" data-toggle="collapse" data-target="#submenu-1"><i class="fa fa-envelope" aria-hidden="true"></i>  <span style="color:white;"> Messages </span></a>
-                </li>
-                <li>
-                    <a class="#" href="#" data-toggle="collapse" data-target="#submenu-1"><i class="fa fa-cogs" aria-hidden="true"></i>   <span style="color:white;"> Settings </span></a>
-                </li>
-            </ul>
-        </div>
-    </nav>
-
-    <div class="container-fluid">
-      <div class="row text-center">
-        <div class="col-md-12 dashhead">
-          <h1> Welcome To My Profile</h1>
-        </div>
+<div class="container-fluid display-table" style="width: 100%; padding: 0; margin: 0;">
+  <div class="row display-table-row">
+    <!-- Sidebar -->
+    <div class="col-md-2 col-sm-2 hidden-xs display-table-cell v-align box" id="navigation">
+      <div class="navi">
+        <ul>
+          <li>
+            <a href="#" (click)="voltarParaTurmas()">
+              <i class="fa fa-home"></i> <span class="hidden-xs hidden-sm">Turmas</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" (click)="goToPerfil()">
+              <i class="fa fa-user-o"></i> <span class="hidden-xs hidden-sm">Perfil</span>
+            </a>
+          </li>
+        </ul>
       </div>
     </div>
 
-  </div><!-- /#wrapper -->
-</body>
+    <!-- Conteúdo Principal -->
+    <div class="col-md-10 col-sm-10 display-table-cell v-align" style="padding: 20px;">
+      <div class="user-dashboard">
+        <h1 class="mb-5">Minhas Turmas</h1>
+
+        <!-- Lista de Turmas -->
+        <div *ngIf="!turmaSelecionada">
+          <div class="panel panel-default">
+            <div class="panel-heading"></div>
+            <div class="panel-body">
+              <div class="row">
+                <div class="col-12 mb-3" *ngFor="let turma of turmas">
+                  <div class="panel panel-primary" style="cursor: pointer;" (click)="selectTurma(turma)">
+                    <div class="panel-body">
+                      <h5 class="panel-title"><strong>{{ turma.nome }}</strong></h5>
+                      <p class="panel-text">Professor: {{ turma.professorNome || 'Nenhum professor atribuído' }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Detalhes da Turma Selecionada -->
+        <div *ngIf="turmaSelecionada">
+          <h2>Turma: {{ turmaSelecionada.nome }}</h2>
+          
+          <!-- Exibir alunos cadastrados -->
+          <div *ngIf="turmaSelecionada.alunos && turmaSelecionada.alunos.length > 0; else semAlunos">
+            <h4>Alunos Matriculados:</h4>
+            <ul class="list-group">
+              <li class="list-group-item" *ngFor="let alunoId of turmaSelecionada.alunos">
+                {{ alunoId }}
+              </li>
+            </ul>
+          </div>
+          <ng-template #semAlunos>
+            <p class="text-muted">Nenhum aluno matriculado.</p>
+          </ng-template>
+          
+          <!-- Mural da Turma -->
+          <h2>Mural - {{ turmaSelecionada.nome }}</h2>
+          <!-- Criar Postagem (Apenas para Professores) -->
+          <div *ngIf="isProfessor">
+            <div class="panel panel-default">
+              <div class="panel-body">
+                <h5 class="panel-title">Criar Nova Postagem</h5>
+                <input type="text" class="form-control my-2" placeholder="Título" [(ngModel)]="novaPostagem.titulo">
+                <textarea class="form-control my-2" placeholder="Conteúdo" [(ngModel)]="novaPostagem.conteudo"></textarea>
+                <button class="btn btn-success btn-block" (click)="criarPostagem()">
+                  <i class="fa fa-plus"></i> Publicar
+                </button>
+              </div>
+            </div>
+          </div>
+          <!-- Postagens Recentes -->
+          <h3>Postagens Recentes</h3>
+          <div *ngIf="postagens && postagens.length > 0; else semPostagens">
+            <div *ngFor="let postagem of postagens" class="panel panel-default my-2">
+              <div class="panel-body">
+                <h5 class="panel-title"><strong>{{ postagem.titulo }}</strong></h5>
+                <p class="panel-text">{{ postagem.conteudo }}</p>
+                <small class="text-muted">{{ postagem.dataCriacao | date:'short' }}</small>
+                <button *ngIf="isProfessor && postagem.id" class="btn btn-danger btn-sm float-right" (click)="excluirPostagem(postagem.id)">
+                  <i class="fa fa-trash"></i> Excluir
+                </button>
+              </div>
+            </div>
+          </div>
+          <ng-template #semPostagens>
+            <p class="text-muted">Nenhuma postagem disponível.</p>
+          </ng-template>
+
+          <button class="btn btn-secondary" (click)="voltarParaTurmas()">Voltar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

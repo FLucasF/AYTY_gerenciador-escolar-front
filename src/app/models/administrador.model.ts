@@ -1,8 +1,6 @@
-export interface Administrador {
-  id?: number;
-  nome: string;
-  email: string;
-  senha: string;
+import { Usuario } from "./usuario.model";
+
+export interface Administrador extends Usuario {
   setor: string;
-  tipo: 'administrador';
+  siape: string;
 }
