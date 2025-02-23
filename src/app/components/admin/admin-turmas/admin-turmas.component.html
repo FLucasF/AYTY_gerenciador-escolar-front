@@ -1,131 +1,125 @@
 <body class="home">
   <div class="container-fluid display-table" style="width: 100%; padding: 0; margin: 0;">
-      <div class="row display-table-row">
-          
-          <!-- Sidebar -->
-          <div class="col-md-2 col-sm-2 hidden-xs display-table-cell v-align box" id="navigation">
-            <div class="navi">
-              <ul>
-                <li>
-                  <a routerLink="/admin"><i class="fa fa-home"></i> <span class="hidden-xs hidden-sm">Painel</span></a>
-                </li>
-                <li>
-                  <a routerLink="/admin/cadastro"><i class="fa fa-user-plus"></i> <span class="hidden-xs hidden-sm">Cadastrar Usuário</span></a>
-                </li>
-                <li>
-                  <a routerLink="/admin/turmas"><i class="fa fa-users"></i> <span class="hidden-xs hidden-sm">Gerenciar Turmas</span></a>
-                </li>
-                <li>
-                  <a routerLink="/board"><i class="fa fa-clipboard"></i> <span class="hidden-xs hidden-sm">Board</span></a>
-                </li>
-                <li>
-                  <a routerLink="/logout"><i class="fa fa-sign-out-alt"></i> <span class="hidden-xs hidden-sm">Sair</span></a>
-                </li>
-              </ul>
+    <div class="row display-table-row">
+
+      <!-- Sidebar -->
+      <div class="col-md-2 col-sm-2 hidden-xs display-table-cell v-align box" id="navigation">
+        <div class="navi">
+          <ul>
+            <li><a routerLink="/admin"><i class="fa fa-home"></i> <span class="hidden-xs hidden-sm">Painel</span></a></li>
+            <li><a routerLink="/admin/cadastro"><i class="fa fa-user-plus"></i> <span class="hidden-xs hidden-sm">Cadastrar Usuário</span></a></li>
+            <li><a routerLink="/admin/turmas"><i class="fa fa-users"></i> <span class="hidden-xs hidden-sm">Gerenciar Turmas</span></a></li>
+            <li><a routerLink="/board"><i class="fa fa-clipboard"></i> <span class="hidden-xs hidden-sm">Board</span></a></li>
+            <li><a routerLink="/logout"><i class="fa fa-sign-out-alt"></i> <span class="hidden-xs hidden-sm">Sair</span></a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Conteúdo Principal -->
+      <div class="col-md-10 col-sm-10 display-table-cell v-align" style="padding: 20px;">
+        <div class="user-dashboard">
+          <h1>Gerenciamento de Turmas</h1>
+
+          <!-- Formulário de Adicionar Turma -->
+          <div class="panel panel-default">
+            <div class="panel-heading"><h3 class="panel-title">Nova Turma</h3></div>
+            <div class="panel-body">
+              <div class="form-group">
+                <label>Nome da Turma</label>
+                <input type="text" class="form-control" [(ngModel)]="novaTurma.nome" required>
+              </div>
+
+              <div class="form-group">
+                <label>Professor</label>
+                <select class="form-control" [(ngModel)]="novaTurma.professorId">
+                  <option [ngValue]="null">Sem professor</option>
+                  <option *ngFor="let professor of professores" [ngValue]="professor.id">
+                    {{ professor.nome }}
+                  </option>
+                </select>
+              </div>
+
+              <button (click)="adicionarTurma()" class="btn btn-success btn-block">
+                <i class="fa fa-plus"></i> Adicionar Turma
+              </button>
             </div>
           </div>
 
-          <!-- Conteúdo Principal -->
-          <div class="col-md-10 col-sm-10 display-table-cell v-align" style="padding: 20px;">
-              <div class="user-dashboard">
-                  <h1>Gerenciamento de Turmas</h1>
+          <hr />
 
-                  <div class="row">
-                      <div class="col-md-12">
-                          <div class="panel panel-default">
-                              
-                              <!-- Cabeçalho -->
-                              <div class="panel-heading">
-                                  <h3 class="panel-title">Lista de Turmas</h3>
-                              </div>
+          <!-- Lista de Turmas -->
+          <div class="panel panel-default">
+            <div class="panel-heading"><h3 class="panel-title">Lista de Turmas</h3></div>
+            <div class="panel-body">
+              <ul class="list-group">
+                <li class="list-group-item" *ngFor="let turma of turmas">
+                  <span>
+                    <strong>{{ turma.nome }}</strong> - ID: {{ turma.id }} 
+                    - Professor: {{ turma.professorId ? (professoresMap.get(turma.professorId) || 'Sem professor') : 'Sem professor' }}
+                  </span>
 
-                              <!-- Corpo -->
-                              <div class="panel-body">
+                  <div class="pull-right">
+                    <button class="btn btn-warning btn-sm" (click)="iniciarEdicao(turma)">
+                      <i class="fa fa-pencil"></i> Editar
+                    </button>
+                    <button class="btn btn-info btn-sm mx-2" (click)="abrirGerenciarAlunos(turma)">
+                      <i class="fa fa-users"></i> Gerenciar Alunos
+                    </button>
+                    <button class="btn btn-danger btn-sm" *ngIf="turma.id" (click)="excluirTurma(turma.id)">
+                      <i class="fa fa-trash"></i> Excluir
+                    </button>
+                  </div>
+                </li>
+              </ul>
 
-                                  <!-- Formulário de Adicionar Turma -->
-                                  <div class="form-group">
-                                      <label>Nome da Turma</label>
-                                      <input type="text" class="form-control" [(ngModel)]="novaTurma.nome" required>
-                                  </div>
+              <div *ngIf="turmas.length === 0" class="text-center text-muted mt-3">
+                <p>Nenhuma turma cadastrada.</p>
+              </div>
+            </div>
+          </div>
 
-                                  <div class="form-group">
-                                      <label>Professor</label>
-                                      <select class="form-control" [(ngModel)]="novaTurma.professorId">
-                                          <option [ngValue]="null">Sem professor</option>
-                                          <option *ngFor="let professor of professores" [ngValue]="professor.id">
-                                              {{ professor.nome }}
-                                          </option>
-                                      </select>
-                                  </div>
+          <!-- Modal de Gerenciamento de Alunos -->
+          <div *ngIf="mostrarGerenciarAlunosModal" class="modal-overlay">
+            <div class="modal-container">
+              <div class="modal-header">
+                <h5>Gerenciar Alunos - {{ turmaGerenciarAlunos?.nome }}</h5>
+                <button class="close" (click)="fecharGerenciarAlunosModal()">&times;</button>
+              </div>
+              <div class="modal-body">
+                
+                <!-- Lista de Alunos Matriculados -->
+                <h6>Alunos Matriculados:</h6>
+                <ul class="list-group">
+                  <li class="list-group-item" *ngFor="let aluno of alunosMatriculados">
+                    {{ aluno.nome }}
+                    <button class="btn btn-danger btn-sm float-right" (click)="removerAlunoDaTurma(aluno.id!)">Remover</button>
+                  </li>
+                </ul>
+                <div *ngIf="alunosMatriculados.length === 0" class="text-center text-muted mt-2">
+                  <p>Nenhum aluno matriculado.</p>
+                </div>
 
-                                  <button (click)="adicionarTurma()" class="btn btn-success btn-block">
-                                      <i class="fa fa-plus"></i> Adicionar Turma
-                                  </button>
+                <!-- Adicionar Aluno -->
+                <h6>Adicionar Aluno:</h6>
+                <select class="form-control" [(ngModel)]="alunoSelecionadoParaAdicionar">
+                  <option [ngValue]="null">Selecione um aluno</option>
+                  <option *ngFor="let aluno of getAlunosDisponiveis()" [ngValue]="aluno.id">
+                    {{ aluno.nome }}
+                  </option>
+                </select>
+                <button class="btn btn-primary btn-block my-3" (click)="adicionarAlunoNaTurma()">
+                  Matricular Aluno
+                </button>
 
-                                  <hr />
-<!-- Modal de Gerenciamento de Alunos -->
-<div *ngIf="mostrarGerenciarAlunosModal" class="modal-overlay">
-  <div class="modal-container">
-    <div class="modal-header">
-      <h5>Gerenciar Alunos - {{ turmaGerenciarAlunos?.nome }}</h5>
-      <button class="close" (click)="fecharGerenciarAlunosModal()">&times;</button>
-    </div>
-    <div class="modal-body">
-      <h6>Alunos Matriculados:</h6>
-      <ul class="list-group">
-        <li class="list-group-item" *ngFor="let aluno of alunosMatriculados">
-          {{ aluno.nome }}
-          <button class="btn btn-danger btn-sm float-right" (click)="removerAlunoDaTurma(aluno.id!)">Remover</button>
-        </li>
-      </ul>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" (click)="fecharGerenciarAlunosModal()">Fechar</button>
+              </div>
+            </div>
+          </div>
 
-      <h6>Adicionar Aluno:</h6>
-      <select class="form-control" [(ngModel)]="alunoSelecionadoParaAdicionar">
-        <option [ngValue]="null">Selecione um aluno</option>
-        <option *ngFor="let aluno of getAlunosDisponiveis()" [ngValue]="aluno.id">
-          {{ aluno.nome }}
-        </option>
-      </select>
-      <button class="btn btn-primary btn-block my-3" (click)="adicionarAlunoNaTurma()">
-        Matricular Aluno
-      </button>
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-secondary" (click)="fecharGerenciarAlunosModal()">Fechar</button>
-    </div>
-  </div>
-</div>
-
-                                  <!-- Lista de Turmas -->
-                                  <ul class="list-group">
-                                      <li class="list-group-item" *ngFor="let turma of turmas">
-                                          <span>
-                                              <strong>{{ turma.nome }}</strong> - ID: {{ turma.id }} 
-                                              - Professor: {{ turma.professorId ? (professoresMap.get(turma.professorId) || 'Sem professor') : 'Sem professor' }}
-                                          </span>
-                                          
-                                          <div class="pull-right">
-                                              <button class="btn btn-warning btn-sm" (click)="iniciarEdicao(turma)">
-                                                  <i class="fa fa-pencil"></i> Editar
-                                              </button>
-                                              <button class="btn btn-info btn-sm mx-2" (click)="abrirGerenciarAlunos(turma)">
-                                                  <i class="fa fa-users"></i> Gerenciar Alunos
-                                              </button>
-                                              <button class="btn btn-danger btn-sm" *ngIf="turma.id" (click)="excluirTurma(turma.id)">
-                                                  <i class="fa fa-trash"></i> Excluir
-                                              </button>
-                                          </div>
-                                      </li>
-                                  </ul>
-
-                                  
-
-                              </div> <!-- /panel-body -->
-                          </div> <!-- /panel-default -->
-                      </div> <!-- /col-md-12 -->
-                  </div> <!-- /row -->
-              </div> <!-- /user-dashboard -->
-          </div> <!-- /col-md-10 -->
-      </div> <!-- /row -->
+        </div> <!-- /user-dashboard -->
+      </div> <!-- /col-md-10 -->
+    </div> <!-- /row -->
   </div> <!-- /container-fluid -->
 </body>

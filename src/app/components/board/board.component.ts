@@ -31,10 +31,11 @@ export class BoardComponent implements OnInit {
     private usuarioService: UsuarioService,
     private authService: AuthService
   ) {
-    // O usuário deve ter sido autenticado e os dados armazenados no localStorage
+    // Recupera dados do usuário autenticado do localStorage
     this.userName = localStorage.getItem('userName') || 'Usuário';
     this.userId = Number(localStorage.getItem('userId')) || 0;
     this.userRole = localStorage.getItem('role') || '';
+    // Apenas professores poderão criar/excluir postagens
     this.isProfessor = this.userRole === 'ROLE_PROFESSOR';
   }
 
@@ -46,10 +47,10 @@ export class BoardComponent implements OnInit {
   private carregarTurmas(): void {
     this.turmaService.listarTurmas().subscribe({
       next: (res) => {
-        // Filtra as turmas de acordo com a role:
-        // - Administrador: todas as turmas.
+        // Filtra as turmas conforme a role:
+        // - Administrador: vê todas as turmas.
         // - Professor: turmas onde turma.professorId === userId.
-        // - Aluno: turmas onde turma.alunos (array de números) contém userId.
+        // - Aluno: turmas onde turma.alunos contém o userId.
         this.turmas = this.filtrarTurmas(res.content);
         console.log('✅ Turmas filtradas:', this.turmas);
       },
@@ -61,23 +62,28 @@ export class BoardComponent implements OnInit {
     if (this.userRole === 'ROLE_ADMINISTRADOR') {
       return turmas;
     } else if (this.userRole === 'ROLE_PROFESSOR') {
-      return turmas.filter(turma => turma.professorId === this.userId);
+      // Certifique-se de que userId seja um número:
+      return turmas.filter(turma => turma.professorId === Number(this.userId));
     } else if (this.userRole === 'ROLE_ALUNO') {
-      return turmas.filter(turma => turma.alunos && turma.alunos.includes(this.userId));
+      // Converta o userId para número para comparar com os números do array de alunos
+      const idNumeric = Number(this.userId);
+      return turmas.filter(turma => turma.alunos && turma.alunos.includes(idNumeric));
     }
     return [];
   }
+  
 
   private carregarProfessores(): void {
     this.usuarioService.listarUsuarios().subscribe({
-      next: (res) =>
+      next: (res) => {
         res.content
           .filter(user => user.role === 'ROLE_PROFESSOR')
           .forEach(({ id, nome }) => {
             if (id) {
               this.professoresMap.set(id, nome);
             }
-          }),
+          });
+      },
       error: (err) => console.error('Erro ao carregar professores:', err)
     });
   }

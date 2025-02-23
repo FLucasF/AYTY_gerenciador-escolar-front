@@ -48,11 +48,9 @@ export class AdminTurmasComponent implements OnInit {
   carregarTurmas(): void {
     this.turmaService.listarTurmas().subscribe({
       next: (res) => {
-        // Aqui extraímos o array de turmas
         this.turmas = res.content;
-        console.log('Turmas carregadas:', this.turmas);
       },
-      error: (err) => console.error('Erro ao carregar turmas:', err)
+      error: (err) => console.error('Erro ao carregar turmas:', err),
     });
   }
 
@@ -60,13 +58,11 @@ export class AdminTurmasComponent implements OnInit {
     this.professorService.listarProfessores().subscribe({
       next: (res) => {
         this.professores = res.content;
-        console.log('Professores carregados:', this.professores); // ✅ Verifique o console do navegador
         this.atualizarProfessoresMap();
       },
-      error: (err) => console.error('Erro ao carregar professores:', err)
+      error: (err) => console.error('Erro ao carregar professores:', err),
     });
   }
-  
 
   private atualizarProfessoresMap(): void {
     this.professoresMap.clear();
@@ -81,9 +77,8 @@ export class AdminTurmasComponent implements OnInit {
     this.alunoService.listarAlunos().subscribe({
       next: (res) => {
         this.todosAlunos = res.content || [];
-        console.log('Todos os alunos carregados:', this.todosAlunos);
       },
-      error: (err) => console.error('Erro ao carregar alunos:', err)
+      error: (err) => console.error('Erro ao carregar alunos:', err),
     });
   }
 
@@ -96,9 +91,8 @@ export class AdminTurmasComponent implements OnInit {
     this.turmaService.listarAlunosPorTurma(turma.id).subscribe({
       next: (res) => {
         this.alunosMatriculados = res.content;
-        console.log('Alunos matriculados na turma:', this.alunosMatriculados);
       },
-      error: (err) => console.error('Erro ao carregar alunos da turma:', err)
+      error: (err) => console.error('Erro ao carregar alunos da turma:', err),
     });
     this.mostrarGerenciarAlunosModal = true;
   }
@@ -110,16 +104,14 @@ export class AdminTurmasComponent implements OnInit {
     }
     const turmaParaAdicionar = {
       nome: this.novaTurma.nome,
-      professor: this.novaTurma.professorId ? { id: this.novaTurma.professorId } : null
+      professorId: this.novaTurma.professorId || null
     };
     this.turmaService.adicionarTurma(turmaParaAdicionar).subscribe({
       next: (res) => {
-        console.log("Turma adicionada com sucesso:", res);
-        // Se o back retornar a turma diretamente, você pode adicionar assim:
         this.turmas.push(res);
         this.novaTurma = { nome: '', professorId: null };
       },
-      error: (err) => console.error('Erro ao adicionar turma:', err)
+      error: (err) => console.error('Erro ao adicionar turma:', err),
     });
   }
 
@@ -127,10 +119,9 @@ export class AdminTurmasComponent implements OnInit {
     if (confirm('Tem certeza que deseja excluir esta turma?')) {
       this.turmaService.excluirTurma(id).subscribe({
         next: () => {
-          console.log(`Turma com id ${id} excluída.`);
           this.turmas = this.turmas.filter(turma => turma.id !== id);
         },
-        error: (err) => console.error('Erro ao excluir turma:', err)
+        error: (err) => console.error('Erro ao excluir turma:', err),
       });
     }
   }
@@ -141,13 +132,12 @@ export class AdminTurmasComponent implements OnInit {
 
   salvarEdicao(): void {
     if (!this.turmaEditando?.id) {
-      console.error('Turma em edição ou id não definido.');
       return;
     }
     const turmaAtualizada = {
       id: this.turmaEditando.id,
       nome: this.turmaEditando.nome,
-      professor: this.turmaEditando.professorId ? { id: this.turmaEditando.professorId } : null
+      professorId: this.turmaEditando.professorId || null
     };
     this.turmaService.atualizarTurma(turmaAtualizada.id, turmaAtualizada).subscribe({
       next: (res) => {
@@ -155,7 +145,7 @@ export class AdminTurmasComponent implements OnInit {
         if (index !== -1) { this.turmas[index] = res; }
         this.turmaEditando = null;
       },
-      error: (err) => console.error('Erro ao atualizar turma:', err)
+      error: (err) => console.error('Erro ao atualizar turma:', err),
     });
   }
 
@@ -172,51 +162,35 @@ export class AdminTurmasComponent implements OnInit {
 
   adicionarAlunoNaTurma(): void {
     if (!this.turmaGerenciarAlunos?.id) {
-      console.error('Nenhuma turma selecionada para matrícula.');
       return;
     }
     if (this.alunoSelecionadoParaAdicionar == null) {
       alert("Selecione um aluno para matricular.");
       return;
     }
-    console.log(`Matriculando aluno ${this.alunoSelecionadoParaAdicionar} na turma ${this.turmaGerenciarAlunos.id}`);
     this.turmaService.matricularAluno(this.turmaGerenciarAlunos.id, this.alunoSelecionadoParaAdicionar).subscribe({
-      next: (res) => {
-        console.log("Aluno matriculado com sucesso:", res);
-        // Recarrega a lista de alunos matriculados
-        // Como já validamos que turmaGerenciarAlunos não é nula, usamos o operador ! para garantir ao compilador
+      next: () => {
         this.abrirGerenciarAlunos(this.turmaGerenciarAlunos!);
       },
-      error: (err) => console.error('Erro ao matricular aluno:', err)
+      error: (err) => console.error('Erro ao matricular aluno:', err),
     });
   }
-  
 
   removerAlunoDaTurma(alunoId: number): void {
-    // Verifica se há uma turma selecionada e se possui um ID válido
     const turmaId = this.turmaGerenciarAlunos?.id;
     if (!turmaId) {
-      console.error("Nenhuma turma selecionada para remover aluno.");
       return;
     }
-  
-    // Confirmação antes de prosseguir
+
     if (!confirm("Tem certeza que deseja remover o aluno da turma?")) {
       return;
     }
-  
-    console.log(`Removendo aluno ${alunoId} da turma ${turmaId}`);
-  
-    // Chama o serviço para remover o aluno da turma
+
     this.turmaService.removerAlunoDaTurma(turmaId, alunoId).subscribe({
       next: () => {
-        console.log(`Aluno ${alunoId} removido da turma ${turmaId}.`);
-  
-        // Após a remoção, recarrega a lista de alunos da turma
         this.turmaService.listarAlunosPorTurma(turmaId).subscribe({
           next: (res) => {
             this.alunosMatriculados = res.content || [];
-            console.log("Lista atualizada de alunos matriculados:", this.alunosMatriculados);
           },
           error: (err) => console.error("Erro ao recarregar alunos da turma:", err),
         });
@@ -224,9 +198,7 @@ export class AdminTurmasComponent implements OnInit {
       error: (err) => console.error("Erro ao remover aluno da turma:", err),
     });
   }
-  
-  
-  
+
   getAlunosDisponiveis(): Aluno[] {
     return this.todosAlunos.filter(aluno => 
       !this.alunosMatriculados.some(matriculado => matriculado.id === aluno.id)

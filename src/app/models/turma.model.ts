@@ -3,7 +3,6 @@ export interface Turma {
   nome: string;
   codigo?: string;
   semestre?: string;
-  professorId?: number | null;  // Indica explicitamente que pode ser null
-  professorNome?: string;  // Opcional: já armazenar o nome do professor
-  alunos?: number[];
+  professorId?: number | null;  // Agora tratamos como ID
+  alunos?: number[];  // Lista de IDs dos alunos
 }
