@@ -1,90 +1,85 @@
 <body class="home">
-    <div class="container-fluid display-table">
-      <div class="row display-table-row">
-        <!-- Sidebar -->
-        <div class="col-md-2 col-sm-2 hidden-xs display-table-cell v-align box" id="navigation">
-          <div class="navi">
-            <ul>
-              <li><a routerLink="/admin"><i class="fa fa-home"></i> Painel</a></li>
-              <li><a routerLink="/admin/cadastro"><i class="fa fa-user-plus"></i> Cadastrar Usuário</a></li>
-              <li><a routerLink="/admin/turmas"><i class="fa fa-users"></i> Gerenciar Turmas</a></li>
-              <li><a routerLink="/logout"><i class="fa fa-sign-out-alt"></i> Sair</a></li>
-            </ul>
-          </div>
+  <div class="container-fluid display-table">
+    <div class="row display-table-row">
+      <!-- Sidebar -->
+      <div class="col-md-2 col-sm-2 hidden-xs display-table-cell v-align box" id="navigation">
+        <div class="navi">
+          <ul>
+            <li><a routerLink="/admin"><i class="fa fa-home"></i> Painel</a></li>
+            <li><a routerLink="/admin/cadastro"><i class="fa fa-user-plus"></i> Cadastrar Usuário</a></li>
+            <li><a routerLink="/admin/turmas"><i class="fa fa-users"></i> Gerenciar Turmas</a></li>
+            <li><a routerLink="/logout"><i class="fa fa-sign-out-alt"></i> Sair</a></li>
+          </ul>
         </div>
-  
-        <!-- Conteúdo Principal -->
-        <div class="col-md-10 col-sm-10 display-table-cell v-align" style="padding: 20px;">
-          <div class="user-dashboard">
-            <h1>Editar Usuário</h1>
-            <div class="panel panel-default">
-              <div class="panel-heading">
-                <h3 class="panel-title">Edição de Usuário</h3>
-              </div>
-              <div class="panel-body">
-                <form [formGroup]="editForm" (ngSubmit)="salvarEdicao()">
-                  <!-- Campos Comuns -->
+      </div>
+
+      <!-- Conteúdo Principal -->
+      <div class="col-md-10 col-sm-10 display-table-cell v-align" style="padding: 20px;">
+        <div class="user-dashboard">
+          <h1>Editar Usuário</h1>
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Edição de Usuário</h3>
+            </div>
+            <div class="panel-body">
+              <form [formGroup]="editForm" (ngSubmit)="salvarEdicao()">
+                <div class="form-group">
+                  <label>Nome</label>
+                  <input type="text" class="form-control" formControlName="nome">
+                </div>
+                <div class="form-group">
+                  <label>Email</label>
+                  <input type="email" class="form-control" formControlName="email">
+                </div>
+                <div class="form-group">
+                  <label>Senha</label>
+                  <input type="password" class="form-control" formControlName="senha" placeholder="Deixe em branco para não alterar">
+                </div>
+
+                <div *ngIf="tipoUsuario === 'administrador'">
                   <div class="form-group">
-                    <label>Nome</label>
-                    <input type="text" class="form-control" formControlName="nome" required>
+                    <label>Setor</label>
+                    <input type="text" class="form-control" formControlName="setor">
                   </div>
                   <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" class="form-control" formControlName="email" required>
+                    <label>SIAPE</label>
+                    <input type="text" class="form-control" formControlName="siape">
+                  </div>
+                </div>
+
+                <div *ngIf="tipoUsuario === 'professor'">
+                  <div class="form-group">
+                    <label>Departamento</label>
+                    <input type="text" class="form-control" formControlName="departamento">
                   </div>
                   <div class="form-group">
-                    <label>Senha</label>
-                    <input type="password" class="form-control" formControlName="senha" placeholder="Deixe em branco para não alterar">
+                    <label>SIAPE</label>
+                    <input type="text" class="form-control" formControlName="siape">
                   </div>
-  
-                  <!-- Campos Específicos para Administrador -->
-                  <div *ngIf="tipoUsuario === 'administrador'">
-                    <div class="form-group">
-                      <label>Setor</label>
-                      <input type="text" class="form-control" formControlName="setor" required>
-                    </div>
-                    <div class="form-group">
-                      <label>SIAPE</label>
-                      <input type="text" class="form-control" formControlName="siape" required>
-                    </div>
+                </div>
+
+                <div *ngIf="tipoUsuario === 'aluno'">
+                  <div class="form-group">
+                    <label>CPF</label>
+                    <input type="text" class="form-control" formControlName="cpf">
                   </div>
-  
-                  <!-- Campos Específicos para Professor -->
-                  <div *ngIf="tipoUsuario === 'professor'">
-                    <div class="form-group">
-                      <label>Departamento</label>
-                      <input type="text" class="form-control" formControlName="departamento" required>
-                    </div>
-                    <div class="form-group">
-                      <label>SIAPE</label>
-                      <input type="text" class="form-control" formControlName="siape" required>
-                    </div>
+                  <div class="form-group">
+                    <label>Curso</label>
+                    <input type="text" class="form-control" formControlName="curso">
                   </div>
-  
-                  <!-- Campos Específicos para Aluno -->
-                  <div *ngIf="tipoUsuario === 'aluno'">
-                    <div class="form-group">
-                      <label>CPF</label>
-                      <input type="text" class="form-control" formControlName="cpf" required>
-                    </div>
-                    <div class="form-group">
-                      <label>Curso</label>
-                      <input type="text" class="form-control" formControlName="curso" required>
-                    </div>
-                  </div>
-  
-                  <button type="submit" class="btn btn-primary btn-block">
-                    <i class="fa fa-save"></i> Salvar Alterações
-                  </button>
-                  <button type="button" (click)="cancelar()" class="btn btn-secondary btn-block">
-                    Cancelar
-                  </button>
-                </form>
-              </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">
+                  <i class="fa fa-save"></i> Salvar Alterações
+                </button>
+                <button type="button" (click)="cancelar()" class="btn btn-secondary btn-block">
+                  Cancelar
+                </button>
+              </form>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </body>
-  
+  </div>
+</body>
