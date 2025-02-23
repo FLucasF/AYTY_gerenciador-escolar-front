@@ -13,6 +13,10 @@ export class TurmaService {
 
   constructor(private http: HttpClient) {}
 
+  listarTurmasDoUsuario(userId: number): Observable<Page<Turma>> {
+    return this.http.get<Page<Turma>>(`${this.apiUrl}/usuario/${userId}`);
+  }
+  
   listarTurmas(): Observable<Page<Turma>> {
     return this.http.get<Page<Turma>>(this.apiUrl);
   }

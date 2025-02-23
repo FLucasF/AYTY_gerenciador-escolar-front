@@ -10,14 +10,16 @@ export class RoleGuard implements CanActivate {
   constructor(private authService: AuthService, private router: Router) {}
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-    const expectedRole = route.data['expectedRole']; // Por exemplo, 'ROLE_ADMINISTRADOR'
+    const expectedRole = route.data['expectedRole']; // Ex: 'ROLE_ADMINISTRADOR'
     const userRole = this.authService.getUserRole();
     console.log('🔎 Verificando acesso: Esperado:', expectedRole, 'Obtido:', userRole);
     if (!userRole || userRole !== expectedRole) {
-      console.warn('🚫 Acesso negado! Redirecionando para login...');
-      this.router.navigate(['/login']);
+      console.warn('🚫 Acesso negado! Redirecionando para board...');
+      // Se não for o administrador, redireciona para board
+      this.router.navigate(['/board']);
       return false;
     }
     return true;
   }
+  
 }

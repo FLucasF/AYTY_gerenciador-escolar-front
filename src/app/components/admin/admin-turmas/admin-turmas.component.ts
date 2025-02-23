@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { TurmaService } from '../../../services/turma.service';
 import { ProfessorService } from '../../../services/professor.service';
 import { AlunoService } from '../../../services/aluno.service';
@@ -22,6 +23,8 @@ export class AdminTurmasComponent implements OnInit {
 
   novaTurma: Partial<Turma> & { professorId?: number | null } = { nome: '', professorId: null };
   turmaEditando: Turma | null = null;
+  editForm!: FormGroup;
+  turmaOriginal: any = {}; // Guarda os dados originais antes da edição
 
   // Controle do modal de gerenciamento de alunos
   mostrarGerenciarAlunosModal = false;
@@ -31,12 +34,14 @@ export class AdminTurmasComponent implements OnInit {
   constructor(
     private turmaService: TurmaService,
     private professorService: ProfessorService,
-    private alunoService: AlunoService
+    private alunoService: AlunoService,
+    private fb: FormBuilder
   ) {}
 
   ngOnInit(): void {
     this.carregarDadosIniciais();
-    console.log('AdminTurmasComponent iniciado.');
+    this.inicializarFormularioEdicao();
+    console.log('✅ AdminTurmasComponent iniciado.');
   }
 
   private carregarDadosIniciais(): void {
@@ -45,12 +50,72 @@ export class AdminTurmasComponent implements OnInit {
     this.carregarTodosAlunos();
   }
 
+  private inicializarFormularioEdicao(): void {
+    this.editForm = this.fb.group({
+      nome: [''],
+      codigo: [''],
+      semestre: [''],
+      professorId: [null]
+    });
+  }
+
+  iniciarEdicao(turma: Turma): void {
+    console.log('✏️ Iniciando edição da turma:', turma);
+
+    this.turmaEditando = { ...turma };
+    this.turmaOriginal = { ...turma };
+
+    this.editForm.patchValue({
+      nome: turma.nome,
+      codigo: turma.codigo,
+      semestre: turma.semestre,
+      professorId: turma.professorId
+    });
+  }
+
+  salvarEdicao(): void {
+    if (!this.turmaEditando?.id || !this.editForm.valid) {
+      return;
+    }
+  
+    // Monta um objeto com os dados do formulário, mantendo os originais se o campo estiver vazio ou inalterado
+    const dadosAtualizados: any = {};
+    Object.keys(this.editForm.value).forEach(key => {
+      const novoValor = this.editForm.value[key];
+      if (novoValor !== '' && novoValor !== this.turmaOriginal[key]) {
+        dadosAtualizados[key] = novoValor;
+      } else {
+        dadosAtualizados[key] = this.turmaOriginal[key];
+      }
+    });
+  
+    console.log('📤 Enviando atualização da turma:', dadosAtualizados);
+  
+    this.turmaService.atualizarTurma(this.turmaEditando.id, dadosAtualizados).subscribe({
+      next: (res) => {
+        console.log('✅ Turma atualizada com sucesso:', res);
+        const index = this.turmas.findIndex(t => t.id === res.id);
+        if (index !== -1) {
+          this.turmas[index] = res;
+        }
+        this.turmaEditando = null;
+      },
+      error: (err) => console.error('❌ Erro ao atualizar turma:', err),
+    });
+  }
+  
+
+  cancelarEdicao(): void {
+    this.turmaEditando = null;
+  }
+
   carregarTurmas(): void {
     this.turmaService.listarTurmas().subscribe({
       next: (res) => {
         this.turmas = res.content;
+        console.log('✅ Turmas carregadas:', this.turmas);
       },
-      error: (err) => console.error('Erro ao carregar turmas:', err),
+      error: (err) => console.error('❌ Erro ao carregar turmas:', err),
     });
   }
 
@@ -59,8 +124,9 @@ export class AdminTurmasComponent implements OnInit {
       next: (res) => {
         this.professores = res.content;
         this.atualizarProfessoresMap();
+        console.log('✅ Professores carregados:', this.professores);
       },
-      error: (err) => console.error('Erro ao carregar professores:', err),
+      error: (err) => console.error('❌ Erro ao carregar professores:', err),
     });
   }
 
@@ -77,41 +143,9 @@ export class AdminTurmasComponent implements OnInit {
     this.alunoService.listarAlunos().subscribe({
       next: (res) => {
         this.todosAlunos = res.content || [];
+        console.log('✅ Alunos carregados:', this.todosAlunos);
       },
-      error: (err) => console.error('Erro ao carregar alunos:', err),
-    });
-  }
-
-  abrirGerenciarAlunos(turma: Turma): void {
-    if (!turma.id) {
-      console.error('Turma sem ID não pode ser gerenciada.');
-      return;
-    }
-    this.turmaGerenciarAlunos = turma;
-    this.turmaService.listarAlunosPorTurma(turma.id).subscribe({
-      next: (res) => {
-        this.alunosMatriculados = res.content;
-      },
-      error: (err) => console.error('Erro ao carregar alunos da turma:', err),
-    });
-    this.mostrarGerenciarAlunosModal = true;
-  }
-
-  adicionarTurma(): void {
-    if (!this.novaTurma.nome) {
-      alert("O nome da turma é obrigatório!");
-      return;
-    }
-    const turmaParaAdicionar = {
-      nome: this.novaTurma.nome,
-      professorId: this.novaTurma.professorId || null
-    };
-    this.turmaService.adicionarTurma(turmaParaAdicionar).subscribe({
-      next: (res) => {
-        this.turmas.push(res);
-        this.novaTurma = { nome: '', professorId: null };
-      },
-      error: (err) => console.error('Erro ao adicionar turma:', err),
+      error: (err) => console.error('❌ Erro ao carregar alunos:', err),
     });
   }
 
@@ -121,36 +155,9 @@ export class AdminTurmasComponent implements OnInit {
         next: () => {
           this.turmas = this.turmas.filter(turma => turma.id !== id);
         },
-        error: (err) => console.error('Erro ao excluir turma:', err),
+        error: (err) => console.error('❌ Erro ao excluir turma:', err),
       });
     }
-  }
-
-  iniciarEdicao(turma: Turma): void {
-    this.turmaEditando = { ...turma };
-  }
-
-  salvarEdicao(): void {
-    if (!this.turmaEditando?.id) {
-      return;
-    }
-    const turmaAtualizada = {
-      id: this.turmaEditando.id,
-      nome: this.turmaEditando.nome,
-      professorId: this.turmaEditando.professorId || null
-    };
-    this.turmaService.atualizarTurma(turmaAtualizada.id, turmaAtualizada).subscribe({
-      next: (res) => {
-        const index = this.turmas.findIndex(t => t.id === res.id);
-        if (index !== -1) { this.turmas[index] = res; }
-        this.turmaEditando = null;
-      },
-      error: (err) => console.error('Erro ao atualizar turma:', err),
-    });
-  }
-
-  cancelarEdicao(): void {
-    this.turmaEditando = null;
   }
 
   fecharGerenciarAlunosModal(): void {
@@ -172,9 +179,55 @@ export class AdminTurmasComponent implements OnInit {
       next: () => {
         this.abrirGerenciarAlunos(this.turmaGerenciarAlunos!);
       },
-      error: (err) => console.error('Erro ao matricular aluno:', err),
+      error: (err) => console.error('❌ Erro ao matricular aluno:', err),
     });
   }
+  
+  adicionarTurma(): void {
+    if (!this.novaTurma.nome) {
+      alert("O nome da turma é obrigatório!");
+      return;
+    }
+  
+    const turmaParaAdicionar = {
+      nome: this.novaTurma.nome,
+      codigo: this.novaTurma.codigo || '',
+      semestre: this.novaTurma.semestre || '',
+      professorId: this.novaTurma.professorId ? this.novaTurma.professorId : null
+    };
+  
+    console.log('📤 Enviando nova turma:', turmaParaAdicionar);
+  
+    this.turmaService.adicionarTurma(turmaParaAdicionar).subscribe({
+      next: (res) => {
+        console.log("✅ Turma criada com sucesso:", res);
+        this.turmas.push(res);
+        this.novaTurma = { nome: '', professorId: null }; // Resetar o formulário
+      },
+      error: (err) => console.error('❌ Erro ao adicionar turma:', err)
+    });
+  }
+  
+
+  abrirGerenciarAlunos(turma: Turma): void {
+    if (!turma.id) {
+      console.error('❌ Erro: Turma sem ID não pode ser gerenciada.');
+      return;
+    }
+    console.log(`📂 Abrindo gerenciamento de alunos para a turma ${turma.nome} (ID: ${turma.id})`);
+    
+    this.turmaGerenciarAlunos = turma;
+    this.turmaService.listarAlunosPorTurma(turma.id).subscribe({
+      next: (res) => {
+        this.alunosMatriculados = res.content;
+        console.log(`✅ Alunos matriculados na turma ${turma.nome}:`, this.alunosMatriculados);
+      },
+      error: (err) => console.error('❌ Erro ao carregar alunos da turma:', err),
+    });
+  
+    this.mostrarGerenciarAlunosModal = true;
+  }
+  
 
   removerAlunoDaTurma(alunoId: number): void {
     const turmaId = this.turmaGerenciarAlunos?.id;
@@ -192,10 +245,10 @@ export class AdminTurmasComponent implements OnInit {
           next: (res) => {
             this.alunosMatriculados = res.content || [];
           },
-          error: (err) => console.error("Erro ao recarregar alunos da turma:", err),
+          error: (err) => console.error("❌ Erro ao recarregar alunos da turma:", err),
         });
       },
-      error: (err) => console.error("Erro ao remover aluno da turma:", err),
+      error: (err) => console.error("❌ Erro ao remover aluno da turma:", err),
     });
   }
 

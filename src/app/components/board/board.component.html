@@ -46,22 +46,37 @@
         <!-- Detalhes da Turma Selecionada -->
         <div *ngIf="turmaSelecionada">
           <h2>Turma: {{ turmaSelecionada.nome }}</h2>
-          
+
+          <!-- Exibir Nome do Professor -->
+          <h4 class="text-primary">
+            <strong>Professor: {{ getProfessorNome(turmaSelecionada.professorId) }}</strong>
+          </h4>
+
           <!-- Exibir alunos cadastrados -->
-          <div *ngIf="turmaSelecionada.alunos && turmaSelecionada.alunos.length > 0; else semAlunos">
+          <div *ngIf="alunosMatriculados.length > 0; else semAlunos">
             <h4>Alunos Matriculados:</h4>
-            <ul class="list-group">
-              <li class="list-group-item" *ngFor="let alunoId of turmaSelecionada.alunos">
-                {{ alunoId }}
-              </li>
-            </ul>
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>Email</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let aluno of alunosMatriculados">
+                  <td>{{ aluno.nome }}</td>
+                  <td>{{ aluno.email }}</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
           <ng-template #semAlunos>
             <p class="text-muted">Nenhum aluno matriculado.</p>
           </ng-template>
-          
+
           <!-- Mural da Turma -->
           <h2>Mural - {{ turmaSelecionada.nome }}</h2>
+
           <!-- Criar Postagem (Apenas para Professores) -->
           <div *ngIf="isProfessor">
             <div class="panel panel-default">
@@ -75,6 +90,7 @@
               </div>
             </div>
           </div>
+
           <!-- Postagens Recentes -->
           <h3>Postagens Recentes</h3>
           <div *ngIf="postagens && postagens.length > 0; else semPostagens">
