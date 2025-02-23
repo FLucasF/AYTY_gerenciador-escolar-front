@@ -10,7 +10,6 @@ import { Aluno } from '../../models/aluno.model';
 import { ProfessorService } from '../../services/professor.service';
 import { Professor } from '../../models/professor.model';
 
-
 @Component({
   selector: 'app-board',
   standalone: false,
@@ -49,25 +48,35 @@ export class BoardComponent implements OnInit {
   }
 
   private carregarTurmas(): void {
-    this.turmaService.listarTurmas().subscribe({
-      next: (res) => {
-        this.turmas = this.filtrarTurmas(res.content);
-        console.log('✅ Turmas filtradas:', this.turmas);
-      },
-      error: (err) => console.error('Erro ao carregar turmas:', err)
-    });
+    if (this.userRole === 'ROLE_ALUNO') {
+      // Para alunos, chama a rota que retorna as turmas do usuário
+      this.turmaService.listarTurmasDoUsuario(this.userId).subscribe({
+        next: (res) => {
+          this.turmas = res.content;
+          console.log('✅ Turmas do usuário:', this.turmas);
+        },
+        error: (err) =>
+          console.error('Erro ao carregar turmas do usuário:', err)
+      });
+    } else {
+      // Para ADMINISTRADOR e PROFESSOR, você pode usar a rota de listar todas
+      this.turmaService.listarTurmas().subscribe({
+        next: (res) => {
+          this.turmas = this.filtrarTurmas(res.content);
+          console.log('✅ Turmas filtradas:', this.turmas);
+        },
+        error: (err) => console.error('Erro ao carregar turmas:', err)
+      });
+    }
   }
 
   private filtrarTurmas(turmas: Turma[]): Turma[] {
     if (this.userRole === 'ROLE_ADMINISTRADOR') {
       return turmas;
     } else if (this.userRole === 'ROLE_PROFESSOR') {
-      return turmas.filter(turma => turma.professorId === Number(this.userId));
-    } else if (this.userRole === 'ROLE_ALUNO') {
-      const idNumeric = Number(this.userId);
-      return turmas.filter(turma => turma.alunos && turma.alunos.includes(idNumeric));
+      return turmas.filter(turma => turma.professorId === this.userId);
     }
-    return [];
+    return turmas;
   }
 
   private carregarProfessores(): void {
@@ -85,9 +94,6 @@ export class BoardComponent implements OnInit {
       error: (err) => console.error('Erro ao carregar professores:', err)
     });
   }
-  
-  
-  
 
   selectTurma(turma: Turma): void {
     this.turmaSelecionada = turma;
@@ -160,7 +166,6 @@ export class BoardComponent implements OnInit {
     this.router.navigate(['/perfil']);
   }
 
-  // Adiciona um log para verificar a entrada e saída deste método
   getProfessorNome(professorId?: number | null): string {
     console.log('🔍 getProfessorNome chamado com professorId:', professorId);
     if (!professorId) {
