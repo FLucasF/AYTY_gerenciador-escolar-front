@@ -3,5 +3,6 @@ export interface Mural {
   titulo: string;
   conteudo: string;
   turmaId?: number;
+  professorId?: number;
   dataCriacao?: string;
 }
