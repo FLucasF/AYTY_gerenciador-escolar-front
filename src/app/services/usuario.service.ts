@@ -30,7 +30,7 @@ export class UsuarioService {
             return user as Aluno;
           } else if (user.role === 'ROLE_PROFESSOR') {
             return user as Professor;
-          } else if (user.role === 'ROLE_ADMINISTRADOR') {
+          } else if (user.role === 'ROLE_ADMIN') {
             return user as Administrador;
           } else {
             return user; // Caso não se encaixe, mantém como Usuario genérico
@@ -48,7 +48,7 @@ export class UsuarioService {
           return user as Aluno;
         } else if (user.role === 'ROLE_PROFESSOR') {
           return user as Professor;
-        } else if (user.role === 'ROLE_ADMINISTRADOR') {
+        } else if (user.role === 'ROLE_ADMIN') {
           return user as Administrador;
         } else {
           return user;
@@ -70,7 +70,7 @@ export class UsuarioService {
       case 'ROLE_PROFESSOR':
         updateUrl = `${this.apiUrl}/professores/${usuario.id}`;
         return this.http.put<Professor>(updateUrl, usuario as Professor);
-      case 'ROLE_ADMINISTRADOR':
+      case 'ROLE_ADMIN':
         updateUrl = `${this.apiUrl}/administradores/${usuario.id}`;
         return this.http.put<Administrador>(updateUrl, usuario as Administrador);
       default:

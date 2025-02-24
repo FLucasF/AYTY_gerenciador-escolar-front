@@ -1,4 +1,3 @@
-// auth.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -15,7 +14,6 @@ interface LoginResponse {
   providedIn: 'root'
 })
 export class AuthService {
-  // Defina a URL da sua API de autenticação (ajuste conforme necessário)
   private apiUrl = 'http://localhost:8090/auth';
 
   constructor(
@@ -24,49 +22,53 @@ export class AuthService {
     private jwtHelper: JwtHelperService
   ) {}
 
-  // Método de login: envia as credenciais para o backend
+  
+
   login(credentials: any): Observable<LoginResponse> {
     console.log('🔐 Tentando login com:', credentials);
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
     return this.http.post<LoginResponse>(`${this.apiUrl}/login`, credentials, { headers });
   }
 
-  // Processa a resposta do login: armazena o token e decodifica para extrair a role
   handleLoginResponse(response: LoginResponse): void {
     console.log('✅ Login realizado com sucesso:', response);
+
+    console.log('✅ Salvando dados no localStorage:', response);
+  localStorage.setItem('accessToken', response.accessToken);
+  localStorage.setItem('userId', response.usuario.id.toString());
+  localStorage.setItem('userName', response.usuario.nome);
+  localStorage.setItem('role', response.usuario.role);
+  
     const token = response.accessToken;
     if (!token) {
       console.error('❌ Token de acesso não encontrado!');
       return;
     }
-    // Salva o token e refreshToken no localStorage
-    localStorage.setItem('access_token', token);
-    localStorage.setItem('refresh_token', response.refreshToken || '');
+
+    // Salva os tokens no localStorage
+    localStorage.setItem('accessToken', token);
+    if (response.refreshToken) {
+      localStorage.setItem('refreshToken', response.refreshToken);
+    }
 
     // Decodifica o token para extrair a role
     const decoded = this.jwtHelper.decodeToken(token);
     console.log('🔍 Token decodificado:', decoded);
     if (decoded && decoded.role) {
-      localStorage.setItem('role', decoded.role);
+      localStorage.setItem('role', decoded.role.toUpperCase()); // Garantindo uppercase
       console.log('🎭 Role extraída do token:', decoded.role);
     } else {
-      console.error('⚠️ Role não encontrada no token! Verifique o payload.');
+      console.error('⚠️ Role não encontrada no token!');
     }
   }
 
-  // Retorna a role armazenada no localStorage
   getUserRole(): string {
-    const role = localStorage.getItem('role');
-    console.log('🎭 Role obtida do localStorage:', role);
-    return role ? role : '';
+    return localStorage.getItem('role') || '';
   }
 
-  // Realiza logout limpando os dados armazenados e redirecionando para o login
   logout(): void {
     console.log('🚪 Logout realizado');
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
-    localStorage.removeItem('role');
+    localStorage.clear(); // Limpa tudo do localStorage
     this.router.navigate(['/login']);
   }
 }

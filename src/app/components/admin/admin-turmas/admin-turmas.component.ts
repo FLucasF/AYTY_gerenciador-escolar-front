@@ -110,7 +110,11 @@ export class AdminTurmasComponent implements OnInit {
   }
 
   carregarTurmas(): void {
-    this.turmaService.listarTurmas().subscribe({
+    // Criando o objeto pageable para paginação
+    const pageable = { page: 0, size: 10 };  // Ajuste o tamanho conforme necessário
+    
+    // Passando o parâmetro pageable para a requisição
+    this.turmaService.listarTodasTurmas(pageable).subscribe({
       next: (res) => {
         this.turmas = res.content;
         console.log('✅ Turmas carregadas:', this.turmas);
@@ -118,6 +122,7 @@ export class AdminTurmasComponent implements OnInit {
       error: (err) => console.error('❌ Erro ao carregar turmas:', err),
     });
   }
+  
 
   carregarProfessores(): void {
     this.professorService.listarProfessores().subscribe({
@@ -215,11 +220,16 @@ export class AdminTurmasComponent implements OnInit {
       return;
     }
     console.log(`📂 Abrindo gerenciamento de alunos para a turma ${turma.nome} (ID: ${turma.id})`);
-    
+  
     this.turmaGerenciarAlunos = turma;
-    this.turmaService.listarAlunosPorTurma(turma.id).subscribe({
+    
+    // Criando o objeto pageable para paginação
+    const pageable = { page: 0, size: 10 };  // Ajuste o tamanho conforme necessário
+    
+    // Passando o parâmetro pageable para a requisição
+    this.turmaService.listarAlunosPorTurma(turma.id, pageable).subscribe({
       next: (res) => {
-        this.alunosMatriculados = res.content;
+        this.alunosMatriculados = res.content || [];
         console.log(`✅ Alunos matriculados na turma ${turma.nome}:`, this.alunosMatriculados);
       },
       error: (err) => console.error('❌ Erro ao carregar alunos da turma:', err),
@@ -234,16 +244,21 @@ export class AdminTurmasComponent implements OnInit {
     if (!turmaId) {
       return;
     }
-
+  
     if (!confirm("Tem certeza que deseja remover o aluno da turma?")) {
       return;
     }
-
+  
     this.turmaService.removerAlunoDaTurma(turmaId, alunoId).subscribe({
       next: () => {
-        this.turmaService.listarAlunosPorTurma(turmaId).subscribe({
+        // Criando o objeto pageable para paginar os alunos
+        const pageable = { page: 0, size: 10 };  // Ajuste o tamanho conforme necessário
+  
+        // Passando o pageable para a requisição de listar alunos da turma
+        this.turmaService.listarAlunosPorTurma(turmaId, pageable).subscribe({
           next: (res) => {
             this.alunosMatriculados = res.content || [];
+            console.log('✅ Alunos recarregados após remoção:', this.alunosMatriculados);
           },
           error: (err) => console.error("❌ Erro ao recarregar alunos da turma:", err),
         });
@@ -251,6 +266,7 @@ export class AdminTurmasComponent implements OnInit {
       error: (err) => console.error("❌ Erro ao remover aluno da turma:", err),
     });
   }
+  
 
   getAlunosDisponiveis(): Aluno[] {
     return this.todosAlunos.filter(aluno => 

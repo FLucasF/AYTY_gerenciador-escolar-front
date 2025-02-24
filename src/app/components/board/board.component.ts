@@ -2,13 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MuralService } from '../../services/mural.service';
 import { TurmaService } from '../../services/turma.service';
+import { ProfessorService } from '../../services/professor.service';
 import { UsuarioService } from '../../services/usuario.service';
 import { AuthService } from '../../services/auth.service';
 import { Turma } from '../../models/turma.model';
 import { Mural } from '../../models/mural.model';
 import { Aluno } from '../../models/aluno.model';
-import { ProfessorService } from '../../services/professor.service';
 import { Professor } from '../../models/professor.model';
+import { Pageable } from '../../models/pageable.model';
 
 @Component({
   selector: 'app-board',
@@ -17,6 +18,7 @@ import { Professor } from '../../models/professor.model';
   styleUrls: ['./board.component.css']
 })
 export class BoardComponent implements OnInit {
+  usuario: { id: number; nome: string; role: string } = { id: 0, nome: 'Usuário', role: '' };
   userName: string;
   userId: number;
   userRole: string;
@@ -32,9 +34,8 @@ export class BoardComponent implements OnInit {
     private router: Router,
     private muralService: MuralService,
     private turmaService: TurmaService,
-    private usuarioService: UsuarioService,
-    private authService: AuthService,
-    private professorService: ProfessorService
+    private professorService: ProfessorService,
+    private usuarioService: UsuarioService
   ) {
     this.userName = localStorage.getItem('userName') || 'Usuário';
     this.userId = Number(localStorage.getItem('userId')) || 0;
@@ -43,29 +44,81 @@ export class BoardComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.carregarDadosDoUsuario();
     this.carregarTurmas();
     this.carregarProfessores();
+
+    
   }
 
+  private carregarDadosDoUsuario(): void {
+    const userName = localStorage.getItem('userName') || 'Usuário';
+    const userId = Number(localStorage.getItem('userId')); // Aqui garantimos que o userId seja convertido para número
+    const userRole = localStorage.getItem('role') || '';
+    
+    // Verificando se os dados do usuário estão no localStorage
+    console.log('🔍 Dados carregados do localStorage:', { userName, userId, userRole });
+  
+    // Verificando se o id e role são válidos
+    if (userId === 0 || !userRole) {
+      console.error('❌ Erro: Usuário não encontrado ou sem ID');
+      return;
+    }
+  
+    this.usuario = { id: userId, nome: userName, role: userRole }; // Atribui corretamente o usuario
+    console.log('🔑 Usuario carregado:', this.usuario);
+  }
+  
+  
+
   private carregarTurmas(): void {
-    // Para ADMINISTRADOR e PROFESSOR, usamos a rota de listar todas
-    this.turmaService.listarTurmas().subscribe({
-      next: (res) => {
-        this.turmas = this.filtrarTurmas(res.content);
-        console.log('✅ Turmas filtradas:', this.turmas);
-      },
-      error: (err) => console.error('Erro ao carregar turmas:', err)
-    });
+    if (!this.usuario || !this.usuario.id) {
+      console.error('❌ Erro: Usuário não encontrado ou sem ID');
+      return;
+    }
+
+    const userId = this.usuario.id;
+
+    console.log(`👤 Enviando requisição para buscar turmas do aluno com ID: ${userId}`);
+
+    const pageable = { page: 0, size: 10 }; // Definindo o tamanho da página e página inicial
+
+    if (this.usuario.role === 'ROLE_ADMIN') {
+      this.turmaService.listarTodasTurmas(pageable).subscribe({
+        next: (res) => {
+          this.turmas = this.filtrarTurmas(res.content);
+          console.log('✅ Turmas carregadas para ADMIN:', this.turmas);
+        },
+        error: (err) => console.error('Erro ao carregar turmas para ADMIN:', err)
+      });
+    } else if (this.usuario.role === 'ROLE_PROFESSOR') {
+      this.turmaService.listarTurmasPorProfessor(userId, pageable).subscribe({
+        next: (res) => {
+          this.turmas = this.filtrarTurmas(res.content);
+          console.log('✅ Turmas carregadas para PROFESSOR:', this.turmas);
+        },
+        error: (err) => console.error('Erro ao carregar turmas para PROFESSOR:', err)
+      });
+    } else if (this.usuario.role === 'ROLE_ALUNO') {
+      this.turmaService.listarTurmasPorAluno(userId, pageable).subscribe({
+        next: (res) => {
+          console.log('✅ Turmas carregadas para o aluno:', res.content);  // Verifique a resposta do backend
+          this.turmas = res.content;  // Armazenando as turmas no componente
+        },
+        error: (err) => {
+          console.error('❌ Erro ao carregar turmas:', err);  // Tratando erro
+        }
+      });
+    }
   }
 
   private filtrarTurmas(turmas: Turma[]): Turma[] {
-    if (this.userRole === 'ROLE_ADMINISTRADOR') {
+    if (this.usuario.role === 'ROLE_ADMIN') {
       return turmas;
-    } else if (this.userRole === 'ROLE_PROFESSOR') {
-      return turmas.filter(turma => turma.professorId === this.userId);
-    } else if (this.userRole === 'ROLE_ALUNO') {
-      // Supondo que o objeto turma contenha uma propriedade "alunos" (array de IDs)
-      return turmas.filter(turma => turma.alunos && turma.alunos.includes(this.userId));
+    } else if (this.usuario.role === 'ROLE_PROFESSOR') {
+      return turmas.filter(turma => turma.professorId === this.usuario.id);
+    } else if (this.usuario.role === 'ROLE_ALUNO') {
+      return turmas.filter(turma => turma.alunos && turma.alunos.includes(this.usuario.id));
     }
     return [];
   }
@@ -106,7 +159,8 @@ export class BoardComponent implements OnInit {
   }
 
   private carregarAlunos(turmaId: number): void {
-    this.turmaService.listarAlunosPorTurma(turmaId).subscribe({
+    const pageable = { page: 0, size: 100 };
+    this.turmaService.listarAlunosPorTurma(turmaId, pageable).subscribe({
       next: (res) => {
         this.alunosMatriculados = res.content || [];
         console.log('✅ Alunos matriculados:', this.alunosMatriculados);
@@ -125,8 +179,7 @@ export class BoardComponent implements OnInit {
         titulo: this.novaPostagem.titulo,
         conteudo: this.novaPostagem.conteudo,
         turmaId: this.turmaSelecionada.id,
-        professorId: this.userId  // Certifique‑se de que esse valor está definido
-
+        professorId: this.usuario.id // Certifique-se de que esse valor está definido
       };
       console.log('📝 Nova postagem:', muralRequest);
 
@@ -140,8 +193,6 @@ export class BoardComponent implements OnInit {
       });
     }
   }
-  
-  
 
   excluirPostagem(id: number): void {
     if (confirm('Tem certeza que deseja excluir esta postagem?')) {

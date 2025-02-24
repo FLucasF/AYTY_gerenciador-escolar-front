@@ -17,7 +17,7 @@ const routes: Routes = [
   {
     path: 'admin',
     canActivate: [AuthGuard, RoleGuard],
-    data: { expectedRole: 'ROLE_ADMINISTRADOR' },
+    data: { expectedRole: 'ROLE_ADMIN' },
     children: [
       { path: '', component: AdminDashboardComponent },
       { path: 'cadastro', component: AdminUserRegisterComponent },

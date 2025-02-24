@@ -57,7 +57,7 @@ export class AdminDashboardComponent implements OnInit {
       return 'aluno';
     } else if (role === 'PROFESSOR' || role === 'ROLE_PROFESSOR') {
       return 'professor';
-    } else if (role === 'ADMINISTRADOR' || role === 'ROLE_ADMINISTRADOR') {
+    } else if (role === 'ADMINISTRADOR' || role === 'ROLE_ADMIN') {
       return 'administrador';
     } else {
       return 'desconhecido';

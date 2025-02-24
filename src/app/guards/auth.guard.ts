@@ -1,21 +1,22 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, Router, UrlTree } from '@angular/router';
-import { Observable } from 'rxjs';
+import { CanActivate, Router } from '@angular/router';
+import { JwtHelperService } from '@auth0/angular-jwt';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthGuard implements CanActivate {
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private jwtHelper: JwtHelperService) {}
 
-  canActivate(): boolean | UrlTree | Observable<boolean | UrlTree> | Promise<boolean | UrlTree> {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      // Se não houver token, redireciona para login
-      return this.router.parseUrl('/login');
+  canActivate(): boolean {
+    const token = localStorage.getItem('accessToken');
+
+    if (!token || this.jwtHelper.isTokenExpired(token)) {
+      console.warn('🚫 Token inválido ou expirado, redirecionando...');
+      this.router.navigate(['/login']);
+      return false;
     }
-    // Aqui você pode incluir lógica para decodificar o token e checar a expiração
     return true;
   }
 }

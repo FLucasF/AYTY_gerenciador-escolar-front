@@ -4,6 +4,6 @@ export interface Usuario {
     email: string;
     senha?: string;
     cpf?: string;
-    role: 'ROLE_ALUNO' | 'ROLE_PROFESSOR' | 'ROLE_ADMINISTRADOR';
+    role: 'ROLE_ALUNO' | 'ROLE_PROFESSOR' | 'ROLE_ADMIN';
   }
   

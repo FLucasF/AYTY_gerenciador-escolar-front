@@ -16,11 +16,9 @@ export class LoginComponent {
   constructor(private authService: AuthService, private router: Router) {}
 
   onSubmit(): void {
-    // Limpa tokens e informações anteriores
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('role');
-    localStorage.removeItem('userId');
+    console.log('🔍 Iniciando o login...');
+
+    localStorage.clear(); // Limpa qualquer dado antes do login
 
     if (!this.email || !this.senha) {
       console.error('❌ E-mail ou senha vazios!');
@@ -34,20 +32,31 @@ export class LoginComponent {
     this.authService.login(credentials).subscribe({
       next: (response) => {
         console.log('✅ Login realizado com sucesso:', response);
-        // Processa a resposta do login (armazenamento de tokens, role, etc.)
+        
+        // Handle response from login
         this.authService.handleLoginResponse(response);
-        // Armazena o userId retornado (certifique-se de que response.usuario.id contém o valor correto)
-        localStorage.setItem('userId', response.usuario.id.toString());
+        
+        // Verificando se o token foi armazenado corretamente
+        const accessToken = localStorage.getItem('accessToken');
+        console.log('🔑 Token de acesso armazenado:', accessToken);
+
         setTimeout(() => {
           const role = this.authService.getUserRole();
           console.log('🔍 Role verificada após login:', role);
-          // Redireciona para o board para alunos e professores; admin para '/admin'
+
+          if (!role) {
+            console.error('❌ Role não encontrada após login.');
+            return;
+          }
+
           switch (role) {
-            case 'ROLE_ADMINISTRADOR':
+            case 'ROLE_ADMIN':
+              console.log('🔑 Redirecionando para Admin...');
               this.router.navigate(['/admin']);
               break;
             case 'ROLE_PROFESSOR':
             case 'ROLE_ALUNO':
+              console.log('🔑 Redirecionando para Board...');
               this.router.navigate(['/board']);
               break;
             default:

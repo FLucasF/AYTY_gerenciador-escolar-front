@@ -24,7 +24,7 @@ export class AdminUserRegisterComponent {
     senha: '',
     setor: '',
     siape: '',
-    role: 'ROLE_ADMINISTRADOR'
+    role: 'ROLE_ADMIN'
   };
 
   professor: Professor = {
@@ -77,7 +77,7 @@ export class AdminUserRegisterComponent {
    * Carrega todas as turmas disponíveis para seleção.
    */
   carregarTurmas(): void {
-    this.turmaService.listarTurmas().subscribe({
+    this.turmaService.listarTodasTurmas({ page: 0, size: 10 }).subscribe({
       next: (res) => {
         // Extraímos o array de turmas da propriedade content
         this.turmasDisponiveis = res.content;
@@ -122,7 +122,7 @@ export class AdminUserRegisterComponent {
    * Reseta os formulários para os valores iniciais.
    */
   resetarFormulario(): void {
-    this.admin = { nome: '', email: '', senha: '', setor: '', siape: '', role: 'ROLE_ADMINISTRADOR' };
+    this.admin = { nome: '', email: '', senha: '', setor: '', siape: '', role: 'ROLE_ADMIN' };
     this.professor = { nome: '', email: '', senha: '', departamento: '', siape: '', turmas: [], role: 'ROLE_PROFESSOR' };
     this.aluno = { nome: '', email: '', senha: '', cpf: '', curso: '', turmas: [], role: 'ROLE_ALUNO' };
   }
