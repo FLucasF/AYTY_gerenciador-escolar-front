@@ -1,0 +1,45 @@
+<div class="col-md-2 col-sm-2 hidden-xs display-table-cell v-align box" id="navigation">
+    <div class="navi">
+      <ul>
+        <!-- Painel - Acesso para todos os usuários autenticados -->
+        <li *ngIf="role === 'ROLE_ADMIN'">
+            <a routerLink="/admin"><i class="fa fa-home"></i> Painel </a>
+        </li>
+  
+        <!-- Cadastro de Usuário - Somente ADMIN -->
+        <li *ngIf="role === 'ROLE_ADMIN'">
+          <a routerLink="/admin/cadastro"><i class="fa fa-user-plus"></i> Cadastrar Usuário </a>
+        </li>
+  
+        <!-- Edição de Usuário - Somente ADMIN -->
+        <li *ngIf="role === 'ROLE_ADMIN'">
+          <a routerLink="/admin/editar/usuario/1"><i class="fa fa-edit"></i> Editar Usuário </a>
+        </li>
+  
+        <!-- Gerenciar Turmas - ADMIN e PROFESSOR -->
+        <li *ngIf="role === 'ROLE_ADMIN' || role === 'ROLE_PROFESSOR'">
+          <a routerLink="/admin/turmas"><i class="fa fa-users"></i> Gerenciar Turmas </a>
+        </li>
+  
+        <!-- Gerenciar Alunos em Turma - Somente ADMIN -->
+        <li *ngIf="role === 'ROLE_ADMIN'">
+          <a routerLink="/admin/turmas/1/gerenciar-alunos"><i class="fa fa-user-cog"></i> Gerenciar Alunos </a>
+        </li>
+   
+        <!-- Apenas Alunos -->
+        <li *ngIf="role === 'ROLE_PROFESSOR' || role === 'ROLE_ALUNO'">
+            <a routerLink="/board"><i class="fa fa-book"></i> Minhas Turmas </a>
+        </li>
+
+        <li *ngIf="role === 'ROLE_ADMIN'">
+            <a routerLink="/board"><i class="fa fa-book"></i> Turmas </a>
+        </li>
+  
+        <!-- Logout - Disponível para todos -->
+        <li>
+          <a (click)="logout()" class="text-danger"><i class="fa fa-sign-out-alt"></i> Sair</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+  

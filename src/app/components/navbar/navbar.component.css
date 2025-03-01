@@ -1,0 +1,60 @@
+/* Estilização do sidebar (navbar lateral) */
+#navigation {
+    background: #0e1a35;  /* Cor azul escuro */
+    height: 100vh;
+    padding: 0;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 200px; /* Largura fixa */
+}
+
+/* Estilização da lista de navegação */
+.navi ul {
+    padding: 0;
+    list-style: none;
+}
+
+.navi a {
+    display: block;
+    padding: 18px;
+    font-size: 16px;
+    color: white;
+    border-bottom: 1px solid #0d172e;
+    text-decoration: none;
+}
+
+/* Efeito hover e item ativo */
+.navi a:hover,
+.navi .active a {
+    background: #122143; /* Cor azul mais escuro */
+    border-left: 5px solid #5584ff; /* Destaque lateral */
+}
+
+/* Ajuste para que o conteúdo fique corretamente ao lado do navbar */
+#main-content {
+    margin-left: 200px; /* Deve ser igual à largura do sidebar */
+    width: calc(100% - 200px); /* Faz com que o conteúdo ocupe o espaço restante */
+    padding: 20px;
+    background: #f6f7fa; /* Mesma cor de fundo do body */
+}
+
+/* Estilização dos botões e textos */
+.user-dashboard {
+    padding: 30px;
+}
+
+.user-dashboard h1 {
+    font-size: 28px;
+    font-weight: bold;
+    color: #0e1a35;
+}
+
+.list-group-item {
+    border: 1px solid #ddd;
+    padding: 15px;
+}
+
+.list-group-item .btn {
+    margin-left: 10px;
+}
