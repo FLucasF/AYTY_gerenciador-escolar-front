@@ -32,35 +32,32 @@ export class AuthService {
 
   handleLoginResponse(response: LoginResponse): void {
     console.log('✅ Login realizado com sucesso:', response);
-
+  
     console.log('✅ Salvando dados no localStorage:', response);
-  localStorage.setItem('accessToken', response.accessToken);
-  localStorage.setItem('userId', response.usuario.id.toString());
-  localStorage.setItem('userName', response.usuario.nome);
-  localStorage.setItem('role', response.usuario.role);
+    localStorage.setItem('accessToken', response.accessToken);
+    localStorage.setItem('userId', response.usuario.id.toString());
+    localStorage.setItem('userName', response.usuario.nome);
   
     const token = response.accessToken;
     if (!token) {
       console.error('❌ Token de acesso não encontrado!');
       return;
     }
-
-    // Salva os tokens no localStorage
-    localStorage.setItem('accessToken', token);
-    if (response.refreshToken) {
-      localStorage.setItem('refreshToken', response.refreshToken);
-    }
-
-    // Decodifica o token para extrair a role
+  
+    // Decodifica o token para extrair a role, se disponível
     const decoded = this.jwtHelper.decodeToken(token);
     console.log('🔍 Token decodificado:', decoded);
-    if (decoded && decoded.role) {
-      localStorage.setItem('role', decoded.role.toUpperCase()); // Garantindo uppercase
-      console.log('🎭 Role extraída do token:', decoded.role);
+  
+    let userRole = response.usuario.role || (decoded?.role ? decoded.role.toUpperCase() : null);
+  
+    if (userRole) {
+      localStorage.setItem('role', userRole);
+      console.log('🎭 Role salva:', userRole);
     } else {
-      console.error('⚠️ Role não encontrada no token!');
+      console.error('⚠️ Role não encontrada no usuário nem no token!');
     }
   }
+  
 
   getUserRole(): string {
     return localStorage.getItem('role') || '';

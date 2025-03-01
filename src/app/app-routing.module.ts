@@ -7,6 +7,7 @@ import { AdminDashboardComponent } from './components/admin/admin-dashboard/admi
 import { AdminUserRegisterComponent } from './components/admin/admin-user-register/admin-user-register.component';
 import { AdminUserEditComponent } from './components/admin/admin-user-edit/admin-user-edit.component';
 import { AdminTurmasComponent } from './components/admin/admin-turmas/admin-turmas.component';
+import { GerenciarAlunoTurmaComponent } from './components/admin/gerenciar-aluno-turma/gerenciar-aluno-turma.component';
 
 import { AuthGuard } from './guards/auth.guard'; // Protege rotas de usuários não autenticados
 import { RoleGuard } from './guards/role.guard'; // Restringe acesso baseado na role do usuário
@@ -22,12 +23,14 @@ const routes: Routes = [
       { path: '', component: AdminDashboardComponent },
       { path: 'cadastro', component: AdminUserRegisterComponent },
       { path: 'editar/:tipo/:id', component: AdminUserEditComponent },
-      { path: 'turmas', component: AdminTurmasComponent }
+      { path: 'turmas', component: AdminTurmasComponent },
+      { path: 'turmas/:id/gerenciar-alunos', component: GerenciarAlunoTurmaComponent }  // 🔴 Removido o "admin/"
     ]
   },
   { path: 'board', component: BoardComponent, canActivate: [AuthGuard] },
   { path: '**', redirectTo: 'login' }
 ];
+
 
 
 @NgModule({

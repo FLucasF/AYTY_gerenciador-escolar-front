@@ -16,6 +16,7 @@ import { AdminTurmasComponent } from './components/admin/admin-turmas/admin-turm
 import { JwtInterceptor } from './interceptor/jwt.interceptor';
 import { JwtHelperService, JWT_OPTIONS } from '@auth0/angular-jwt';
 import { AdminUserEditComponent } from './components/admin/admin-user-edit/admin-user-edit.component';
+import { GerenciarAlunoTurmaComponent } from './components/admin/gerenciar-aluno-turma/gerenciar-aluno-turma.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { AdminUserEditComponent } from './components/admin/admin-user-edit/admin
     AdminUserRegisterComponent,
     BoardComponent,
     AdminTurmasComponent,
-    AdminUserEditComponent
+    AdminUserEditComponent,
+    GerenciarAlunoTurmaComponent,
   ],
   imports: [
     BrowserModule,

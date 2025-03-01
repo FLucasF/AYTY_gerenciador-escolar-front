@@ -33,9 +33,11 @@ export class TurmaService {
       })
     );
   }
-  
-  
 
+  buscarTurmaPorId(id: number): Observable<Turma> {
+    return this.http.get<Turma>(`${this.apiUrl}/${id}`);
+  } 
+  
   // Listar todas as turmas (geral - para ADMIN)
   listarTodasTurmas(pageable: any): Observable<Page<Turma>> {
     return this.http.get<Page<Turma>>(`${this.apiUrl}/geral`, { params: pageable });
