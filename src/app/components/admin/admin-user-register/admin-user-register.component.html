@@ -15,11 +15,12 @@
                 <!-- Seleção do tipo de usuário -->
                 <div class="form-group">
                   <label>Tipo de Usuário:</label>
-                  <select [(ngModel)]="tipoUsuarioSelecionado" name="tipoUsuario" class="form-control">
+                  <select [(ngModel)]="tipoUsuarioSelecionado" name="tipoUsuario" class="form-control" (ngModelChange)="onTipoUsuarioChange()">
                     <option value="administrador">Administrador</option>
                     <option value="professor">Professor</option>
                     <option value="aluno">Aluno</option>
                   </select>
+                  
                 </div>
   
                 <hr />
@@ -85,14 +86,6 @@
                         SIAPE deve conter 7 dígitos numéricos.
                       </small>
                     </div>
-                    <div class="form-group">
-                      <label>Turmas</label>
-                      <select multiple class="form-control" formControlName="turmas">
-                        <option *ngFor="let turma of turmasDisponiveis" [ngValue]="turma.id">
-                          {{ turma.nome }} (Código: {{ turma.codigo }})
-                        </option>
-                      </select>
-                    </div>
                   </div>
   
                   <!-- Campos específicos para Aluno -->
@@ -107,14 +100,6 @@
                     <div class="form-group">
                       <label>Curso</label>
                       <input type="text" class="form-control" formControlName="curso" placeholder="Ex: Ciência da Computação" required>
-                    </div>
-                    <div class="form-group">
-                      <label>Turmas</label>
-                      <select multiple class="form-control" formControlName="turmas">
-                        <option *ngFor="let turma of turmasDisponiveis" [ngValue]="turma.id">
-                          {{ turma.nome }} (Código: {{ turma.codigo }})
-                        </option>
-                      </select>
                     </div>
                   </div>
   
