@@ -1,45 +1,65 @@
-<div class="col-md-2 col-sm-2 hidden-xs display-table-cell v-align box" id="navigation">
-    <div class="navi">
-      <ul>
-        <!-- Painel - Acesso para todos os usuários autenticados -->
-        <li *ngIf="role === 'ROLE_ADMIN'">
-            <a routerLink="/admin"><i class="fa fa-home"></i> Painel </a>
-        </li>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark">
+  <div class="container-fluid">
   
-        <!-- Cadastro de Usuário - Somente ADMIN -->
-        <li *ngIf="role === 'ROLE_ADMIN'">
-          <a routerLink="/admin/cadastro"><i class="fa fa-user-plus"></i> Cadastrar Usuário </a>
-        </li>
-  
-        <!-- Edição de Usuário - Somente ADMIN -->
-        <li *ngIf="role === 'ROLE_ADMIN'">
-          <a routerLink="/admin/editar/usuario/1"><i class="fa fa-edit"></i> Editar Usuário </a>
-        </li>
-  
-        <!-- Gerenciar Turmas - ADMIN e PROFESSOR -->
-        <li *ngIf="role === 'ROLE_ADMIN' || role === 'ROLE_PROFESSOR'">
-          <a routerLink="/admin/turmas"><i class="fa fa-users"></i> Gerenciar Turmas </a>
-        </li>
-  
-        <!-- Gerenciar Alunos em Turma - Somente ADMIN -->
-        <li *ngIf="role === 'ROLE_ADMIN'">
-          <a routerLink="/admin/turmas/1/gerenciar-alunos"><i class="fa fa-user-cog"></i> Gerenciar Alunos </a>
-        </li>
-   
-        <!-- Apenas Alunos -->
-        <li *ngIf="role === 'ROLE_PROFESSOR' || role === 'ROLE_ALUNO'">
-            <a routerLink="/board"><i class="fa fa-book"></i> Minhas Turmas </a>
-        </li>
+    <!-- Toggle button -->
+    <button class="navbar-toggler" type="button" (click)="collapsed = !collapsed">
+      <i class="fas fa-bars"></i>
+    </button>
 
-        <li *ngIf="role === 'ROLE_ADMIN'">
-            <a routerLink="/board"><i class="fa fa-book"></i> Turmas </a>
+    <!-- Collapsible wrapper -->
+    <div class="collapse navbar-collapse" [ngClass]="{ collapse: collapsed, 'navbar-collapse': true }" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto d-flex flex-row mt-3 mt-lg-0">
+        <li class="nav-item text-center mx-2 mx-lg-1" *ngIf="role === 'ROLE_ADMIN'">
+          <a class="nav-link" routerLink="/admin">
+            <i class="fas fa-home fa-lg mb-1"></i>
+            Dashboard
+          </a>
         </li>
-  
-        <!-- Logout - Disponível para todos -->
-        <li>
-          <a (click)="logout()" class="text-danger"><i class="fa fa-sign-out-alt"></i> Sair</a>
+        <li class="nav-item text-center mx-2 mx-lg-1" *ngIf="role === 'ROLE_ADMIN'">
+          <a class="nav-link" routerLink="/admin/cadastro">
+            <i class="fas fa-user-plus fa-lg mb-1"></i>
+            Cadastrar Usuário
+          </a>
+        </li>
+        <li class="nav-item text-center mx-2 mx-lg-1" *ngIf="role === 'ROLE_ADMIN'">
+          <a class="nav-link" routerLink="/admin/editar/tipo/id">
+            <i class="fas fa-edit fa-lg mb-1"></i>
+            Editar Usuário
+          </a>
+        </li>
+        <li class="nav-item text-center mx-2 mx-lg-1" *ngIf="role === 'ROLE_ADMIN' || role === 'ROLE_PROFESSOR'">
+          <a class="nav-link" routerLink="/admin/turmas">
+            <i class="fas fa-users fa-lg mb-1"></i>
+            Gerenciar Turmas
+          </a>
+        </li>
+        <li class="nav-item text-center mx-2 mx-lg-1" *ngIf="role === 'ROLE_ADMIN'">
+          <a class="nav-link" routerLink="/admin/turmas/id/gerenciar-alunos">
+            <i class="fas fa-user-cog fa-lg mb-1"></i>
+            Gerenciar Alunos
+          </a>
+        </li>
+        <li class="nav-item text-center mx-2 mx-lg-1">
+          <a class="nav-link" routerLink="/board">
+            <i class="fas fa-book fa-lg mb-1"></i>
+            Minhas Turmas
+          </a>
+        </li>
+      </ul>
+
+      <!-- Right links (Apenas essa parte ficará vermelha) -->
+      <ul class="navbar-nav ms-auto d-flex flex-row mt-3 mt-lg-0 text-danger">
+        <li class="nav-item text-center mx-2 mx-lg-1">
+          <a class="nav-link" (click)="logout()">
+            <i class="fas fa-sign-out-alt fa-lg mb-1"></i>
+            Sair
+          </a>
         </li>
       </ul>
     </div>
   </div>
-  
+</nav>
+
+<!-- Overlay de fundo quando o menu mobile está aberto -->
+<div class="menu-overlay" [ngClass]="{ 'active': !collapsed }" (click)="collapsed = true"></div>

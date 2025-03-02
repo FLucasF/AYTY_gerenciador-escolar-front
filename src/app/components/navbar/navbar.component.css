@@ -1,60 +1,78 @@
-/* Estilização do sidebar (navbar lateral) */
-#navigation {
-    background: #0e1a35;  /* Cor azul escuro */
-    height: 100vh;
-    padding: 0;
+.navbar {
+    background-color: #0e1a35 !important; /* Azul escuro */
+  }
+  
+  .navbar-brand,
+  .navbar-nav .nav-link {
+    color: #ffffff !important; /* Branco */
+    font-weight: 600;
+  }
+  
+  .navbar-nav .nav-link:hover,
+  .navbar-nav .nav-link.active {
+    color: #a3b1d1 !important; /* Azul mais claro */
+  }
+  
+  .navbar-toggler {
+    border: none;
+  }
+  
+  .navbar-toggler i {
+    color: #ffffff !important; /* Branco */
+  }
+  
+  .navbar-nav.text-danger .nav-link {
+    color: #dc3545 !important; /* Vermelho Bootstrap */
+  }
+  
+  .navbar-nav.text-danger .nav-link:hover {
+    color: #ff6b6b !important; /* Vermelho mais claro ao passar o mouse */
+  }
+  
+  /* Estilo do overlay para escurecer o fundo */
+  .menu-overlay {
     position: fixed;
-    left: 0;
     top: 0;
-    width: 200px; /* Largura fixa */
-}
-
-/* Estilização da lista de navegação */
-.navi ul {
-    padding: 0;
-    list-style: none;
-}
-
-.navi a {
-    display: block;
-    padding: 18px;
-    font-size: 16px;
-    color: white;
-    border-bottom: 1px solid #0d172e;
-    text-decoration: none;
-}
-
-/* Efeito hover e item ativo */
-.navi a:hover,
-.navi .active a {
-    background: #122143; /* Cor azul mais escuro */
-    border-left: 5px solid #5584ff; /* Destaque lateral */
-}
-
-/* Ajuste para que o conteúdo fique corretamente ao lado do navbar */
-#main-content {
-    margin-left: 200px; /* Deve ser igual à largura do sidebar */
-    width: calc(100% - 200px); /* Faz com que o conteúdo ocupe o espaço restante */
-    padding: 20px;
-    background: #f6f7fa; /* Mesma cor de fundo do body */
-}
-
-/* Estilização dos botões e textos */
-.user-dashboard {
-    padding: 30px;
-}
-
-.user-dashboard h1 {
-    font-size: 28px;
-    font-weight: bold;
-    color: #0e1a35;
-}
-
-.list-group-item {
-    border: 1px solid #ddd;
-    padding: 15px;
-}
-
-.list-group-item .btn {
-    margin-left: 10px;
-}
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5); /* Fundo escuro semitransparente */
+    opacity: 0;
+    visibility: hidden;
+    z-index: 999; /* Abaixo do menu, acima do conteúdo */
+    transition: opacity 0.3s, visibility 0.3s;
+  }
+  
+  .menu-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  @media (max-width: 992px) {
+    .navbar-collapse {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      background-color: #0e1a35 !important; /* Azul escuro */
+      z-index: 1000;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+  
+    .navbar-nav {
+      flex-direction: column !important;
+      align-items: flex-start !important;
+      width: 100%;
+    }
+  
+    .navbar-nav .nav-item {
+      width: 100%;
+      text-align: left;
+    }
+  
+    .navbar-nav .nav-link {
+      padding: 10px 15px;
+      width: 100%;
+    }
+  }
+  

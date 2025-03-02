@@ -19,6 +19,12 @@ import { AdminUserEditComponent } from './components/admin/admin-user-edit/admin
 import { GerenciarAlunoTurmaComponent } from './components/admin/gerenciar-aluno-turma/gerenciar-aluno-turma.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatListModule } from '@angular/material/list';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -35,8 +41,13 @@ import { NavbarComponent } from './components/navbar/navbar.component';
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
+    MatListModule,  // Adicione esta linha
     FormsModule,
-    ReactiveFormsModule  // <-- Adicione aqui
+    ReactiveFormsModule,
+    MatToolbarModule,  // Para a barra superior
+    MatButtonModule,   // Para botões
+    MatIconModule,     // Para os ícones do Material
+    MatSidenavModule,  // Para o menu lateral responsivo
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },

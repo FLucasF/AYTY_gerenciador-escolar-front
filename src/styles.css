@@ -35,10 +35,34 @@
     height: 100vh;
     overflow: auto; /* Se o conteúdo for grande, ativa o scroll */
     background: #f6f7fa; /* Cor de fundo para visualização */
-    padding: 30px;
 }
 
 /* Ajusta o dashboard dentro da main-content */
 .user-dashboard {
     height: 100%;
 }
+
+
+
+/* Garante que a coluna de conteúdo ocupe exatamente o espaço restante */
+.col-md-10, .col-sm-10 {
+    width: calc(100% - 200px); /* Ajuste dinâmico para evitar a linha branca */
+    margin: 0;
+    padding: 0;
+    height: 100vh; /* Garante que preencha toda a tela */
+    background: #f6f7fa; /* Mantém o fundo correto */
+    box-sizing: border-box; /* Evita que padding cause mudanças de tamanho */
+}
+
+/* Remove qualquer espaçamento residual */
+.display-table-cell {
+    display: table-cell;
+    float: none;
+    height: 100%;
+    vertical-align: top;
+    padding: 0; /* Elimina qualquer padding que possa estar empurrando o conteúdo */
+    border: none; /* Remove qualquer borda invisível */
+}
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

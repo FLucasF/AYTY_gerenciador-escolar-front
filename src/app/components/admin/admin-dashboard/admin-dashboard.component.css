@@ -1,42 +1,54 @@
-/* Remove qualquer espaçamento extra no board */
+/* Estilo geral */
+body {
+    font-family: 'Lato', sans-serif;
+    background: #f6f7fa;
+    margin: 0;
+    padding: 0;
+}
+
+/* Conteúdo principal ajustado ao lado da navbar */
 #main-content {
     margin-left: 200px; /* Deve ser igual à largura do sidebar */
     width: calc(100% - 200px); /* Faz com que o conteúdo ocupe o espaço restante */
     padding: 20px;
-    background: #f6f7fa; /* Garante um fundo uniforme */
-    min-height: 100vh; /* Ocupar toda a altura da tela */
-    box-sizing: border-box;
 }
 
-/* Garante que não tenha nenhuma borda ou espaçamento indesejado */
-#main-content, .user-dashboard {
-    border: none;
-    margin: 0;
-    padding: 0;
+/* Removido qualquer referência à tabela antiga */
+.display-table,
+.display-table-row,
+.display-table-cell {
+    display: block;
+    width: auto;
+    height: auto;
 }
 
-/* Remove qualquer espaço que possa estar sendo criado pelo navbar */
-#navigation {
-    border: none;
-    margin: 0;
-    padding: 0;
+/* Ajuste dos botões */
+.list-group-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #ffffff;
+    transition: all 0.3s ease;
 }
 
-/* Verifica se há alguma borda ou linha no board */
-.user-dashboard {
-    background: #f6f7fa; /* Mantém o mesmo fundo */
-    width: 100%;
-    height: 100vh; /* Garante que ocupe toda a altura disponível */
-    box-sizing: border-box;
+.list-group-item:hover {
+    background: #f0f4ff;
 }
 
-/* Se houver algum padding residual, remova */
-.container-fluid {
-    padding: 0;
-    margin: 0;
+.list-group-item .btn {
+    margin-left: 10px;
 }
 
-/* Evita qualquer espaço entre o conteúdo e a navbar */
-.row {
-    margin: 0;
+/* Responsividade */
+@media (max-width: 768px) {
+    #navigation {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+
+    #main-content {
+        margin-left: 0;
+        width: 100%;
+    }
 }

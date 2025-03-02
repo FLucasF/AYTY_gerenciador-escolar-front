@@ -1,21 +1,2 @@
-<div class="container-fluid display-table">
-    <div class="row display-table-row">
-      
-      <!-- Sidebar -->
-      <div class="col-md-2 col-sm-3 hidden-xs display-table-cell v-align box" id="navigation">
-
-        <div *ngIf="!isLoginPage()">
-            <app-navbar></app-navbar>
-        </div>
-      </div>
-  
-      <!-- Conteúdo Principal (Se adapta ao lado do sidebar) -->
-      <div class="col-md-10 col-sm-9 display-table-cell v-align" id="main-content">
-        <router-outlet></router-outlet>
-      </div>
-  
-    </div>
-  </div>
-
-
-  
+<app-navbar *ngIf="!isLoginPage()"></app-navbar>
+<router-outlet></router-outlet>
