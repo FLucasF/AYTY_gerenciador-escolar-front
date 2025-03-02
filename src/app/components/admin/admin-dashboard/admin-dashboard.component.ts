@@ -101,6 +101,8 @@ export class AdminDashboardComponent implements OnInit {
     }
   }
 
+
+
   irParaEdicao(usuario: any): void {
     console.log("✏️ Redirecionando para edição do usuário:", usuario);
     // Verifica se o usuário possui "id" (ou outra propriedade como _id)

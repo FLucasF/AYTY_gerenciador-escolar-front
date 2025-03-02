@@ -1,63 +1,66 @@
 <body class="home">
-  <div class="container-fluid display-table">
-      <div class="row display-table-row">
-        <!-- Conteúdo Principal -->
-          <div class="col-md-10 col-sm-10 display-table-cell v-align" style="padding: 20px;">
-              <div class="user-dashboard">
-                  <h1>Usuários Cadastrados</h1>
-                  <!-- Filtro -->
-                  <div class="form-group">
-                      <label for="tipoUsuario">Filtrar por tipo:</label>
-                      <select [(ngModel)]="tipoUsuarioSelecionado" (change)="filtrarUsuarios()" class="form-control">
-                          <option value="todos">Todos</option>
-                          <option value="administrador">Administrador</option>
-                          <option value="professor">Professor</option>
-                          <option value="aluno">Aluno</option>
-                      </select>
-                  </div>
-                  <hr />
-                  <!-- Botão de Adicionar Usuário -->
-                  <button (click)="irParaCadastro()" class="btn btn-success btn-block">
-                      <i class="fa fa-plus"></i> Adicionar Novo Usuário
-                  </button>
-                  <hr />
-                  <!-- Lista de Usuários -->
-                  <ul class="list-group">
-                      <li class="list-group-item" *ngFor="let user of filtrarUsuarios()">
-                          <span>
-                              <strong>{{ user.nome }}</strong> - {{ user.email }}
-                              <span *ngIf="user.tipo === 'aluno'"> - CPF: {{ user.cpf }}</span>
-                              <span *ngIf="user.tipo === 'administrador'"> - Setor: {{ user.setor }}</span>
-                              <span *ngIf="user.tipo === 'professor'"> - Departamento: {{ user.departamento }}</span>
-                          </span>
-                          <div class="pull-right">
-                              <button (click)="irParaEdicao(user)" class="btn btn-warning btn-sm">
-                                  <i class="fa fa-pencil"></i> Editar
-                              </button>
-                              <button (click)="excluirUsuario(user)" class="btn btn-danger btn-sm">
-                                  <i class="fa fa-trash"></i> Excluir
-                              </button>
-                          </div>
-                      </li>
-                  </ul>
-                  <!-- Paginação -->
-                  <div class="pagination-container">
-                      <button (click)="mudarPagina(0)" [disabled]="currentPage === 0" class="btn btn-secondary">
-                        << Primeira
-                      </button>
-                      <button (click)="mudarPagina(currentPage - 1)" [disabled]="currentPage === 0" class="btn btn-secondary">
-                        < Anterior
-                      </button>
-                      <span>Página {{ currentPage + 1 }} de {{ totalPages }}</span>
-                      <button (click)="mudarPagina(currentPage + 1)" [disabled]="currentPage >= totalPages - 1" class="btn btn-secondary">
-                        Próxima >
-                      </button>
-                      <button (click)="mudarPagina(totalPages - 1)" [disabled]="currentPage >= totalPages - 1" class="btn btn-secondary">
-                        Última >>
-                      </button>
-                  </div>
-              </div>
-          </div>
-      </div>
-  </div>
-</body>
+    <div class="container-fluid display-table">
+        <div class="row display-table-row">
+          <!-- Conteúdo Principal -->
+            <div class="col-md-10 col-sm-10 display-table-cell v-align" id="main-content">
+                <div class="user-dashboard">
+                    <h1>Usuários Cadastrados</h1>
+  
+                    <!-- Filtro -->
+                    <div class="form-group">
+                        <label for="tipoUsuario">Filtrar por tipo:</label>
+                        <select [(ngModel)]="tipoUsuarioSelecionado" (change)="filtrarUsuarios()" class="form-control">
+                            <option value="todos">Todos</option>
+                            <option value="administrador">Administrador</option>
+                            <option value="professor">Professor</option>
+                            <option value="aluno">Aluno</option>
+                        </select>
+                    </div>
+  
+                    <hr />
+  
+                    <!-- Botão de Adicionar Usuário -->
+                    <button (click)="irParaCadastro()" class="btn btn-success btn-block">
+                        <i class="fa fa-plus"></i> Adicionar Novo Usuário
+                    </button>
+  
+                    <hr />
+  
+                    <!-- Lista de Usuários -->
+                    <ul class="list-group">
+                        <li class="list-group-item" *ngFor="let user of filtrarUsuarios()">
+                            <span>
+                                <strong>{{ user.nome }}</strong> - {{ user.email }}
+                                <span *ngIf="user.tipo === 'aluno'"> - CPF: {{ user.cpf }}</span>
+                                <span *ngIf="user.tipo === 'administrador'"> - Setor: {{ user.setor }}</span>
+                                <span *ngIf="user.tipo === 'professor'"> - Departamento: {{ user.departamento }}</span>
+                            </span>
+                            <div class="pull-right">
+                                <button (click)="irParaEdicao(user)" class="btn btn-warning btn-sm">
+                                    <i class="fa fa-pencil"></i> Editar
+                                </button>
+                                <button (click)="excluirUsuario(user)" class="btn btn-danger btn-sm">
+                                    <i class="fa fa-trash"></i> Excluir
+                                </button>
+                            </div>
+                        </li>
+                    </ul>
+  
+                    <div class="pagination-container">
+                        <!-- Botão de página anterior -->
+                        <span class="page-item prev" (click)="mudarPagina(currentPage - 1)" [class.disabled]="currentPage === 0">
+                            &#10094; <!-- Ícone de seta esquerda -->
+                        </span>
+                
+                    
+                        <!-- Botão de próxima página -->
+                        <span class="page-item next" (click)="mudarPagina(currentPage + 1)" [class.disabled]="currentPage >= totalPages - 1">
+                            &#10095; <!-- Ícone de seta direita -->
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </body>
+  

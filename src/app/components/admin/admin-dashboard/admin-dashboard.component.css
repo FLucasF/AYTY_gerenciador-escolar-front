@@ -11,23 +11,56 @@ body {
     margin-left: 200px; /* Deve ser igual à largura do sidebar */
     width: calc(100% - 200px); /* Faz com que o conteúdo ocupe o espaço restante */
     padding: 20px;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
 }
 
-/* Removido qualquer referência à tabela antiga */
-.display-table,
-.display-table-row,
-.display-table-cell {
-    display: block;
-    width: auto;
-    height: auto;
+/* Títulos */
+.user-dashboard h1 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
 }
 
-/* Ajuste dos botões */
+/* Filtro */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    font-weight: bold;
+}
+
+/* Botão de Adicionar */
+.btn-success {
+    width: 100%;
+    font-size: 18px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-success i {
+    margin-right: 8px;
+}
+
+/* Lista de Usuários */
+.list-group {
+    list-style: none;
+    padding: 0;
+}
+
 .list-group-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
     background: #ffffff;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 10px;
     transition: all 0.3s ease;
 }
 
@@ -35,8 +68,47 @@ body {
     background: #f0f4ff;
 }
 
+/* Botões dentro da lista */
 .list-group-item .btn {
     margin-left: 10px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+}
+
+.list-group-item .btn i {
+    margin-right: 5px;
+}
+
+/* Paginação com Setinhas */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 20px;
+}
+
+.page-item {
+    padding: 10px 15px;
+    font-size: 16px;
+    font-weight: bold;
+    background: #1c1c1c; /* Cor escura */
+    color: #ffffff; /* Texto branco */
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.page-item:hover {
+    background: #ffb74d; /* Laranja claro */
+    transform: scale(1.1);
+}
+
+/* Estilo específico para as setinhas (anterior e próximo) */
+.page-item.prev,
+.page-item.next {
+    background: #333333; /* Cinza escuro */
 }
 
 /* Responsividade */
@@ -50,5 +122,22 @@ body {
     #main-content {
         margin-left: 0;
         width: 100%;
+    }
+
+    .list-group-item {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .list-group-item .pull-right {
+        margin-top: 10px;
+        display: flex;
+        justify-content: center;
+        gap: 5px;
+    }
+
+    .pagination-container {
+        flex-wrap: wrap;
+        gap: 5px;
     }
 }

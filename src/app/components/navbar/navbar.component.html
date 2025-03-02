@@ -22,12 +22,6 @@
             Cadastrar Usuário
           </a>
         </li>
-        <li class="nav-item text-center mx-2 mx-lg-1" *ngIf="role === 'ROLE_ADMIN'">
-          <a class="nav-link" routerLink="/admin/editar/tipo/id">
-            <i class="fas fa-edit fa-lg mb-1"></i>
-            Editar Usuário
-          </a>
-        </li>
         <li class="nav-item text-center mx-2 mx-lg-1" *ngIf="role === 'ROLE_ADMIN' || role === 'ROLE_PROFESSOR'">
           <a class="nav-link" routerLink="/admin/turmas">
             <i class="fas fa-users fa-lg mb-1"></i>
