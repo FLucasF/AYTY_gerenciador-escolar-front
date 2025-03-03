@@ -18,6 +18,10 @@ export class AdminTurmasComponent implements OnInit {
   professores: Professor[] = [];
   professoresMap = new Map<number, string>();
 
+  totalPages: number = 0;
+  currentPage: number = 0;
+  size: number = 10;
+
   novaTurmaForm!: FormGroup;
   editForm!: FormGroup;
   turmaEditando: Turma | null = null;
@@ -37,7 +41,7 @@ export class AdminTurmasComponent implements OnInit {
   }
 
   private carregarDadosIniciais(): void {
-    this.carregarTurmas();
+    this.carregarTurmas(0);
     this.carregarProfessores();
   }
 
@@ -57,16 +61,19 @@ export class AdminTurmasComponent implements OnInit {
     });
   }
 
-  carregarTurmas(): void {
-    this.turmaService.listarTodasTurmas(10).subscribe({
+  carregarTurmas(page: number): void {
+    this.turmaService.listarTodasTurmas(page).subscribe({
       next: (res) => {
         this.turmas = res.content;
+        // Atualiza a página atual e o total de páginas a partir da resposta
+        this.currentPage = res.number;
+        this.totalPages = res.totalPages;
         console.log('✅ Turmas carregadas:', this.turmas);
       },
       error: (err) => console.error('❌ Erro ao carregar turmas:', err),
     });
   }
-
+  
   carregarProfessores(): void {
     this.professorService.listarProfessores().subscribe({
       next: (res) => {
@@ -179,5 +186,14 @@ export class AdminTurmasComponent implements OnInit {
         error: (err) => console.error('❌ Erro ao excluir turma:', err),
       });
     }
+  }
+
+  mudarPagina(page: number): void {
+    console.log(`📜 Mudando para página: ${page}`);
+    if (page < 0 || page >= this.totalPages) {
+      console.warn("⚠️ Tentativa de acessar página inválida!");
+      return;
+    }
+    this.carregarTurmas(page);
   }
 }

@@ -1,75 +1,225 @@
+/* Estilos Globais */
+
 body {
     font-family: 'Lato', sans-serif;
     background: #f6f7fa;
     margin: 0;
     padding: 0;
-}
+  }
 
-
-header {
+  
+  header {
     background: #ffffff;
     padding: 15px;
     box-shadow: 0 1px 12px rgba(0, 0, 0, 0.04);
-}
+  }
 
-.search input {
+  .search input {
     border: 1px solid #d4d9e3;
     padding: 10px;
     width: 100%;
-}
-
-.user-dashboard {
-    padding: 30px;
-}
-
-.user-dashboard h1 {
-    font-size: 28px;
-    font-weight: bold;
-    color: #0e1a35;
-}
-
-.list-group-item {
-    border: 1px solid #ddd;
-    padding: 15px;
-}
-
-.list-group-item .btn {
-    margin-left: 10px;
-}
-
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
+  }
+  
+  #main-content {
+    margin: 20px auto;       /* Centraliza horizontalmente */
+    max-width: 1200px;       /* Define um limite máximo de largura */
+    width: 100%;             /* Ocupa 100% da largura disponível dentro do max-width */
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  .user-dashboard {
+    margin: 20px auto;
+    max-width: 1200px; /* mesmo valor usado no dashboard */
     width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  /* Títulos e Filtro */
+  .user-dashboard h1 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  .form-group label {
+    font-weight: bold;
+  }
+  
+  /* Botão de Adicionar Usuário */
+  .btn-success {
+    width: 100%;
+    font-size: 18px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .btn-success i {
+    margin-right: 8px;
+  }
+  
+  /* Tabela de Usuários (Desktop) */
+  .desktop-table {
+    display: block;
+  }
+  
+  .desktop-table table {
+    width: 100%;
+    margin: 0 auto;
+    border-collapse: collapse;
+  }
+  
+  /* Lista de Usuários (Mobile) */
+  .mobile-list {
+    display: none;
+  }
+  
+  .mobile-list .list-group {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .mobile-list .list-group-item {
+    background: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+  
+  /* Botões dentro dos itens da lista */
+  .mobile-list .list-group-item .btn {
+    margin: 5px;
+    font-size: 14px;
+  }
+  
+  /* Paginação */
+  .pagination-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000;
+    gap: 8px;
+    margin-top: 20px;
   }
   
-  .modal-container {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    width: 400px;
-  }
-  
-  .modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #ddd;
-    padding-bottom: 10px;
-  }
-  
-  .close {
-    background: none;
-    border: none;
-    font-size: 20px;
+  .page-item {
+    padding: 10px 15px;
+    font-size: 16px;
+    font-weight: bold;
+    background: #1c1c1c;
+    color: #ffffff;
+    border-radius: 5px;
     cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+  }
+  
+  .page-item:hover {
+    background: #ffb74d;
+    transform: scale(1.1);
+  }
+  
+  .page-item.prev,
+  .page-item.next {
+    background: #333333;
+  }
+  
+  /* Centralização do painel */
+  .panel-default {
+    max-width: 80%;
+    margin: 20px auto;
+  }
+  
+  .panel-heading .panel-title {
+    text-align: center;
+  }
+
+  
+  
+  /* Responsividade */
+  @media (max-width: 768px) {
+   
+    #main-content {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 0;
+        margin: 0;
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        border-radius: 0;
+      }
+      
+      
+
+
+      /* Ajusta o seletor de filtro */
+  .form-group select {
+    max-width: 80%;
+    text-align-last: center; /* Para garantir a centralização da opção selecionada */
+    margin: 0 auto;
+    display: block;
+    
+  }
+
+  .form-control {
+    max-width: 80%;
+    text-align-last: center; /* Para garantir a centralização da opção selecionada */
+    margin: 0 auto;
+
+  }
+
+    .pagination-container {
+        margin-top: 10px; /* reduz a margem superior */
+      }
+      
+      .page-item {
+        padding: 6px 10px;  /* diminui o padding */
+        font-size: 14px;    /* reduz o tamanho da fonte */
+      }
+      
+      .page-item.prev,
+      .page-item.next {
+        transform: translateY(-5px);  /* sobe as setas */
+      }
+
+      .btn.btn-success.btn-block {
+        width: 70%;        /* define a largura em 80% do container */
+        margin: 0 auto;    /* centraliza horizontalmente */
+        display: block;    /* garante que o margin auto funcione */
+      }
+    
+    .desktop-table {
+      display: none;
+    }
+    
+    .mobile-list {
+      display: block;
+      margin: 0 auto;    /* centraliza horizontalmente */
+      max-width: 90%;
+    }
+    
+    .panel-default {
+      max-width: 100%;
+      margin: 10px auto;
+    }
+    
+    .table-responsive table {
+      width: 100%;
+      margin: 0;
+    }
   }
   

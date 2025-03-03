@@ -1,36 +1,44 @@
 <body class="home">
-  <div class="container-fluid display-table" style="width: 100%; padding: 0; margin: 0;">
-    <div class="row display-table-row">
+  <!-- Container principal unificado -->
+  <div id="main-content" class="user-dashboard">
+    <h1>Gerenciamento de Turmas</h1>
+    <hr />
 
-      <!-- Conteúdo Principal -->
-      <div class="col-md-10 col-sm-10 display-table-cell v-align" style="padding: 20px;">
-        <div class="user-dashboard">
-          <h1>Gerenciamento de Turmas</h1>
-      <!-- Formulário de Adicionar Turma -->
-<div class="panel panel-default">
-  <div class="panel-heading"><h3 class="panel-title">Nova Turma</h3></div>
-  <div class="panel-body">
+    <!-- Formulário de Adicionar Turma -->
     <form [formGroup]="novaTurmaForm" (ngSubmit)="adicionarTurma()">
-      
-      <!-- Nome da Turma -->
       <div class="form-group">
         <label>Nome da Turma</label>
         <input type="text" class="form-control" formControlName="nome" placeholder="Ex: Matemática Aplicada" required>
+        <small *ngIf="novaTurmaForm.get('nome')?.hasError('required') && novaTurmaForm.get('nome')?.touched" class="text-danger">
+          O nome da turma é obrigatório.
+        </small>
+        <small *ngIf="novaTurmaForm.get('nome')?.hasError('pattern') && novaTurmaForm.get('nome')?.touched" class="text-danger">
+          O nome deve conter apenas letras e espaços.
+        </small>
       </div>
 
-      <!-- Código da Turma -->
       <div class="form-group">
         <label>Código</label>
         <input type="text" class="form-control" formControlName="codigo" placeholder="Ex: MAT101" required>
+        <small *ngIf="novaTurmaForm.get('codigo')?.hasError('required') && novaTurmaForm.get('codigo')?.touched" class="text-danger">
+          O código da turma é obrigatório.
+        </small>
+        <small *ngIf="novaTurmaForm.get('codigo')?.hasError('pattern') && novaTurmaForm.get('codigo')?.touched" class="text-danger">
+          O código deve conter apenas letras, números e o caractere "/".
+        </small>
       </div>
 
-      <!-- Semestre -->
       <div class="form-group">
         <label>Semestre</label>
         <input type="text" class="form-control" formControlName="semestre" placeholder="Ex: 2024/1" required>
+        <small *ngIf="novaTurmaForm.get('semestre')?.hasError('required') && novaTurmaForm.get('semestre')?.touched" class="text-danger">
+          O semestre é obrigatório.
+        </small>
+        <small *ngIf="novaTurmaForm.get('semestre')?.hasError('pattern') && novaTurmaForm.get('semestre')?.touched" class="text-danger">
+          Formato inválido. Use YYYY/1 ou YYYY/2.
+        </small>
       </div>
 
-      <!-- Professor -->
       <div class="form-group">
         <label>Professor</label>
         <select class="form-control" formControlName="professorId">
@@ -41,95 +49,147 @@
         </select>
       </div>
 
-      <!-- Botão de Adicionar -->
-      <button type="submit" class="btn btn-success btn-block">
+      <button type="submit" class="btn btn-success btn-block" [disabled]="novaTurmaForm.invalid">
         <i class="fa fa-plus"></i> Adicionar Turma
       </button>
     </form>
+    
+    <hr />
+
+    <!-- Lista de Turmas - Versão Desktop -->
+    <div class="table-responsive desktop-table">
+      <table class="table table-striped table-hover">
+        <thead class="thead-dark">
+          <tr>
+            <th>Turma</th>
+            <th>Código</th>
+            <th>Semestre</th>
+            <th>Professor</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let turma of turmas">
+            <td>{{ turma.nome }}</td>
+            <td>{{ turma.codigo }}</td>
+            <td>{{ turma.semestre }}</td>
+            <td>
+              {{ turma.professorId ? (professoresMap.get(turma.professorId) || 'Sem professor') : 'Sem professor' }}
+            </td>
+            <td>
+              <button class="btn btn-warning btn-sm" (click)="iniciarEdicao(turma)">
+                <i class="fa fa-pencil"></i> Editar
+              </button>
+              <button class="btn btn-primary btn-sm" (click)="navegarParaGerenciarAlunos(turma.id)">
+                <i class="fa fa-users"></i> Gerenciar Alunos
+              </button>
+              <button class="btn btn-danger btn-sm" (click)="excluirTurma(turma.id)">
+                <i class="fa fa-trash"></i> Excluir
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <!-- Lista de Turmas - Versão Mobile -->
+    <div class="mobile-list">
+      <ul class="list-group">
+        <li class="list-group-item" *ngFor="let turma of turmas">
+          <div>
+            <strong>Turma: {{ turma.nome }}</strong>
+          </div>
+          <div>Código: {{ turma.codigo }}</div>
+          <div>Semestre: {{ turma.semestre }}</div>
+          <div>
+            Professor: 
+            {{ turma.professorId ? (professoresMap.get(turma.professorId) || 'Sem professor') : 'Sem professor' }}
+          </div>
+          <div class="actions">
+            <button class="btn btn-warning btn-sm" (click)="iniciarEdicao(turma)">
+              <i class="fa fa-pencil"></i> Editar
+            </button>
+            <button class="btn btn-primary btn-sm" (click)="navegarParaGerenciarAlunos(turma.id)">
+              <i class="fa fa-users"></i> Gerenciar Alunos
+            </button>
+            <button class="btn btn-danger btn-sm" (click)="excluirTurma(turma.id)">
+              <i class="fa fa-trash"></i> Excluir
+            </button>
+          </div>
+        </li>
+      </ul>
+      <div *ngIf="turmas.length === 0" class="text-center text-muted mt-3">
+        <p>Nenhuma turma cadastrada.</p>
+      </div>
+    </div>
+    
+    <!-- Modal de Edição de Turma -->
+    <div *ngIf="turmaEditando" class="modal-overlay">
+      <div class="modal-container">
+        <div class="modal-header">
+          <h5>Editar Turma {{ turmaEditando.nome }}</h5>
+          <button class="close" (click)="cancelarEdicao()">&times;</button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="editForm" (ngSubmit)="salvarEdicao()">
+            <div class="form-group">
+              <label>Nome</label>
+              <input type="text" class="form-control" formControlName="nome">
+              <small *ngIf="editForm.get('nome')?.hasError('required') && editForm.get('nome')?.touched" class="text-danger">
+                O nome é obrigatório.
+              </small>
+              <small *ngIf="editForm.get('nome')?.hasError('pattern') && editForm.get('nome')?.touched" class="text-danger">
+                O nome deve conter apenas letras e espaços.
+              </small>
+            </div>
+            <div class="form-group">
+              <label>Código</label>
+              <input type="text" class="form-control" formControlName="codigo">
+              <small *ngIf="editForm.get('codigo')?.hasError('required') && editForm.get('codigo')?.touched" class="text-danger">
+                O código é obrigatório.
+              </small>
+              <small *ngIf="editForm.get('codigo')?.hasError('pattern') && editForm.get('codigo')?.touched" class="text-danger">
+                O código deve conter apenas letras, números e o caractere "/".
+              </small>
+            </div>
+            <div class="form-group">
+              <label>Semestre</label>
+              <input type="text" class="form-control" formControlName="semestre">
+              <small *ngIf="editForm.get('semestre')?.hasError('required') && editForm.get('semestre')?.touched" class="text-danger">
+                O semestre é obrigatório.
+              </small>
+              <small *ngIf="editForm.get('semestre')?.hasError('pattern') && editForm.get('semestre')?.touched" class="text-danger">
+                Formato inválido. Use YYYY/1 ou YYYY/2.
+              </small>
+            </div>
+            <div class="form-group">
+              <label>Professor</label>
+              <select class="form-control" formControlName="professorId">
+                <option [ngValue]="null">Sem professor</option>
+                <option *ngFor="let professor of professores" [ngValue]="professor.id">
+                  {{ professor.nome }}
+                </option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">
+              <i class="fa fa-save"></i> Salvar Alterações
+            </button>
+            <button type="button" class="btn btn-secondary btn-block" (click)="cancelarEdicao()">
+              Cancelar
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Paginação -->
+    <div class="pagination-container">
+      <span class="page-item prev" (click)="mudarPagina(currentPage - 1)" [class.disabled]="currentPage === 0">
+        &#10094;
+      </span>
+      <span class="page-item next" (click)="mudarPagina(currentPage + 1)" [class.disabled]="currentPage >= totalPages - 1">
+        &#10095;
+      </span>
+    </div>
   </div>
-</div>
-
-
-
-          <hr />
-
-          <!-- Lista de Turmas -->
-          <div class="panel panel-default">
-            <div class="panel-heading"><h3 class="panel-title">Lista de Turmas</h3></div>
-            <div class="panel-body">
-              <ul class="list-group">
-                <li class="list-group-item" *ngFor="let turma of turmas">
-                  <span>
-                    <strong>{{ turma.nome }}</strong> - Código: {{ turma.codigo }} - Semestre: {{ turma.semestre }}
-                    - Professor: {{ turma.professorId ? (professoresMap.get(turma.professorId) || 'Sem professor') : 'Sem professor' }}
-                  </span>
-
-                  <div class="pull-right">
-                    <button class="btn btn-warning btn-sm" (click)="iniciarEdicao(turma)">
-                      <i class="fa fa-pencil"></i> Editar
-                    </button>
-
-                    <button class="btn btn-primary btn-sm mx-2" (click)="navegarParaGerenciarAlunos(turma.id)">
-                      <i class="fa fa-users"></i> Gerenciar Alunos
-                    </button>
-                    
-                    <button class="btn btn-danger btn-sm" (click)="excluirTurma(turma.id)">
-                      <i class="fa fa-trash"></i> Excluir
-                    </button>
-                  </div>
-                </li>
-              </ul>
-
-              <div *ngIf="turmas.length === 0" class="text-center text-muted mt-3">
-                <p>Nenhuma turma cadastrada.</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- Modal de Edição de Turma -->
-          <div *ngIf="turmaEditando" class="modal-overlay">
-            <div class="modal-container">
-              <div class="modal-header">
-                <h5>Editar Turma - {{ turmaEditando.nome }}</h5>
-                <button class="close" (click)="cancelarEdicao()">&times;</button>
-              </div>
-              <div class="modal-body">
-                <form [formGroup]="editForm" (ngSubmit)="salvarEdicao()">
-                  <div class="form-group">
-                    <label>Nome</label>
-                    <input type="text" class="form-control" formControlName="nome">
-                  </div>
-                  <div class="form-group">
-                    <label>Código</label>
-                    <input type="text" class="form-control" formControlName="codigo">
-                  </div>
-                  <div class="form-group">
-                    <label>Semestre</label>
-                    <input type="text" class="form-control" formControlName="semestre">
-                  </div>
-                  <div class="form-group">
-                    <label>Professor</label>
-                    <select class="form-control" formControlName="professorId">
-                      <option [ngValue]="null">Sem professor</option>
-                      <option *ngFor="let professor of professores" [ngValue]="professor.id">
-                        {{ professor.nome }}
-                      </option>
-                    </select>
-                  </div>
-
-                  <button type="submit" class="btn btn-primary btn-block">
-                    <i class="fa fa-save"></i> Salvar Alterações
-                  </button>
-                  <button type="button" class="btn btn-secondary btn-block" (click)="cancelarEdicao()">
-                    Cancelar
-                  </button>
-                </form>
-              </div>
-            </div>
-          </div>
-
-        </div> <!-- /user-dashboard -->
-      </div> <!-- /col-md-10 -->
-    </div> <!-- /row -->
-  </div> <!-- /container-fluid -->
 </body>
