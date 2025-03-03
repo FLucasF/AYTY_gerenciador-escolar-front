@@ -140,4 +140,12 @@ body {
         flex-wrap: wrap;
         gap: 5px;
     }
+
+    @media (max-width: 768px) {
+        #main-content {
+          margin-left: 0;
+          width: 100%;
+        }
+      }
+      
 }
