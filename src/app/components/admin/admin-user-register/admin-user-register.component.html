@@ -87,16 +87,17 @@
                       </small>
                     </div>
                   </div>
+
+                  <div class="form-group">
+                    <label>CPF</label>
+                    <input type="text" class="form-control" formControlName="cpf" placeholder="Ex: 12345678900">
+                    <small *ngIf="usuarioForm.controls['cpf'].invalid && usuarioForm.controls['cpf'].touched" class="text-danger">
+                      CPF é obrigatório e deve conter 11 dígitos numéricos.
+                    </small>
+                  </div>
   
                   <!-- Campos específicos para Aluno -->
                   <div *ngIf="tipoUsuarioSelecionado === 'aluno'">
-                    <div class="form-group">
-                      <label>CPF</label>
-                      <input type="text" class="form-control" formControlName="cpf" placeholder="Ex: 12345678900">
-                      <small *ngIf="usuarioForm.controls['cpf'].invalid && usuarioForm.controls['cpf'].touched" class="text-danger">
-                        CPF deve conter 11 dígitos numéricos.
-                      </small>
-                    </div>
                     <div class="form-group">
                       <label>Curso</label>
                       <input type="text" class="form-control" formControlName="curso" placeholder="Ex: Ciência da Computação" required>

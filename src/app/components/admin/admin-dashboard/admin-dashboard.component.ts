@@ -37,19 +37,25 @@ export class AdminDashboardComponent implements OnInit {
   carregarUsuarios(page: number = 0): void {
     this.currentPage = page;
     console.log(`📥 Carregando usuários - Página: ${page}`);
+    
     this.usuarioService.listarUsuarios(page, this.size).subscribe({
       next: (res: Page<any>) => {
-        console.log("✅ Usuários recebidos do backend:", res);
+        console.log("✅ Usuários recebidos do backend:", res.content); // 👀 Veja como os dados chegam
+
         this.usuarios = res.content.map(user => ({
           ...user,
-          tipo: this.definirTipo(user.role)
+          tipo: this.definirTipo(user.role),
+          informacaoExtra: this.obterInformacaoExtra(user) // 🔥 Adiciona o campo extra no objeto já processado
         }));
-        console.log("🔎 Usuários após conversão de role para tipo:", this.usuarios);
+
+        console.log("🔎 Usuários processados:", this.usuarios); // 👀 Veja o resultado após o processamento
+
         this.totalPages = res.totalPages;
       },
       error: (err: any) => console.error('❌ Erro ao carregar usuários:', err),
     });
-  }
+}
+
 
   definirTipo(role: string): string {
     console.log(`🔄 Convertendo role "${role}" para tipo...`);
@@ -101,6 +107,18 @@ export class AdminDashboardComponent implements OnInit {
     }
   }
 
+  obterInformacaoExtra(user: any): string {
+    if (user.tipo === 'aluno') {
+        return `Curso: ${user.curso || 'Não informado'}`;
+    }
+    if (user.tipo === 'professor') {
+        return `Departamento: ${user.departamento || 'Não informado'}`;
+    }
+    if (user.tipo === 'administrador') {
+        return `Setor: ${user.setor || 'Não informado'}`;
+    }
+    return 'Não disponível';
+}
 
 
   irParaEdicao(usuario: any): void {

@@ -42,14 +42,32 @@ export class AdminUserRegisterComponent implements OnInit {
    */
   private inicializarFormulario(): void {
     this.usuarioForm = this.fb.group({
-      nome: ['', [Validators.required, Validators.minLength(3)]],
-      email: ['', [Validators.required, Validators.email]],
-      senha: ['', [Validators.required, Validators.minLength(6)]],
+      nome: ['', [
+        Validators.required, 
+        Validators.minLength(3),
+        Validators.maxLength(50)
+      ]],
+      email: ['', [
+        Validators.required,
+        Validators.email,
+        Validators.minLength(11),
+        Validators.maxLength(30)
+      ]],
+      senha: ['', [
+        Validators.required,
+        Validators.minLength(8),
+        Validators.maxLength(20),
+        Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/) //Verifica se a senha tem digito, caracter especial, letra maiuscula e minuscula
+
+      ]],
+      cpf: ['', [
+        Validators.required,
+        Validators.pattern(/^\d{11}$/)
+      ]],
       // Campos específicos
       setor: [''],           // Administrador
       siape: [''],           // Administrador e Professor
       departamento: [''],    // Professor
-      cpf: [''],             // Aluno
       curso: ['']            // Aluno
     });
   }
@@ -72,7 +90,6 @@ export class AdminUserRegisterComponent implements OnInit {
    */
   atualizarValidadores(): void {
     // Primeiro, limpe os validadores dos campos que não serão usados
-    this.clearControlValidators('cpf');
     this.clearControlValidators('curso');
     this.clearControlValidators('setor');
     this.clearControlValidators('siape');
@@ -80,16 +97,32 @@ export class AdminUserRegisterComponent implements OnInit {
 
     if (this.tipoUsuarioSelecionado === 'administrador') {
       // Administrador: setor e siape são obrigatórios
-      this.setControlValidators('setor', [Validators.required]);
-      this.setControlValidators('siape', [Validators.required, Validators.pattern(/^\d{7}$/)]);
+      this.setControlValidators('setor', [
+        Validators.required,
+        Validators.minLength(3),
+        Validators.maxLength(30)
+      ]);
+      this.setControlValidators('siape', [
+        Validators.required,
+        Validators.pattern(/^\d{7}$/)
+      ]);
     } else if (this.tipoUsuarioSelecionado === 'professor') {
       // Professor: departamento e siape são obrigatórios
-      this.setControlValidators('departamento', [Validators.required]);
-      this.setControlValidators('siape', [Validators.required, Validators.pattern(/^\d{7}$/)]);
+      this.setControlValidators('departamento', [
+        Validators.required,
+        Validators.minLength(3),
+        Validators.maxLength(30)
+      ]);
+      this.setControlValidators('siape', [
+        Validators.required,
+        Validators.pattern(/^\d{7}$/)
+      ]);
     } else if (this.tipoUsuarioSelecionado === 'aluno') {
-      // Aluno: cpf e curso são obrigatórios
-      this.setControlValidators('cpf', [Validators.required, Validators.pattern(/^\d{11}$/)]);
-      this.setControlValidators('curso', [Validators.required]);
+      this.setControlValidators('curso', [
+        Validators.required,
+        Validators.minLength(2),
+        Validators.maxLength(50)
+      ]);
     }
   }
 
@@ -141,6 +174,7 @@ export class AdminUserRegisterComponent implements OnInit {
           nome: dadosUsuario.nome,
           email: dadosUsuario.email,
           senha: dadosUsuario.senha,
+          cpf: dadosUsuario.cpf,
           setor: dadosUsuario.setor,
           siape: dadosUsuario.siape,
           role: 'ROLE_ADMIN'
@@ -152,6 +186,7 @@ export class AdminUserRegisterComponent implements OnInit {
           nome: dadosUsuario.nome,
           email: dadosUsuario.email,
           senha: dadosUsuario.senha,
+          cpf: dadosUsuario.cpf,
           departamento: dadosUsuario.departamento,
           siape: dadosUsuario.siape,
           role: 'ROLE_PROFESSOR'

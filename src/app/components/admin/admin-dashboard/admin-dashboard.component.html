@@ -1,11 +1,11 @@
 <body class="home">
     <div class="container-fluid display-table">
         <div class="row display-table-row">
-          <!-- Conteúdo Principal -->
+            <!-- Conteúdo Principal -->
             <div class="col-md-10 col-sm-10 display-table-cell v-align" id="main-content">
                 <div class="user-dashboard">
                     <h1>Usuários Cadastrados</h1>
-  
+
                     <!-- Filtro -->
                     <div class="form-group">
                         <label for="tipoUsuario">Filtrar por tipo:</label>
@@ -16,44 +16,52 @@
                             <option value="aluno">Aluno</option>
                         </select>
                     </div>
-  
+
                     <hr />
-  
+
                     <!-- Botão de Adicionar Usuário -->
                     <button (click)="irParaCadastro()" class="btn btn-success btn-block">
                         <i class="fa fa-plus"></i> Adicionar Novo Usuário
                     </button>
-  
+
                     <hr />
-  
-                    <!-- Lista de Usuários -->
-                    <ul class="list-group">
-                        <li class="list-group-item" *ngFor="let user of filtrarUsuarios()">
-                            <span>
-                                <strong>{{ user.nome }}</strong> - {{ user.email }}
-                                <span *ngIf="user.tipo === 'aluno'"> - CPF: {{ user.cpf }}</span>
-                                <span *ngIf="user.tipo === 'administrador'"> - Setor: {{ user.setor }}</span>
-                                <span *ngIf="user.tipo === 'professor'"> - Departamento: {{ user.departamento }}</span>
-                            </span>
-                            <div class="pull-right">
-                                <button (click)="irParaEdicao(user)" class="btn btn-warning btn-sm">
-                                    <i class="fa fa-pencil"></i> Editar
-                                </button>
-                                <button (click)="excluirUsuario(user)" class="btn btn-danger btn-sm">
-                                    <i class="fa fa-trash"></i> Excluir
-                                </button>
-                            </div>
-                        </li>
-                    </ul>
-  
+
+                    <!-- Tabela de Usuários -->
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>Tipo</th>
+                                    <th>Nome</th>
+                                    <th>Email</th>
+                                    <th>Informação Extra</th> <!-- Coluna genérica -->
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let user of filtrarUsuarios()">
+                                    <td>{{ user.tipo | titlecase }}</td>
+                                    <td>{{ user.nome }}</td>
+                                    <td>{{ user.email }}</td>
+                                    <td>{{ obterInformacaoExtra(user) }}</td> <!-- Chama a função dinâmica -->
+                                    <td>
+                                        <button (click)="irParaEdicao(user)" class="btn btn-warning btn-sm">
+                                            <i class="fa fa-pencil"></i> Editar
+                                        </button>
+                                        <button (click)="excluirUsuario(user)" class="btn btn-danger btn-sm">
+                                            <i class="fa fa-trash"></i> Excluir
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Paginação -->
                     <div class="pagination-container">
-                        <!-- Botão de página anterior -->
                         <span class="page-item prev" (click)="mudarPagina(currentPage - 1)" [class.disabled]="currentPage === 0">
                             &#10094; <!-- Ícone de seta esquerda -->
                         </span>
-                
-                    
-                        <!-- Botão de próxima página -->
                         <span class="page-item next" (click)="mudarPagina(currentPage + 1)" [class.disabled]="currentPage >= totalPages - 1">
                             &#10095; <!-- Ícone de seta direita -->
                         </span>
@@ -62,5 +70,4 @@
             </div>
         </div>
     </div>
-  </body>
-  
+</body>

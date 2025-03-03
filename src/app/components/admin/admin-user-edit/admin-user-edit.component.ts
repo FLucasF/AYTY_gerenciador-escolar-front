@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AdministradorService } from '../../../services/administrador.service';
@@ -32,31 +32,49 @@ export class AdminUserEditComponent implements OnInit {
     const tipoParam = this.route.snapshot.params['tipo'];
     this.tipoUsuario = tipoParam ? tipoParam.toLowerCase() as 'administrador' | 'professor' | 'aluno' : 'administrador';
 
-    this.buildForm();
-    this.loadUser();
+    console.log("🔵 Inicializando edição de usuário...");
+    console.log(`🆔 ID do usuário: ${this.usuarioId}, Tipo: ${this.tipoUsuario}`);
+
+    this.inicializarFormulario();
+    this.carregarUsuario();
   }
 
-  buildForm(): void {
+  /**
+   * Inicializa o formulário com os campos dinâmicos.
+   */
+  private inicializarFormulario(): void {
     this.editForm = this.fb.group({
-      nome: [''],
-      email: [''],
-      senha: [''],
-      ...(this.tipoUsuario === 'administrador' && {
-        setor: [''],
-        siape: ['']
-      }),
-      ...(this.tipoUsuario === 'professor' && {
-        departamento: [''],
-        siape: ['']
-      }),
-      ...(this.tipoUsuario === 'aluno' && {
-        cpf: [''],
-        curso: ['']
-      })
+      nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
+      email: ['', [Validators.required, Validators.email, Validators.minLength(11), Validators.maxLength(30)]],
+      senha: ['', [Validators.minLength(8), Validators.maxLength(20),
+        Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/)]],
+      cpf: ['', [Validators.required, Validators.pattern(/^\d{11}$/)]]
     });
+
+    this.adicionarCamposEspecificos();
   }
 
-  loadUser(): void {
+  /**
+   * Adiciona campos dinâmicos ao formulário com base no tipo de usuário.
+   */
+  private adicionarCamposEspecificos(): void {
+    if (this.tipoUsuario === 'administrador') {
+      this.editForm.addControl('setor', this.fb.control('', [Validators.required, Validators.minLength(3), Validators.maxLength(30)]));
+      this.editForm.addControl('siape', this.fb.control('', [Validators.required, Validators.pattern(/^\d{7}$/)]));
+    } else if (this.tipoUsuario === 'professor') {
+      this.editForm.addControl('departamento', this.fb.control('', [Validators.required, Validators.minLength(3), Validators.maxLength(30)]));
+      this.editForm.addControl('siape', this.fb.control('', [Validators.required, Validators.pattern(/^\d{7}$/)]));
+    } else if (this.tipoUsuario === 'aluno') {
+      this.editForm.addControl('curso', this.fb.control('', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]));
+    }
+
+    console.log("✅ Campos adicionados dinamicamente:", Object.keys(this.editForm.controls));
+  }
+
+  /**
+   * Carrega os dados do usuário e preenche o formulário.
+   */
+  private carregarUsuario(): void {
     let request: Observable<any> | null = null;
 
     switch (this.tipoUsuario) {
@@ -74,7 +92,14 @@ export class AdminUserEditComponent implements OnInit {
     if (request) {
       request.subscribe({
         next: (usuario) => {
+          console.log("✅ Usuário carregado:", usuario);
           this.usuarioOriginal = usuario;
+
+          // Ajustar os campos opcionais para undefined (removendo `null` ou `""`)
+          Object.keys(usuario).forEach(key => {
+            if (usuario[key] === '' || usuario[key] === null) usuario[key] = undefined;
+          });
+
           this.editForm.patchValue(usuario);
         },
         error: (err) => console.error('❌ Erro ao carregar usuário:', err)
@@ -82,26 +107,26 @@ export class AdminUserEditComponent implements OnInit {
     }
   }
 
+  /**
+   * Salva as alterações do usuário, enviando apenas os dados que foram alterados.
+   */
   salvarEdicao(): void {
     if (this.editForm.invalid) {
-      alert('Por favor, preencha os campos corretamente.');
+      console.warn("⚠️ Formulário inválido:", this.editForm.value);
+      alert('⚠️ Por favor, preencha os campos corretamente.');
       return;
     }
-
-    // Monta um objeto com apenas os campos alterados
-    const dadosAtualizados: any = {};
-    Object.keys(this.editForm.value).forEach(key => {
-      const novoValor = this.editForm.value[key];
-
-      // Se o valor do campo mudou, adicionamos à requisição
-      if (novoValor !== '' && novoValor !== this.usuarioOriginal[key]) {
-        dadosAtualizados[key] = novoValor;
-      } else {
-        // Se o campo não foi alterado, mantém o valor original
-        dadosAtualizados[key] = this.usuarioOriginal[key];
-      }
-    });
-
+  
+    // Criar um objeto completo mantendo os valores antigos se não forem alterados
+    const dadosAtualizados = { ...this.usuarioOriginal, ...this.editForm.value };
+  
+    // Se a senha não foi alterada, manter a senha original
+    if (!this.editForm.get('senha')?.dirty || !this.editForm.get('senha')?.value) {
+      dadosAtualizados.senha = this.usuarioOriginal.senha;
+    }
+  
+    console.log("📤 Dados enviados:", dadosAtualizados);
+  
     let request: Observable<any> | null = null;
     switch (this.tipoUsuario) {
       case 'administrador':
@@ -114,7 +139,7 @@ export class AdminUserEditComponent implements OnInit {
         request = this.alunoService.atualizarAluno(this.usuarioId, dadosAtualizados);
         break;
     }
-
+  
     if (request) {
       request.subscribe({
         next: () => {
@@ -125,8 +150,11 @@ export class AdminUserEditComponent implements OnInit {
       });
     }
   }
+  
+  
 
   cancelar(): void {
+    console.log("❌ Cancelando edição...");
     this.router.navigate(['/admin']);
   }
 }
