@@ -55,7 +55,7 @@ export class AdminUserRegisterComponent implements OnInit {
       ]],
       senha: ['', [
         Validators.required,
-        Validators.minLength(8),
+        Validators.minLength(6),
         Validators.maxLength(20),
         Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/) //Verifica se a senha tem digito, caracter especial, letra maiuscula e minuscula
 

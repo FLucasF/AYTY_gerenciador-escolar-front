@@ -47,13 +47,16 @@
                   </div>
   
                   <!-- Senha -->
-                  <div class="form-group">
-                    <label>Senha</label>
-                    <input type="password" class="form-control" formControlName="senha" placeholder="Mínimo 6 caracteres" required>
-                    <small *ngIf="usuarioForm.controls['senha'].invalid && usuarioForm.controls['senha'].touched" class="text-danger">
-                      A senha deve ter pelo menos 6 caracteres.
-                    </small>
-                  </div>
+<div class="form-group">
+  <label>Senha</label>
+  <input type="password" class="form-control" formControlName="senha" placeholder="Mínimo 6 caracteres" required>
+  <small *ngIf="usuarioForm.get('senha')?.hasError('required') && usuarioForm.get('senha')?.touched" class="text-danger">
+    Senha é obrigatória.
+  </small>
+  <small *ngIf="usuarioForm.get('senha')?.hasError('pattern') && usuarioForm.get('senha')?.touched" class="text-danger">
+    A senha deve ter pelo menos 8 caracteres, incluindo uma letra maiúscula, uma minúscula, um dígito e um caractere especial.
+  </small>
+</div>
   
                   <!-- Campos específicos para Administrador -->
                   <div *ngIf="tipoUsuarioSelecionado === 'administrador'">
