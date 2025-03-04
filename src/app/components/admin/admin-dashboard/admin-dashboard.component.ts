@@ -21,6 +21,8 @@ export class AdminDashboardComponent implements OnInit {
   totalPages: number = 0;
   currentPage: number = 0;
   size: number = 10;
+  usuariosFiltrados: any[] = []; // Lista que será exibida no HTML
+
 
   // Variáveis para edição via modal
   editForm!: FormGroup;
@@ -36,7 +38,7 @@ export class AdminDashboardComponent implements OnInit {
     private alunoService: AlunoService,
     private professorService: ProfessorService,
     private administradorService: AdministradorService,
-    private router: Router
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -45,24 +47,107 @@ export class AdminDashboardComponent implements OnInit {
     this.inicializarFormulario(); // Inicializa o formulário para o modal de edição
   }
 
-  carregarUsuarios(page: number = 0): void {
+  carregarUsuarios(page: number = 0, forcarAtualizacao: boolean = false): void {
+    if (this.usuarios.length > 0 && !forcarAtualizacao) {
+        console.log("⚠️ Evitando requisição extra, usuários já carregados.");
+        return;
+    }
+
     this.currentPage = page;
     console.log(`📥 Carregando usuários - Página: ${page}`);
-    
+
     this.usuarioService.listarUsuarios(page, this.size).subscribe({
-      next: (res: Page<any>) => {
-        console.log("✅ Usuários recebidos do backend:", res.content);
-        this.usuarios = res.content.map(user => ({
-          ...user,
-          tipo: this.definirTipo(user.role),
-          informacaoExtra: this.obterInformacaoExtra(user)
-        }));
-        console.log("🔎 Usuários processados:", this.usuarios);
-        this.totalPages = res.totalPages;
-      },
-      error: (err: any) => console.error('❌ Erro ao carregar usuários:', err),
+        next: (res: Page<any>) => {
+            console.log("✅ Usuários recebidos do backend:", res.content);
+            this.usuarios = res.content.map(user => ({
+                ...user,
+                tipo: this.definirTipo(user.role),
+                informacaoExtra: this.obterInformacaoExtra(user)
+            }));
+            this.totalPages = res.totalPages;
+
+            // Atualiza a lista filtrada após carregar os usuários
+            this.filtrarUsuarios();
+        },
+        error: (err: any) => console.error('❌ Erro ao carregar usuários:', err),
     });
-  }
+}
+
+
+excluirUsuario(usuario: any): void {
+    if (confirm(`Tem certeza que deseja excluir ${usuario.nome}?`)) {
+        let request$: Observable<any>;
+        switch (usuario.tipo) {
+            case 'aluno': request$ = this.alunoService.excluirAluno(usuario.id); break;
+            case 'professor': request$ = this.professorService.excluirProfessor(usuario.id); break;
+            case 'administrador': request$ = this.administradorService.excluirAdministrador(usuario.id); break;
+            default: console.error('❌ Erro: Tipo de usuário desconhecido.'); return;
+        }
+
+        request$.subscribe({
+            next: () => {
+                console.log(`✅ Usuário ${usuario.nome} excluído com sucesso!`);
+                this.carregarUsuarios(this.currentPage, true);
+            },
+            error: (err: any) => console.error(`❌ Erro ao excluir ${usuario.tipo}:`, err),
+        });
+    }
+}
+
+irParaEdicao(usuario: any): void {
+    if (this.usuarioEditando?.id === usuario.id) {
+        console.log("🔄 Usuário já carregado, evitando requisição extra.");
+        this.editForm.patchValue(this.usuarioEditando);
+        return;
+    }
+
+    this.usuarioEditando = usuario;
+    this.tipoUsuario = usuario.tipo;
+    this.inicializarFormulario();
+    this.adicionarCamposEspecificos();
+
+    let request: Observable<any> | null = null;
+    switch (this.tipoUsuario) {
+        case 'administrador': request = this.administradorService.buscarAdministradorPorId(usuario.id); break;
+        case 'professor': request = this.professorService.buscarProfessorPorId(usuario.id); break;
+        case 'aluno': request = this.alunoService.buscarAlunoPorId(usuario.id); break;
+    }
+
+    if (request) {
+        request.subscribe({
+            next: (dados) => {
+                this.usuarioEditando = dados;
+                this.editForm.patchValue(dados);
+            },
+            error: (err) => console.error('❌ Erro ao carregar dados do usuário:', err)
+        });
+    }
+}
+
+salvarEdicao(): void {
+    if (this.editForm.invalid) return;
+
+    const dadosAtualizados = { ...this.usuarioOriginal, ...this.editForm.value };
+
+    let request$: Observable<any> | null = null;
+    switch (this.tipoUsuario) {
+        case 'administrador': request$ = this.administradorService.atualizarAdministrador(this.usuarioEditando.id, dadosAtualizados); break;
+        case 'professor': request$ = this.professorService.atualizarProfessor(this.usuarioEditando.id, dadosAtualizados); break;
+        case 'aluno': request$ = this.alunoService.atualizarAluno(this.usuarioEditando.id, dadosAtualizados); break;
+    }
+
+    if (request$) {
+        request$.subscribe({
+            next: () => {
+                console.log('✅ Usuário atualizado com sucesso!');
+                this.usuarioEditando = null;
+                this.carregarUsuarios(this.currentPage, true);
+            },
+            error: (err) => console.error('❌ Erro ao atualizar usuário:', err)
+        });
+    }
+}
+
 
   definirTipo(role: string): string {
     console.log(`🔄 Convertendo role "${role}" para tipo...`);
@@ -77,43 +162,23 @@ export class AdminDashboardComponent implements OnInit {
     }
   }
 
-  filtrarUsuarios(): any[] {
-    console.log(`📊 Filtrando usuários - Tipo selecionado: ${this.tipoUsuarioSelecionado}`);
-    const filtrados = this.tipoUsuarioSelecionado === 'todos'
-      ? this.usuarios
-      : this.usuarios.filter(user => user.tipo === this.tipoUsuarioSelecionado);
-    console.log("🔎 Usuários filtrados:", filtrados);
-    return filtrados;
-  }
 
-  excluirUsuario(usuario: any): void {
-    console.log("🗑️ Excluindo usuário:", usuario);
-    if (confirm(`Tem certeza que deseja excluir ${usuario.nome}?`)) {
-      let request$: Observable<any>;
-      switch (usuario.tipo) {
-        case 'aluno':
-          request$ = this.alunoService.excluirAluno(usuario.id);
-          break;
-        case 'professor':
-          request$ = this.professorService.excluirProfessor(usuario.id);
-          break;
-        case 'administrador':
-          request$ = this.administradorService.excluirAdministrador(usuario.id);
-          break;
-        default:
-          console.error('❌ Erro: Tipo de usuário desconhecido.');
-          return;
+
+  filtrarUsuarios(): void {
+      console.log(`📊 Filtrando usuários - Tipo selecionado: ${this.tipoUsuarioSelecionado}`);
+      
+      if (this.tipoUsuarioSelecionado === 'todos') {
+          this.usuariosFiltrados = [...this.usuarios];
+      } else {
+          this.usuariosFiltrados = this.usuarios.filter(user => user.tipo === this.tipoUsuarioSelecionado);
       }
-      request$.subscribe({
-        next: () => {
-          console.log(`✅ Usuário ${usuario.nome} excluído com sucesso!`);
-          this.carregarUsuarios(this.currentPage);
-        },
-        error: (err: any) => console.error(`❌ Erro ao excluir ${usuario.tipo}:`, err),
-      });
-    }
+  
+      console.log("🔎 Usuários filtrados:", this.usuariosFiltrados);
   }
+  
 
+
+  
   obterInformacaoExtra(user: any): string {
     if (user.tipo === 'aluno') {
       return `Curso: ${user.curso || 'Não informado'}`;
@@ -139,49 +204,6 @@ export class AdminDashboardComponent implements OnInit {
       return;
     }
     this.carregarUsuarios(page);
-  }
-
-  // Abre o modal de edição: busca os dados completos do usuário e configura o formulário
-  irParaEdicao(usuario: any): void {
-    console.log("✏️ Iniciando edição para usuário:", usuario);
-    this.usuarioEditando = usuario;
-    // Aqui definimos a propriedade tipoUsuario com o tipo do usuário que está sendo editado
-    this.tipoUsuario = usuario.tipo as 'administrador' | 'professor' | 'aluno';
-    // Reinicia o formulário e adiciona os campos específicos conforme o tipo
-    this.inicializarFormulario();
-    this.adicionarCamposEspecificos();
-
-    // Carrega os dados completos do usuário via serviço, similar ao componente antigo
-    let request: Observable<any> | null = null;
-    switch (this.tipoUsuario) {
-      case 'administrador':
-        request = this.administradorService.buscarAdministradorPorId(usuario.id);
-        break;
-      case 'professor':
-        request = this.professorService.buscarProfessorPorId(usuario.id);
-        break;
-      case 'aluno':
-        request = this.alunoService.buscarAlunoPorId(usuario.id);
-        break;
-    }
-    if (request) {
-      request.subscribe({
-        next: (dados) => {
-          console.log("✅ Dados completos do usuário carregados:", dados);
-          // Salva os dados originais para futuras comparações
-          this.usuarioOriginal = dados;
-          // Ajusta valores opcionais para undefined, se necessário
-          Object.keys(dados).forEach(key => {
-            if (dados[key] === '' || dados[key] === null) { 
-              dados[key] = undefined;
-            }
-          });
-          // Preenche o formulário com os dados carregados
-          this.editForm.patchValue(dados);
-        },
-        error: (err) => console.error('❌ Erro ao carregar dados do usuário:', err)
-      });
-    }
   }
 
   // Inicializa o formulário com os campos comuns
@@ -215,47 +237,6 @@ export class AdminDashboardComponent implements OnInit {
     console.log("✅ Campos do formulário:", Object.keys(this.editForm.controls));
   }
 
-  // Envia os dados atualizados do formulário para o backend
-  salvarEdicao(): void {
-    if (this.editForm.invalid) {
-      console.warn("⚠️ Formulário inválido:", this.editForm.value);
-      alert('⚠️ Por favor, preencha os campos corretamente.');
-      return;
-    }
-
-    // Cria um objeto mesclando os dados originais com as alterações feitas
-    const dadosAtualizados = { ...this.usuarioOriginal, ...this.editForm.value };
-
-    // Se a senha não foi alterada, mantém o valor original
-    if (!this.editForm.get('senha')?.dirty || !this.editForm.get('senha')?.value) {
-      dadosAtualizados.senha = this.usuarioOriginal.senha;
-    }
-
-    console.log("📤 Dados enviados:", dadosAtualizados);
-
-    let request: Observable<any> | null = null;
-    switch (this.tipoUsuario) {
-      case 'administrador':
-        request = this.administradorService.atualizarAdministrador(this.usuarioEditando.id, dadosAtualizados);
-        break;
-      case 'professor':
-        request = this.professorService.atualizarProfessor(this.usuarioEditando.id, dadosAtualizados);
-        break;
-      case 'aluno':
-        request = this.alunoService.atualizarAluno(this.usuarioEditando.id, dadosAtualizados);
-        break;
-    }
-    if (request) {
-      request.subscribe({
-        next: () => {
-          alert('✅ Usuário atualizado com sucesso!');
-          this.usuarioEditando = null; // Fecha o modal
-          this.carregarUsuarios(this.currentPage); // Atualiza a listagem
-        },
-        error: (err) => console.error('❌ Erro ao atualizar usuário:', err)
-      });
-    }
-  }
 
   cancelarEdicao(): void {
     console.log("❌ Cancelando edição...");

@@ -36,7 +36,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let user of filtrarUsuarios()">
+            <tr *ngFor="let user of usuariosFiltrados">
               <td>{{ user.tipo | titlecase }}</td>
               <td>{{ user.nome }}</td>
               <td>{{ user.email }}</td>
@@ -51,13 +51,14 @@
               </td>
             </tr>
           </tbody>
+          
         </table>
       </div>
       
       <!-- Lista de Usuários (Mobile) -->
       <div class="mobile-list">
         <ul class="list-group">
-          <li class="list-group-item" *ngFor="let user of filtrarUsuarios()">
+          <li class="list-group-item" *ngFor="let user of usuariosFiltrados">
             <div>
               <strong>{{ user.tipo | titlecase }}</strong>
             </div>
@@ -75,6 +76,7 @@
           </li>
         </ul>
       </div>
+      
 
 
     <!-- Modal de Edição de Usuário -->

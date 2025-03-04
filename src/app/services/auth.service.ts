@@ -30,34 +30,31 @@ export class AuthService {
     return this.http.post<LoginResponse>(`${this.apiUrl}/login`, credentials, { headers });
   }
 
-  handleLoginResponse(response: LoginResponse): void {
+  handleLoginResponse(response: any): void {
     console.log('✅ Login realizado com sucesso:', response);
-  
-    console.log('✅ Salvando dados no localStorage:', response);
+
+    // ⚠️ Verifica se `id` e `accessToken` existem
+    if (!response || !response.accessToken || !response.id) {
+        console.error('❌ Resposta inválida no login!', response);
+        return;
+    }
+
+    // Salvando no `localStorage`
     localStorage.setItem('accessToken', response.accessToken);
-    localStorage.setItem('userId', response.usuario.id.toString());
-    localStorage.setItem('userName', response.usuario.nome);
-  
-    const token = response.accessToken;
-    if (!token) {
-      console.error('❌ Token de acesso não encontrado!');
-      return;
-    }
-  
+    localStorage.setItem('userId', response.id.toString()); // ✅ Agora salva `id` diretamente
+    localStorage.setItem('userEmail', response.email || '');
+
     // Decodifica o token para extrair a role, se disponível
-    const decoded = this.jwtHelper.decodeToken(token);
+    const decoded = this.jwtHelper.decodeToken(response.accessToken);
     console.log('🔍 Token decodificado:', decoded);
-  
-    let userRole = response.usuario.role || (decoded?.role ? decoded.role.toUpperCase() : null);
-  
-    if (userRole) {
-      localStorage.setItem('role', userRole);
-      console.log('🎭 Role salva:', userRole);
-    } else {
-      console.error('⚠️ Role não encontrada no usuário nem no token!');
-    }
-  }
-  
+
+    let userRole = response.role || (decoded?.role ? decoded.role.toUpperCase() : 'UNKNOWN');
+
+    localStorage.setItem('role', userRole);
+    console.log('🎭 Role salva:', userRole);
+}
+
+ 
 
   getUserRole(): string {
     return localStorage.getItem('role') || '';
