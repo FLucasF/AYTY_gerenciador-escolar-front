@@ -21,7 +21,6 @@ export class GerenciarAlunoTurmaComponent implements OnInit {
   alunoSelecionadoParaAdicionar: number | null = null;
   loadingAlunos = true;
 
-  // Paginação
   pageIndex: number = 0;
   pageSize: number = 10;
   totalElements: number = 0;
@@ -31,16 +30,16 @@ export class GerenciarAlunoTurmaComponent implements OnInit {
     private router: Router,
     private turmaService: TurmaService,
     private alunoService: AlunoService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
-    console.log('[GerenciarAlunoTurmaComponent] 🚀 Iniciado!');
+    console.log('[GerenciarAlunoTurmaComponent] Iniciado!');
 
     this.route.params.subscribe(params => {
       this.turmaId = +params['id'];
 
       if (!this.turmaId || isNaN(this.turmaId)) {
-        console.warn('[GerenciarAlunoTurmaComponent] 🚨 ID da turma inválido, retornando...');
+        console.warn('[GerenciarAlunoTurmaComponent] ID da turma inválido, retornando...');
         this.router.navigate(['/admin/turmas']);
         return;
       }
@@ -57,9 +56,9 @@ export class GerenciarAlunoTurmaComponent implements OnInit {
     this.turmaService.buscarTurmaPorId(this.turmaId).subscribe({
       next: (turma: Turma) => {
         this.turmaNome = turma.nome;
-        console.log(`[GerenciarAlunoTurmaComponent] ✅ Turma carregada: ${turma.nome}`);
+        console.log(`[GerenciarAlunoTurmaComponent] Turma carregada: ${turma.nome}`);
       },
-      error: (err) => console.error('❌ Erro ao carregar turma:', err)
+      error: (err) => console.error('Erro ao carregar turma:', err)
     });
   }
 
@@ -77,9 +76,9 @@ export class GerenciarAlunoTurmaComponent implements OnInit {
         this.pageIndex = res.page.number;
         this.pageSize = res.page.size;
         this.totalElements = res.page.totalElements;
-        console.log(`[GerenciarAlunoTurmaComponent] ✅ Alunos carregados para a turma ${this.turmaId}`);
+        console.log(`[GerenciarAlunoTurmaComponent] Alunos carregados para a turma ${this.turmaId}`);
       },
-      error: (err) => console.error('❌ Erro ao carregar alunos:', err)
+      error: (err) => console.error('Erro ao carregar alunos:', err)
     });
   }
 
@@ -88,10 +87,10 @@ export class GerenciarAlunoTurmaComponent implements OnInit {
       next: (res) => {
         this.todosAlunos = res.content;
         this.loadingAlunos = false;
-        console.log(`[GerenciarAlunoTurmaComponent] ✅ Todos os alunos carregados.`);
+        console.log(`[GerenciarAlunoTurmaComponent] Todos os alunos carregados.`);
       },
       error: (err) => {
-        console.error('❌ Erro ao carregar alunos:', err);
+        console.error('Erro ao carregar alunos:', err);
         this.loadingAlunos = false;
       }
     });
@@ -102,11 +101,11 @@ export class GerenciarAlunoTurmaComponent implements OnInit {
 
     this.turmaService.matricularAluno(this.turmaId, this.alunoSelecionadoParaAdicionar).subscribe({
       next: () => {
-        console.log(`[GerenciarAlunoTurmaComponent] ✅ Aluno ${this.alunoSelecionadoParaAdicionar} matriculado!`);
+        console.log(`[GerenciarAlunoTurmaComponent] Aluno ${this.alunoSelecionadoParaAdicionar} matriculado!`);
         this.carregarAlunosDaTurma();
         this.alunoSelecionadoParaAdicionar = null;
       },
-      error: (err) => console.error('❌ Erro ao matricular aluno:', err)
+      error: (err) => console.error('Erro ao matricular aluno:', err)
     });
   }
 
@@ -115,15 +114,15 @@ export class GerenciarAlunoTurmaComponent implements OnInit {
 
     this.turmaService.removerAlunoDaTurma(this.turmaId, alunoId).subscribe({
       next: () => {
-        console.log(`[GerenciarAlunoTurmaComponent] ✅ Aluno ${alunoId} removido da turma ${this.turmaId}`);
+        console.log(`[GerenciarAlunoTurmaComponent] Aluno ${alunoId} removido da turma ${this.turmaId}`);
         this.carregarAlunosDaTurma();
       },
-      error: (err) => console.error('❌ Erro ao remover aluno:', err)
+      error: (err) => console.error('Erro ao remover aluno:', err)
     });
   }
 
   voltarParaTurmas(): void {
-    console.log(`[GerenciarAlunoTurmaComponent] ⏪ Retornando para lista de turmas.`);
+    console.log(`[GerenciarAlunoTurmaComponent] Retornando para lista de turmas.`);
     this.router.navigate(['/admin/turmas']);
   }
 }

@@ -12,7 +12,7 @@ import { map } from 'rxjs/operators';
   providedIn: 'root',
 })
 export class UsuarioService {
-  private apiUrl = 'http://localhost:8090'; // 🔹 Defina manualmente sua URL da API
+  private apiUrl = 'http://localhost:8090';
   private baseUrl = `${this.apiUrl}/usuarios`;
 
   constructor(private http: HttpClient) {}
@@ -33,27 +33,11 @@ export class UsuarioService {
           } else if (user.role === 'ROLE_ADMIN') {
             return user as Administrador;
           } else {
-            return user; // Caso não se encaixe, mantém como Usuario genérico
+            return user;
           }
         });
         return page;
       })
     );
   }
-
-  // buscarUsuarioPorId(id: number): Observable<Usuario> {
-  //   return this.http.get<Usuario>(`${this.baseUrl}/${id}`).pipe(
-  //     map(user => {
-  //       if (user.role === 'ROLE_ALUNO') {
-  //         return user as Aluno;
-  //       } else if (user.role === 'ROLE_PROFESSOR') {
-  //         return user as Professor;
-  //       } else if (user.role === 'ROLE_ADMIN') {
-  //         return user as Administrador;
-  //       } else {
-  //         return user;
-  //       }
-  //     })
-  //   );
-  // }
 }

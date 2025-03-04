@@ -25,12 +25,8 @@
     </div>
 
     <!-- Paginação das Turmas -->
-    <mat-paginator
-      [length]="totalElements"
-      [pageSize]="size"
-      [pageIndex]="currentPage"
-      [pageSizeOptions]="[5, 7, 10, 20]"
-      (page)="mudarPagina($event)">
+    <mat-paginator [length]="totalElements" [pageSize]="size" [pageIndex]="currentPage"
+      [pageSizeOptions]="[5, 7, 10, 20]" (page)="mudarPagina($event)">
     </mat-paginator>
   </div>
 
@@ -62,12 +58,8 @@
         </ng-template>
 
         <!-- Paginação de Alunos -->
-        <mat-paginator
-          [length]="totalAlunos"
-          [pageSize]="sizeAlunos"
-          [pageIndex]="currentPageAlunos"
-          [pageSizeOptions]="[5, 10, 20]"
-          (page)="mudarPaginaAlunos($event)">
+        <mat-paginator [length]="totalAlunos" [pageSize]="sizeAlunos" [pageIndex]="currentPageAlunos"
+          [pageSizeOptions]="[5, 10, 20]" (page)="mudarPaginaAlunos($event)">
         </mat-paginator>
       </div>
 
@@ -96,12 +88,8 @@
         </ng-template>
 
         <!-- Paginação das Postagens -->
-        <mat-paginator
-          [length]="totalPostagens"
-          [pageSize]="sizePostagens"
-          [pageIndex]="currentPagePostagens"
-          [pageSizeOptions]="[3, 5, 10]"
-          (page)="mudarPaginaPostagens($event)">
+        <mat-paginator [length]="totalPostagens" [pageSize]="sizePostagens" [pageIndex]="currentPagePostagens"
+          [pageSizeOptions]="[3, 5, 10]" (page)="mudarPaginaPostagens($event)">
         </mat-paginator>
       </div>
 

@@ -25,7 +25,7 @@ export class AdminUserRegisterComponent implements OnInit {
     private professorService: ProfessorService,
     private alunoService: AlunoService,
     private turmaService: TurmaService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.carregarTurmas();
@@ -33,7 +33,7 @@ export class AdminUserRegisterComponent implements OnInit {
     // Sempre que o tipo de usuário mudar, atualize os validadores
     // (caso esteja usando two-way binding com ngModel, você também pode chamar o método via (ngModelChange))
     this.atualizarValidadores();
-    console.log('🚀 Componente de cadastro de usuários carregado!');
+    console.log('Componente de cadastro de usuários carregado!');
   }
 
   /**
@@ -43,7 +43,7 @@ export class AdminUserRegisterComponent implements OnInit {
   private inicializarFormulario(): void {
     this.usuarioForm = this.fb.group({
       nome: ['', [
-        Validators.required, 
+        Validators.required,
         Validators.minLength(3),
         Validators.maxLength(50)
       ]],
@@ -79,9 +79,9 @@ export class AdminUserRegisterComponent implements OnInit {
     this.turmaService.listarTodasTurmas({ page: 0, size: 10 }).subscribe({
       next: (res) => {
         this.turmasDisponiveis = res.content;
-        console.log('📚 Turmas carregadas:', res.content);
+        console.log('Turmas carregadas:', res.content);
       },
-      error: (err) => console.error('❌ Erro ao carregar turmas:', err)
+      error: (err) => console.error('Erro ao carregar turmas:', err)
     });
   }
 
@@ -161,7 +161,7 @@ export class AdminUserRegisterComponent implements OnInit {
    */
   salvarUsuario(): void {
     if (this.usuarioForm.invalid) {
-      console.warn('⚠️ Formulário inválido. Verifique os campos antes de enviar.');
+      console.warn('Formulário inválido. Verifique os campos antes de enviar.');
       return;
     }
 
@@ -211,7 +211,7 @@ export class AdminUserRegisterComponent implements OnInit {
           this.usuarioForm.reset();
           this.atualizarValidadores();
         },
-        error: (err) => console.error('❌ Erro ao cadastrar usuário:', err)
+        error: (err) => console.error('Erro ao cadastrar usuário:', err)
       });
     }
   }

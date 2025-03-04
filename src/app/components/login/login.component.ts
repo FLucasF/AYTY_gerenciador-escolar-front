@@ -18,10 +18,10 @@ export class LoginComponent {
   async onSubmit(): Promise<void> {
     console.log('🔍 Iniciando o login...');
 
-    localStorage.clear(); // Limpa qualquer dado antes do login
+    localStorage.clear();
 
     if (!this.email || !this.senha) {
-      console.error('❌ E-mail ou senha vazios!');
+      console.error('E-mail ou senha vazios!');
       this.errorMessage = 'Preencha todos os campos!';
       return;
     }
@@ -32,38 +32,35 @@ export class LoginComponent {
       const response = await this.authService.login(credentials).toPromise();
       console.log('✅ Login realizado com sucesso:', response);
 
-      // Handle response from login
       this.authService.handleLoginResponse(response);
 
-      // Verificando se o token foi armazenado corretamente
       const accessToken = localStorage.getItem('accessToken');
-      console.log('🔑 Token de acesso armazenado:', accessToken);
+      console.log('Token de acesso armazenado:', accessToken);
 
-      // Redirecionando conforme o papel do usuário
       const role = this.authService.getUserRole();
-      console.log('🔍 Role verificada após login:', role);
+      console.log('Role verificada após login:', role);
 
       if (!role) {
-        console.error('❌ Role não encontrada após login.');
+        console.error('Role não encontrada após login.');
         return;
       }
 
       switch (role) {
         case 'ROLE_ADMIN':
-          console.log('🔑 Redirecionando para Admin...');
+          console.log('Redirecionando para Admin.');
           this.router.navigate(['/admin']);
           break;
         case 'ROLE_PROFESSOR':
         case 'ROLE_ALUNO':
-          console.log('🔑 Redirecionando para Board...');
+          console.log('Redirecionando para Board.');
           this.router.navigate(['/board']);
           break;
         default:
-          console.warn('⚠️ Role desconhecida, redirecionando para login...');
+          console.warn('Role desconhecida, redirecionando para login.');
           this.router.navigate(['/login']);
       }
     } catch (error) {
-      console.error('❌ Erro no login:', error);
+      console.error('Erro no login:', error);
       this.errorMessage = 'Erro no login. Verifique as credenciais.';
     }
   }

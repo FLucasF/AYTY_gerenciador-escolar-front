@@ -13,6 +13,7 @@ interface LoginResponse {
 @Injectable({
   providedIn: 'root'
 })
+
 export class AuthService {
   private apiUrl = 'http://localhost:8090/auth';
 
@@ -30,13 +31,11 @@ export class AuthService {
   handleLoginResponse(response: any): void {
     console.log('Login realizado com sucesso:', response);
 
-    // Verificando a resposta antes de acessar as propriedades
     if (!response?.accessToken || !response?.id) {
         console.error('Resposta inválida no login!', response);
         return;
     }
 
-    // Armazenando dados no localStorage
     localStorage.setItem('accessToken', response.accessToken);
     localStorage.setItem('userId', response.id.toString());
     localStorage.setItem('userEmail', response.email || '');

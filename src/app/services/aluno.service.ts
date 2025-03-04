@@ -8,7 +8,7 @@ import { Page } from '../models/page.model';
   providedIn: 'root'
 })
 export class AlunoService {
-  private baseUrl = 'http://localhost:8090/alunos'; // 🔹 Ajuste sua URL da API se necessário
+  private baseUrl = 'http://localhost:8090/alunos';
 
   constructor(private http: HttpClient) {}
 
@@ -20,11 +20,11 @@ export class AlunoService {
     return this.http.get<Page<Aluno>>(`${this.baseUrl}?page=${page}&size=${size}`);
   }
 
-  buscarAlunoPorId(id: number): Observable<Aluno> { // 🔹 Método adicionado
+  buscarAlunoPorId(id: number): Observable<Aluno> {
     return this.http.get<Aluno>(`${this.baseUrl}/${id}`);
   }
 
-  atualizarAluno(id: number, aluno: Aluno): Observable<Aluno> { // 🔹 Método adicionado
+  atualizarAluno(id: number, aluno: Aluno): Observable<Aluno> { 
     return this.http.put<Aluno>(`${this.baseUrl}/${id}`, aluno);
   }
 

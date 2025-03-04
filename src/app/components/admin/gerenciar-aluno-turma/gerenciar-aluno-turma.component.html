@@ -11,9 +11,8 @@
       <ul class="list-group">
         <li class="list-group-item" *ngFor="let aluno of paginaAlunos?.content">
           <span>{{ aluno.nome }}</span>
-          <button class="btn btn-danger btn-sm float-right" 
-                  (click)="removerAlunoDaTurma(aluno.id!)"
-                  [disabled]="loadingAlunos">
+          <button class="btn btn-danger btn-sm float-right" (click)="removerAlunoDaTurma(aluno.id!)"
+            [disabled]="loadingAlunos">
             <i class="fa fa-trash"></i> Remover
           </button>
         </li>
@@ -26,12 +25,8 @@
   </div>
 
   <!-- Paginação -->
-  <mat-paginator
-    [length]="totalElements"
-    [pageIndex]="pageIndex"
-    [pageSize]="pageSize"
-    [pageSizeOptions]="[5, 10, 25, 50]"
-    (page)="carregarAlunosDaTurma($event)">
+  <mat-paginator [length]="totalElements" [pageIndex]="pageIndex" [pageSize]="pageSize"
+    [pageSizeOptions]="[5, 10, 25, 50]" (page)="carregarAlunosDaTurma($event)">
   </mat-paginator>
 
   <!-- Adicionar Aluno -->
@@ -55,9 +50,8 @@
         </div>
       </div>
 
-      <button class="btn btn-primary btn-block mt-3" 
-              (click)="adicionarAlunoNaTurma()"
-              [disabled]="!alunoSelecionadoParaAdicionar || loadingAlunos">
+      <button class="btn btn-primary btn-block mt-3" (click)="adicionarAlunoNaTurma()"
+        [disabled]="!alunoSelecionadoParaAdicionar || loadingAlunos">
         <i class="fa fa-user-plus mr-2"></i> Matricular Aluno
       </button>
     </div>

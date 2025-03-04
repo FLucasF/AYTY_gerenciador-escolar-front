@@ -16,15 +16,13 @@ import { PageEvent } from '@angular/material/paginator';
   styleUrls: ['./admin-dashboard.component.css'],
 })
 export class AdminDashboardComponent implements OnInit {
-  // Variáveis de listagem, filtro e paginação
   tipoUsuarioSelecionado: 'todos' | 'administrador' | 'professor' | 'aluno' = 'todos';
   usuarios: any[] = [];
-  usuariosFiltrados: any[] = []; // Lista que será exibida no HTML
+  usuariosFiltrados: any[] = [];
   pageIndex: number = 0;
   pageSize: number = 10;
   totalElements: number = 0;
 
-  // Variáveis para edição via modal
   editForm!: FormGroup;
   usuarioEditando: any = null;
   usuarioOriginal: any = {};
@@ -37,16 +35,13 @@ export class AdminDashboardComponent implements OnInit {
     private professorService: ProfessorService,
     private administradorService: AdministradorService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.carregarUsuarios();
     this.inicializarFormulario();
   }
 
-  /**
-   * Carrega os usuários com paginação
-   */
   carregarUsuarios(event?: PageEvent): void {
     if (event) {
       this.pageIndex = event.pageIndex;
@@ -55,7 +50,7 @@ export class AdminDashboardComponent implements OnInit {
 
     this.usuarioService.listarUsuarios(this.pageIndex, this.pageSize).subscribe({
       next: (res: Page<any>) => {
-        console.log("📥 Dados recebidos do backend:", res);
+        console.log("Dados recebidos do backend:", res);
 
         this.usuarios = res.content.map(user => ({
           ...user,
@@ -69,13 +64,12 @@ export class AdminDashboardComponent implements OnInit {
 
         this.filtrarUsuarios();
       },
-      error: (err) => console.error('❌ Erro ao carregar usuários:', err)
+      error: (err) => console.error('Erro ao carregar usuarios:', err)
     });
   }
 
-
   irParaCadastro(): void {
-    console.log("➕ Redirecionando para cadastro de usuário...");
+    console.log("Redirecionando para cadastro de usuario");
     this.router.navigate(['/admin/cadastro']);
   }
 
@@ -86,24 +80,24 @@ export class AdminDashboardComponent implements OnInit {
         case 'aluno': request$ = this.alunoService.excluirAluno(usuario.id); break;
         case 'professor': request$ = this.professorService.excluirProfessor(usuario.id); break;
         case 'administrador': request$ = this.administradorService.excluirAdministrador(usuario.id); break;
-        default: console.error('❌ Erro: Tipo de usuário desconhecido.'); return;
+        default: console.error('Erro: Tipo de usuário desconhecido'); return;
       }
 
       request$.subscribe({
         next: () => {
-          console.log(`✅ Usuário ${usuario.nome} excluído com sucesso!`);
+          console.log(`Usuário ${usuario.nome} excluído com sucesso!`);
           this.carregarUsuarios();
         },
-        error: (err) => console.error(`❌ Erro ao excluir ${usuario.tipo}:`, err),
+        error: (err) => console.error(`Erro ao excluir ${usuario.tipo}:`, err),
       });
     }
   }
 
   irParaEdicao(usuario: any): void {
-    console.log("✏️ Iniciando edição para usuário:", usuario);
+    console.log("Iniciando edição para usuário:", usuario);
 
     if (this.usuarioEditando?.id === usuario.id) {
-      console.log("🔄 Usuário já carregado, evitando requisição extra.");
+      console.log("Usuário ja carregado, evitando requisição extra");
       this.editForm.patchValue(this.usuarioEditando);
       return;
     }
@@ -131,19 +125,19 @@ export class AdminDashboardComponent implements OnInit {
     if (request) {
       request.subscribe({
         next: (dados) => {
-          console.log("✅ Dados completos do usuário carregados:", dados);
+          console.log("✅ Dados completos do usurio carregados:", dados);
           this.usuarioEditando = dados;
           this.editForm.patchValue(dados);
         },
-        error: (err) => console.error('❌ Erro ao carregar dados do usuário:', err)
+        error: (err) => console.error('Erro ao carregar dados do usuario:', err)
       });
     }
   }
 
   salvarEdicao(): void {
     if (this.editForm.invalid) {
-      console.warn("⚠️ Formulário inválido:", this.editForm.value);
-      alert('⚠️ Por favor, preencha os campos corretamente.');
+      console.warn("Formulário invalido:", this.editForm.value);
+      alert('Por favor, preencha os campos corretamente');
       return;
     }
 
@@ -153,7 +147,7 @@ export class AdminDashboardComponent implements OnInit {
       dadosAtualizados.senha = this.usuarioOriginal.senha;
     }
 
-    console.log("📤 Dados enviados:", dadosAtualizados);
+    console.log("Dados enviados:", dadosAtualizados);
 
     let request: Observable<any> | null = null;
     switch (this.tipoUsuario) {
@@ -174,19 +168,16 @@ export class AdminDashboardComponent implements OnInit {
           this.usuarioEditando = null;
           this.carregarUsuarios();
         },
-        error: (err) => console.error('❌ Erro ao atualizar usuário:', err)
+        error: (err) => console.error('Erro ao atualizar usuário:', err)
       });
     }
   }
 
   cancelarEdicao(): void {
-    console.log("❌ Cancelando edição...");
+    console.log("Cancelando edição");
     this.usuarioEditando = null;
   }
 
-  /**
-   * Adiciona os campos específicos do usuário no formulário.
-   */
   private adicionarCamposEspecificos(): void {
     if (this.editForm.contains('setor')) { this.editForm.removeControl('setor'); }
     if (this.editForm.contains('siape')) { this.editForm.removeControl('siape'); }
@@ -205,7 +196,7 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   mudarPagina(event: PageEvent): void {
-    console.log(`📜 Mudando para página: ${event.pageIndex}`);
+    console.log(`Mudando para página: ${event.pageIndex}`);
     this.carregarUsuarios(event);
   }
 
@@ -217,43 +208,42 @@ export class AdminDashboardComponent implements OnInit {
     });
   }
 
-
   filtrarUsuarios(): void {
-    console.log(`📊 Filtrando usuários - Tipo selecionado: ${this.tipoUsuarioSelecionado}`);
-    
+    console.log(`Filtrando usuários - Tipo selecionado: ${this.tipoUsuarioSelecionado}`);
+
     if (this.tipoUsuarioSelecionado === 'todos') {
-        this.usuariosFiltrados = [...this.usuarios];
+      this.usuariosFiltrados = [...this.usuarios];
     } else {
-        this.usuariosFiltrados = this.usuarios.filter(user => user.tipo === this.tipoUsuarioSelecionado);
+      this.usuariosFiltrados = this.usuarios.filter(user => user.tipo === this.tipoUsuarioSelecionado);
     }
 
     console.log("🔎 Usuários filtrados:", this.usuariosFiltrados);
-}
+  }
 
-definirTipo(role: string): string {
-  console.log(`🔄 Convertendo role "${role}" para tipo...`);
-  if (role === 'ALUNO' || role === 'ROLE_ALUNO') {
-    return 'aluno';
-  } else if (role === 'PROFESSOR' || role === 'ROLE_PROFESSOR') {
-    return 'professor';
-  } else if (role === 'ADMINISTRADOR' || role === 'ROLE_ADMIN') {
-    return 'administrador';
-  } else {
-    return 'desconhecido';
+  definirTipo(role: string): string {
+    console.log(`Convertendo role "${role}" para tipo...`);
+    if (role === 'ALUNO' || role === 'ROLE_ALUNO') {
+      return 'aluno';
+    } else if (role === 'PROFESSOR' || role === 'ROLE_PROFESSOR') {
+      return 'professor';
+    } else if (role === 'ADMINISTRADOR' || role === 'ROLE_ADMIN') {
+      return 'administrador';
+    } else {
+      return 'desconhecido';
+    }
   }
-} 
 
-obterInformacaoExtra(user: any): string {
-  if (user.tipo === 'aluno') {
-    return `Curso: ${user.curso || 'Não informado'}`;
+  obterInformacaoExtra(user: any): string {
+    if (user.tipo === 'aluno') {
+      return `Curso: ${user.curso || 'Não informado'}`;
+    }
+    if (user.tipo === 'professor') {
+      return `Departamento: ${user.departamento || 'Não informado'}`;
+    }
+    if (user.tipo === 'administrador') {
+      return `Setor: ${user.setor || 'Não informado'}`;
+    }
+    return 'Não disponível';
   }
-  if (user.tipo === 'professor') {
-    return `Departamento: ${user.departamento || 'Não informado'}`;
-  }
-  if (user.tipo === 'administrador') {
-    return `Setor: ${user.setor || 'Não informado'}`;
-  }
-  return 'Não disponível';
-}
 
 }

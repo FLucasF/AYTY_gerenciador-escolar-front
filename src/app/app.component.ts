@@ -10,8 +10,8 @@ import { Router } from '@angular/router';
 export class AppComponent {
   constructor(private router: Router) {}
 
-  // Verifica se a rota atual é 'login'
   isLoginPage(): boolean {
     return this.router.url === '/login';
   }
+  
 }

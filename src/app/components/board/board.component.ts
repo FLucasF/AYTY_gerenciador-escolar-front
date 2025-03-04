@@ -34,12 +34,11 @@ export class BoardComponent implements OnInit {
   totalAlunos: number = 0;
   sizeAlunos: number = 5;
   currentPageAlunos: number = 0;
-  
+
   totalPostagens: number = 0;
   sizePostagens: number = 3;
   currentPagePostagens: number = 0;
 
-  // Paginação
   paginaTurmas: Page<Turma> | null = null;
   currentPage: number = 0;
   totalPages: number = 0;
@@ -77,33 +76,27 @@ export class BoardComponent implements OnInit {
     }
   }
 
-// Paginação do Mural
-mudarPaginaPostagens(event: PageEvent): void {
-  console.log(`📜 Mudando para página ${event.pageIndex} no mural`);
+  mudarPaginaPostagens(event: PageEvent): void {
+    console.log(`Mudando para página ${event.pageIndex} no mural`);
 
-  // Atualiza SOMENTE a paginação do mural
-  this.currentPagePostagens = event.pageIndex;
-  this.sizePostagens = event.pageSize;
+    this.currentPagePostagens = event.pageIndex;
+    this.sizePostagens = event.pageSize;
 
-  // Carrega SOMENTE as postagens da turma selecionada
-  if (this.turmaSelecionada) {
-    this.carregarPostagens();
+    if (this.turmaSelecionada) {
+      this.carregarPostagens();
+    }
   }
-}
 
-// Paginação dos Alunos
-mudarPaginaAlunos(event: PageEvent): void {
-  console.log(`📜 Mudando para página ${event.pageIndex} dos alunos`);
+  mudarPaginaAlunos(event: PageEvent): void {
+    console.log(`Mudando para página ${event.pageIndex} dos alunos`);
 
-  // Atualiza SOMENTE a paginação dos alunos
-  this.currentPageAlunos = event.pageIndex;
-  this.sizeAlunos = event.pageSize;
+    this.currentPageAlunos = event.pageIndex;
+    this.sizeAlunos = event.pageSize;
 
-  // Carrega SOMENTE os alunos da turma selecionada
-  if (this.turmaSelecionada) {
-    this.carregarAlunos(this.turmaSelecionada.id);
+    if (this.turmaSelecionada) {
+      this.carregarAlunos(this.turmaSelecionada.id);
+    }
   }
-}
 
 
   criarPostagem(): void {
@@ -118,13 +111,13 @@ mudarPaginaAlunos(event: PageEvent): void {
         turmaId: this.turmaSelecionada.id,
         professorId: this.usuario.id // Certifique-se de que esse valor está definido
       };
-      console.log('📝 Nova postagem:', muralRequest);
+      console.log('Nova postagem:', muralRequest);
 
       this.muralService.criarPostagem(muralRequest).subscribe({
         next: (res) => {
           this.postagens.unshift(res);
           this.novaPostagem = { titulo: '', conteudo: '' };
-          console.log('✅ Postagem criada:', res);
+          console.log('Postagem criada:', res);
         },
         error: (err) => console.error('Erro ao criar postagem:', err)
       });
@@ -133,23 +126,22 @@ mudarPaginaAlunos(event: PageEvent): void {
 
   excluirPostagem(id: number): void {
     if (!this.turmaSelecionada?.id) {
-      console.error("❌ Nenhuma turma selecionada para excluir postagens.");
+      console.error("Nenhuma turma selecionada para excluir postagens.");
       return;
     }
-  
+
     if (confirm('Tem certeza que deseja excluir esta postagem?')) {
       this.muralService.excluirPostagem(id).subscribe({
         next: () => {
-          console.log(`✅ Postagem ${id} excluída.`);
-          
-          // Recarregar as postagens após excluir
+          console.log(`Postagem ${id} excluída.`);
+
           this.carregarPostagens();
         },
-        error: (err) => console.error('❌ Erro ao excluir postagem:', err)
+        error: (err) => console.error('Erro ao excluir postagem:', err)
       });
     }
   }
-  
+
 
   voltarParaTurmas(): void {
     this.turmaSelecionada = undefined;
@@ -175,7 +167,7 @@ mudarPaginaAlunos(event: PageEvent): void {
     const userRole = localStorage.getItem('role') || '';
 
     if (userId === 0 || !userRole) {
-      console.error('❌ Erro: Usuário não encontrado ou sem ID');
+      console.error('Erro: Usuário não encontrado ou sem ID');
       return;
     }
 
@@ -185,13 +177,12 @@ mudarPaginaAlunos(event: PageEvent): void {
 
   private carregarTurmas(event?: PageEvent): void {
     if (!this.usuario || !this.usuario.id) {
-      console.error('❌ Erro: Usuário não encontrado ou sem ID');
+      console.error('Erro: Usuário não encontrado ou sem ID');
       return;
     }
 
     const userId = this.usuario.id;
 
-    // Atualiza paginação caso `event` seja passado
     if (event) {
       this.currentPage = event.pageIndex;
       this.size = event.pageSize;
@@ -204,8 +195,8 @@ mudarPaginaAlunos(event: PageEvent): void {
     if (this.usuario.role === 'ROLE_ADMIN') {
       this.turmaService.listarTodasTurmas(pageable).subscribe({
         next: (res: Page<Turma>) => {
-          console.log("📥 Dados recebidos do backend:", res);
-          
+          console.log("Dados recebidos do backend:", res);
+
           this.paginaTurmas = res;
           this.turmas = this.filtrarTurmas(res.content);
 
@@ -214,14 +205,14 @@ mudarPaginaAlunos(event: PageEvent): void {
           this.totalElements = res.page.totalElements;
           this.totalPages = res.page.totalPages;
 
-          console.log(`✅ Turmas carregadas para ADMIN - Página ${this.currentPage + 1} de ${this.totalPages}`);
+          console.log(`Turmas carregadas para ADMIN - Página ${this.currentPage + 1} de ${this.totalPages}`);
         },
-        error: (err) => console.error('❌ Erro ao carregar turmas para ADMIN:', err)
+        error: (err) => console.error('Erro ao carregar turmas para ADMIN:', err)
       });
     } else if (this.usuario.role === 'ROLE_PROFESSOR') {
       this.turmaService.listarTurmasPorProfessor(userId, pageable).subscribe({
         next: (res: Page<Turma>) => {
-          console.log("📥 Dados recebidos do backend:", res);
+          console.log("Dados recebidos do backend:", res);
 
           this.paginaTurmas = res;
           this.turmas = this.filtrarTurmas(res.content);
@@ -231,14 +222,14 @@ mudarPaginaAlunos(event: PageEvent): void {
           this.totalElements = res.page.totalElements;
           this.totalPages = res.page.totalPages;
 
-          console.log(`✅ Turmas carregadas para PROFESSOR - Página ${this.currentPage + 1} de ${this.totalPages}`);
+          console.log(`Turmas carregadas para PROFESSOR - Página ${this.currentPage + 1} de ${this.totalPages}`);
         },
-        error: (err) => console.error('❌ Erro ao carregar turmas para PROFESSOR:', err)
+        error: (err) => console.error('Erro ao carregar turmas para PROFESSOR:', err)
       });
     } else if (this.usuario.role === 'ROLE_ALUNO') {
       this.turmaService.listarTurmasPorAluno(userId, pageable).subscribe({
         next: (res: Page<Turma>) => {
-          console.log("📥 Dados recebidos do backend:", res);
+          console.log("Dados recebidos do backend:", res);
 
           this.paginaTurmas = res;
           this.turmas = res.content;
@@ -248,12 +239,12 @@ mudarPaginaAlunos(event: PageEvent): void {
           this.totalElements = res.page.totalElements;
           this.totalPages = res.page.totalPages;
 
-          console.log(`✅ Turmas carregadas para o ALUNO - Página ${this.currentPage + 1} de ${this.totalPages}`);
+          console.log(`Turmas carregadas para o ALUNO - Página ${this.currentPage + 1} de ${this.totalPages}`);
         },
-        error: (err) => console.error('❌ Erro ao carregar turmas para ALUNO:', err)
+        error: (err) => console.error('Erro ao carregar turmas para ALUNO:', err)
       });
     }
-}
+  }
 
   private carregarProfessores(): void {
     this.professorService.listarProfessores(0, 100).subscribe({
@@ -269,11 +260,11 @@ mudarPaginaAlunos(event: PageEvent): void {
   }
 
   mudarPagina(event: PageEvent): void {
-    console.log(`📜 Mudando para página: ${event.pageIndex}`);
+    console.log(`Mudando para página: ${event.pageIndex}`);
     this.carregarTurmas(event);
   }
 
-  
+
   private filtrarTurmas(turmas: Turma[]): Turma[] {
     if (this.usuario.role === 'ROLE_ADMIN') {
       return turmas;
@@ -285,50 +276,48 @@ mudarPaginaAlunos(event: PageEvent): void {
     return [];
   }
 
-  // Atualizando método de carregar alunos com paginação
-private carregarAlunos(turmaId: number): void {
-  const pageable = { page: this.currentPageAlunos, size: this.sizeAlunos };
+  private carregarAlunos(turmaId: number): void {
+    const pageable = { page: this.currentPageAlunos, size: this.sizeAlunos };
 
-  this.turmaService.listarAlunosPorTurma(turmaId, pageable).subscribe({
-    next: (res) => {
-      this.alunosMatriculados = res.content || [];
-      this.totalAlunos = res.page.totalElements;
-      console.log('✅ Alunos matriculados:', this.alunosMatriculados);
-    },
-    error: (err) => console.error('❌ Erro ao carregar alunos da turma:', err)
-  });
-}
-
-private carregarPostagens(turmaId?: number, event?: PageEvent): void {
-  const id = turmaId ?? this.turmaSelecionada?.id;
-
-  if (!id) {
-    console.error("❌ Nenhuma turma selecionada para carregar postagens.");
-    return;
+    this.turmaService.listarAlunosPorTurma(turmaId, pageable).subscribe({
+      next: (res) => {
+        this.alunosMatriculados = res.content || [];
+        this.totalAlunos = res.page.totalElements;
+        console.log('Alunos matriculados:', this.alunosMatriculados);
+      },
+      error: (err) => console.error('Erro ao carregar alunos da turma:', err)
+    });
   }
 
-  // Atualiza a paginação caso `event` seja passado
-  if (event) {
-    this.currentPagePostagens = event.pageIndex;
-    this.sizePostagens = event.pageSize;
+  private carregarPostagens(turmaId?: number, event?: PageEvent): void {
+    const id = turmaId ?? this.turmaSelecionada?.id;
+
+    if (!id) {
+      console.error("Nenhuma turma selecionada para carregar postagens.");
+      return;
+    }
+
+    if (event) {
+      this.currentPagePostagens = event.pageIndex;
+      this.sizePostagens = event.pageSize;
+    }
+
+    const pageable = { page: this.currentPagePostagens, size: this.sizePostagens };
+
+    this.muralService.listarPostagens(id, pageable).subscribe({
+      next: (res: Page<Mural>) => {
+        console.log("Postagens recebidas do backend:", res);
+
+        this.postagens = res.content;
+        this.currentPagePostagens = res.page.number;
+        this.sizePostagens = res.page.size;
+        this.totalPostagens = res.page.totalElements;
+        this.totalPages = res.page.totalPages;
+      },
+      error: (err) => console.error('Erro ao carregar postagens:', err)
+    });
   }
 
-  const pageable = { page: this.currentPagePostagens, size: this.sizePostagens };
-
-  this.muralService.listarPostagens(id, pageable).subscribe({
-    next: (res: Page<Mural>) => {
-      console.log("📥 Postagens recebidas do backend:", res);
-
-      this.postagens = res.content;
-      this.currentPagePostagens = res.page.number;
-      this.sizePostagens = res.page.size;
-      this.totalPostagens = res.page.totalElements;
-      this.totalPages = res.page.totalPages;
-    },
-    error: (err) => console.error('❌ Erro ao carregar postagens:', err)
-  });
-}
 
 
-  
 }

@@ -39,7 +39,7 @@ export class AdminTurmasComponent implements OnInit {
     private professorService: ProfessorService,
     private fb: FormBuilder,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.initializeForms();
@@ -82,23 +82,22 @@ export class AdminTurmasComponent implements OnInit {
       this.pageIndex = event.pageIndex;
       this.pageSize = event.pageSize;
     }
-  
+
     const pageable: Pageable = { page: this.pageIndex, size: this.pageSize };
-  
+
     this.turmaService.listarTodasTurmas(pageable).subscribe({
       next: (res: any) => { // Mudando para `any` para refletir o JSON corretamente
-        console.log("📥 Dados recebidos do backend:", res);
-  
+        console.log("Dados recebidos do backend:", res);
+
         // Acessando corretamente os dados paginados
         this.turmas = res.content;
         this.pageIndex = res.page.number; // Página atual
         this.pageSize = res.page.size; // Tamanho da página
         this.totalElements = res.page.totalElements; // Total de elementos
       },
-      error: (err) => console.error('❌ Erro ao carregar turmas:', err)
+      error: (err) => console.error('Erro ao carregar turmas:', err)
     });
   }
-  
 
   /**
    * Evento acionado pelo paginator para mudança de página.

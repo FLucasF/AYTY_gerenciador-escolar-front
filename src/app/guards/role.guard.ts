@@ -10,17 +10,16 @@ export class RoleGuard implements CanActivate {
   constructor(private router: Router, private jwtHelper: JwtHelperService) {}
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-    console.log('[RoleGuard] 🎭 Verificando role...');
+    console.log('[RoleGuard] Verificando role.');
 
     let userRole = localStorage.getItem('role');
     const expectedRole = route.data['expectedRole'];
 
-    console.log('[RoleGuard] ✅ Usuário tem role:', userRole);
-    console.log('[RoleGuard] 🎯 Role esperada:', expectedRole);
+    console.log('[RoleGuard] Usuário tem role:', userRole);
+    console.log('[RoleGuard] Role esperada:', expectedRole);
 
-    // Se a role não estiver salva, tenta recuperar do token
     if (!userRole) {
-      console.warn('[RoleGuard] ⚠️ Role não encontrada no localStorage. Tentando recuperar do token...');
+      console.warn('[RoleGuard] Role não encontrada no localStorage. Tentando recuperar do token.');
     
       const token = localStorage.getItem('accessToken');
       if (token) {
@@ -29,25 +28,24 @@ export class RoleGuard implements CanActivate {
           if (decoded?.role) {
             userRole = decoded.role.toUpperCase();
             if (userRole) {
-              localStorage.setItem('role', userRole); // ✅ Garantindo que só salva se não for null
+              localStorage.setItem('role', userRole);
             }
-            console.log('[RoleGuard] ✅ Role recuperada do token:', userRole);
+            console.log('[RoleGuard] Role recuperada do token:', userRole);
           }
         } catch (error) {
-          console.error('[RoleGuard] ❌ Erro ao decodificar token:', error);
+          console.error('[RoleGuard] Erro ao decodificar token:', error);
         }
       }
     }
-    
 
     if (!userRole) {
-      console.error('[RoleGuard] 🚫 Nenhuma role encontrada! Redirecionando para login...');
+      console.error('[RoleGuard] Nenhuma role encontrada! Redirecionando para login.');
       this.router.navigate(['/login']);
       return false;
     }
 
     if (userRole !== expectedRole) {
-      console.error(`[RoleGuard] ❌ Acesso negado! Esperava ${expectedRole}, mas encontrou ${userRole}`);
+      console.error(`[RoleGuard] Acesso negado! esperava ${expectedRole}, mas encontrou ${userRole}`);
       this.router.navigate(['/login']);
       return false;
     }

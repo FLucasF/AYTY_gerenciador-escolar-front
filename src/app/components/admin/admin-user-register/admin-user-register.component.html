@@ -1,126 +1,140 @@
 <body class="home">
-    <div class="container-fluid display-table">
-      <div class="row display-table-row">
-        <!-- Conteúdo Principal -->
-        <div class="col-md-10 col-sm-10 display-table-cell v-align" style="padding: 20px;">
-          <div class="user-dashboard">
-            <h1>Cadastrar Usuário</h1>
-  
-            <div class="panel panel-default">
-              <div class="panel-heading">
-                <h3 class="panel-title">Cadastro de Usuário</h3>
-              </div>
-              <div class="panel-body">
-                
-                <!-- Seleção do tipo de usuário -->
-                <div class="form-group">
-                  <label>Tipo de Usuário:</label>
-                  <select [(ngModel)]="tipoUsuarioSelecionado" name="tipoUsuario" class="form-control" (ngModelChange)="onTipoUsuarioChange()">
-                    <option value="administrador">Administrador</option>
-                    <option value="professor">Professor</option>
-                    <option value="aluno">Aluno</option>
-                  </select>
-                  
-                </div>
-  
-                <hr />
-  
-                <!-- Formulário Reativo -->
-                <form [formGroup]="usuarioForm" (ngSubmit)="salvarUsuario()">
-  
-                  <!-- Nome -->
-                  <div class="form-group">
-                    <label>Nome</label>
-                    <input type="text" class="form-control" formControlName="nome" placeholder="Ex: João Silva" required>
-                    <small *ngIf="usuarioForm.controls['nome'].invalid && usuarioForm.controls['nome'].touched" class="text-danger">
-                      Nome é obrigatório e deve ter pelo menos 3 caracteres.
-                    </small>
-                  </div>
-  
-                  <!-- Email -->
-                  <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" class="form-control" formControlName="email" placeholder="Ex: joao@email.com" required>
-                    <small *ngIf="usuarioForm.controls['email'].invalid && usuarioForm.controls['email'].touched" class="text-danger">
-                      Insira um email válido.
-                    </small>
-                  </div>
-  
-                  <!-- Senha -->
-<div class="form-group">
-  <label>Senha</label>
-  <input type="password" class="form-control" formControlName="senha" placeholder="Mínimo 6 caracteres" required>
-  <small *ngIf="usuarioForm.get('senha')?.hasError('required') && usuarioForm.get('senha')?.touched" class="text-danger">
-    Senha é obrigatória.
-  </small>
-  <small *ngIf="usuarioForm.get('senha')?.hasError('pattern') && usuarioForm.get('senha')?.touched" class="text-danger">
-    A senha deve ter pelo menos 8 caracteres, incluindo uma letra maiúscula, uma minúscula, um dígito e um caractere especial.
-  </small>
-</div>
-  
-                  <!-- Campos específicos para Administrador -->
-                  <div *ngIf="tipoUsuarioSelecionado === 'administrador'">
-                    <div class="form-group">
-                      <label>Setor</label>
-                      <input type="text" class="form-control" formControlName="setor" placeholder="Ex: Recursos Humanos" required>
-                      <small *ngIf="usuarioForm.controls['setor'].invalid && usuarioForm.controls['setor'].touched" class="text-danger">
-                        Setor não pode ser vazio.
-                      </small>
-                    </div>
-                    <div class="form-group">
-                      <label>SIAPE</label>
-                      <input type="text" class="form-control" formControlName="siape" placeholder="Ex: 1234567">
-                      <small *ngIf="usuarioForm.controls['siape'].invalid && usuarioForm.controls['siape'].touched" class="text-danger">
-                        SIAPE deve conter 7 dígitos numéricos.
-                      </small>
-                    </div>
-                  </div>
-  
-                  <!-- Campos específicos para Professor -->
-                  <div *ngIf="tipoUsuarioSelecionado === 'professor'">
-                    <div class="form-group">
-                      <label>Departamento</label>
-                      <input type="text" class="form-control" formControlName="departamento" placeholder="Ex: Centro de Ciências Aplicadas e Educação" required>
-                    </div>
-                    <div class="form-group">
-                      <label>SIAPE</label>
-                      <input type="text" class="form-control" formControlName="siape" placeholder="Ex: 1234567">
-                      <small *ngIf="usuarioForm.controls['siape'].invalid && usuarioForm.controls['siape'].touched" class="text-danger">
-                        SIAPE deve conter 7 dígitos numéricos.
-                      </small>
-                    </div>
-                  </div>
+  <div class="container-fluid display-table">
+    <div class="row display-table-row">
+      <!-- Conteúdo Principal -->
+      <div class="col-md-10 col-sm-10 display-table-cell v-align" style="padding: 20px;">
+        <div class="user-dashboard">
+          <h1>Cadastrar Usuário</h1>
 
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Cadastro de Usuário</h3>
+            </div>
+            <div class="panel-body">
+
+              <!-- Seleção do tipo de usuário -->
+              <div class="form-group">
+                <label>Tipo de Usuário:</label>
+                <select [(ngModel)]="tipoUsuarioSelecionado" name="tipoUsuario" class="form-control"
+                  (ngModelChange)="onTipoUsuarioChange()">
+                  <option value="administrador">Administrador</option>
+                  <option value="professor">Professor</option>
+                  <option value="aluno">Aluno</option>
+                </select>
+
+              </div>
+
+              <hr />
+
+              <!-- Formulário Reativo -->
+              <form [formGroup]="usuarioForm" (ngSubmit)="salvarUsuario()">
+
+                <!-- Nome -->
+                <div class="form-group">
+                  <label>Nome</label>
+                  <input type="text" class="form-control" formControlName="nome" placeholder="Ex: João Silva" required>
+                  <small *ngIf="usuarioForm.controls['nome'].invalid && usuarioForm.controls['nome'].touched"
+                    class="text-danger">
+                    Nome é obrigatório e deve ter pelo menos 3 caracteres.
+                  </small>
+                </div>
+
+                <!-- Email -->
+                <div class="form-group">
+                  <label>Email</label>
+                  <input type="email" class="form-control" formControlName="email" placeholder="Ex: joao@email.com"
+                    required>
+                  <small *ngIf="usuarioForm.controls['email'].invalid && usuarioForm.controls['email'].touched"
+                    class="text-danger">
+                    Insira um email válido.
+                  </small>
+                </div>
+
+                <!-- Senha -->
+                <div class="form-group">
+                  <label>Senha</label>
+                  <input type="password" class="form-control" formControlName="senha" placeholder="Mínimo 6 caracteres"
+                    required>
+                  <small *ngIf="usuarioForm.get('senha')?.hasError('required') && usuarioForm.get('senha')?.touched"
+                    class="text-danger">
+                    Senha é obrigatória.
+                  </small>
+                  <small *ngIf="usuarioForm.get('senha')?.hasError('pattern') && usuarioForm.get('senha')?.touched"
+                    class="text-danger">
+                    A senha deve ter pelo menos 8 caracteres, incluindo uma letra maiúscula, uma minúscula, um dígito e
+                    um caractere especial.
+                  </small>
+                </div>
+
+                <!-- Campos específicos para Administrador -->
+                <div *ngIf="tipoUsuarioSelecionado === 'administrador'">
                   <div class="form-group">
-                    <label>CPF</label>
-                    <input type="text" class="form-control" formControlName="cpf" placeholder="Ex: 12345678900">
-                    <small *ngIf="usuarioForm.controls['cpf'].invalid && usuarioForm.controls['cpf'].touched" class="text-danger">
-                      CPF é obrigatório e deve conter 11 dígitos numéricos.
+                    <label>Setor</label>
+                    <input type="text" class="form-control" formControlName="setor" placeholder="Ex: Recursos Humanos"
+                      required>
+                    <small *ngIf="usuarioForm.controls['setor'].invalid && usuarioForm.controls['setor'].touched"
+                      class="text-danger">
+                      Setor não pode ser vazio.
                     </small>
                   </div>
-  
-                  <!-- Campos específicos para Aluno -->
-                  <div *ngIf="tipoUsuarioSelecionado === 'aluno'">
-                    <div class="form-group">
-                      <label>Curso</label>
-                      <input type="text" class="form-control" formControlName="curso" placeholder="Ex: Ciência da Computação" required>
-                    </div>
+                  <div class="form-group">
+                    <label>SIAPE</label>
+                    <input type="text" class="form-control" formControlName="siape" placeholder="Ex: 1234567">
+                    <small *ngIf="usuarioForm.controls['siape'].invalid && usuarioForm.controls['siape'].touched"
+                      class="text-danger">
+                      SIAPE deve conter 7 dígitos numéricos.
+                    </small>
                   </div>
-  
-                  <hr />
-  
-                  <!-- Botão de Cadastro -->
-                  <button type="submit" class="btn btn-success btn-block" [disabled]="usuarioForm.invalid">
-                    <i class="fa fa-check"></i> Cadastrar Usuário
-                  </button>
-  
-                </form>
-  
-              </div> <!-- /panel-body -->
-            </div> <!-- /panel-default -->
-          </div> <!-- /user-dashboard -->
-        </div> <!-- /col-md-10 -->
-      </div> <!-- /row -->
-    </div> <!-- /container-fluid -->
-  </body>
-  
+                </div>
+
+                <!-- Campos específicos para Professor -->
+                <div *ngIf="tipoUsuarioSelecionado === 'professor'">
+                  <div class="form-group">
+                    <label>Departamento</label>
+                    <input type="text" class="form-control" formControlName="departamento"
+                      placeholder="Ex: Centro de Ciências Aplicadas e Educação" required>
+                  </div>
+                  <div class="form-group">
+                    <label>SIAPE</label>
+                    <input type="text" class="form-control" formControlName="siape" placeholder="Ex: 1234567">
+                    <small *ngIf="usuarioForm.controls['siape'].invalid && usuarioForm.controls['siape'].touched"
+                      class="text-danger">
+                      SIAPE deve conter 7 dígitos numéricos.
+                    </small>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label>CPF</label>
+                  <input type="text" class="form-control" formControlName="cpf" placeholder="Ex: 12345678900">
+                  <small *ngIf="usuarioForm.controls['cpf'].invalid && usuarioForm.controls['cpf'].touched"
+                    class="text-danger">
+                    CPF é obrigatório e deve conter 11 dígitos numéricos.
+                  </small>
+                </div>
+
+                <!-- Campos específicos para Aluno -->
+                <div *ngIf="tipoUsuarioSelecionado === 'aluno'">
+                  <div class="form-group">
+                    <label>Curso</label>
+                    <input type="text" class="form-control" formControlName="curso"
+                      placeholder="Ex: Ciência da Computação" required>
+                  </div>
+                </div>
+
+                <hr />
+
+                <!-- Botão de Cadastro -->
+                <button type="submit" class="btn btn-success btn-block" [disabled]="usuarioForm.invalid">
+                  <i class="fa fa-check"></i> Cadastrar Usuário
+                </button>
+
+              </form>
+
+            </div> <!-- /panel-body -->
+          </div> <!-- /panel-default -->
+        </div> <!-- /user-dashboard -->
+      </div> <!-- /col-md-10 -->
+    </div> <!-- /row -->
+  </div> <!-- /container-fluid -->
+</body>

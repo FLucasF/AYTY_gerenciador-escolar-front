@@ -1,14 +1,15 @@
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark">
   <div class="container-fluid">
-  
+
     <!-- Toggle button -->
     <button class="navbar-toggler" type="button" (click)="collapsed = !collapsed">
       <i class="fas fa-bars"></i>
     </button>
 
     <!-- Collapsible wrapper -->
-    <div class="collapse navbar-collapse" [ngClass]="{ collapse: collapsed, 'navbar-collapse': true }" id="navbarSupportedContent">
+    <div class="collapse navbar-collapse" [ngClass]="{ collapse: collapsed, 'navbar-collapse': true }"
+      id="navbarSupportedContent">
       <ul class="navbar-nav me-auto d-flex flex-row mt-3 mt-lg-0">
         <li class="nav-item text-center mx-2 mx-lg-1" *ngIf="role === 'ROLE_ADMIN'">
           <a class="nav-link" routerLink="/admin">

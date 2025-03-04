@@ -3,6 +3,6 @@ export interface Turma {
   nome: string;
   codigo?: string;
   semestre?: string;
-  professorId?: number | null;  // Agora tratamos como ID
-  alunos?: number[];  // Lista de IDs dos alunos
+  professorId?: number | null;
+  alunos?: number[];
 }
