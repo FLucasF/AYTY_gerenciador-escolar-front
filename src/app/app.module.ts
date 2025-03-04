@@ -15,7 +15,6 @@ import { AdminTurmasComponent } from './components/admin/admin-turmas/admin-turm
 
 import { JwtInterceptor } from './interceptor/jwt.interceptor';
 import { JwtHelperService, JWT_OPTIONS } from '@auth0/angular-jwt';
-import { AdminUserEditComponent } from './components/admin/admin-user-edit/admin-user-edit.component';
 import { GerenciarAlunoTurmaComponent } from './components/admin/gerenciar-aluno-turma/gerenciar-aluno-turma.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 
@@ -23,7 +22,6 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatListModule } from '@angular/material/list';
 
 @NgModule({
   declarations: [
@@ -33,7 +31,6 @@ import { MatListModule } from '@angular/material/list';
     AdminUserRegisterComponent,
     BoardComponent,
     AdminTurmasComponent,
-    AdminUserEditComponent,
     GerenciarAlunoTurmaComponent,
     NavbarComponent,
   ],
@@ -41,7 +38,6 @@ import { MatListModule } from '@angular/material/list';
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    MatListModule,  // Adicione esta linha
     FormsModule,
     ReactiveFormsModule,
     MatToolbarModule,  // Para a barra superior

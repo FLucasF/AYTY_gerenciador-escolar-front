@@ -5,7 +5,6 @@ import { LoginComponent } from './components/login/login.component';
 import { BoardComponent } from './components/board/board.component';
 import { AdminDashboardComponent } from './components/admin/admin-dashboard/admin-dashboard.component';
 import { AdminUserRegisterComponent } from './components/admin/admin-user-register/admin-user-register.component';
-import { AdminUserEditComponent } from './components/admin/admin-user-edit/admin-user-edit.component';
 import { AdminTurmasComponent } from './components/admin/admin-turmas/admin-turmas.component';
 import { GerenciarAlunoTurmaComponent } from './components/admin/gerenciar-aluno-turma/gerenciar-aluno-turma.component';
 
@@ -22,7 +21,6 @@ const routes: Routes = [
     children: [
       { path: '', component: AdminDashboardComponent },
       { path: 'cadastro', component: AdminUserRegisterComponent },
-      { path: 'editar/:tipo/:id', component: AdminUserEditComponent },
       { path: 'turmas', component: AdminTurmasComponent },
       { path: 'turmas/:id/gerenciar-alunos', component: GerenciarAlunoTurmaComponent }  // 🔴 Removido o "admin/"
     ]
