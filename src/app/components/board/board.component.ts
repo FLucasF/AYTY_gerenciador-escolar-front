@@ -3,13 +3,14 @@ import { Router } from '@angular/router';
 import { MuralService } from '../../services/mural.service';
 import { TurmaService } from '../../services/turma.service';
 import { ProfessorService } from '../../services/professor.service';
-import { UsuarioService } from '../../services/usuario.service';
-import { AuthService } from '../../services/auth.service';
+
 import { Turma } from '../../models/turma.model';
 import { Mural } from '../../models/mural.model';
 import { Aluno } from '../../models/aluno.model';
 import { Professor } from '../../models/professor.model';
-import { Pageable } from '../../models/pageable.model';
+import { Page } from '../../models/page.model';
+import { PageEvent } from '@angular/material/paginator';
+
 
 @Component({
   selector: 'app-board',
@@ -22,121 +23,49 @@ export class BoardComponent implements OnInit {
   userName: string;
   userId: number;
   userRole: string;
-  isProfessor: boolean;
+  isProfessor: boolean = false;
+  isAluno: boolean = false;
   professoresMap = new Map<number, string>();
-  turmas: Turma[] = [];
   turmaSelecionada?: Turma;
   postagens: Mural[] = [];
   novaPostagem: Mural = { titulo: '', conteudo: '' };
   alunosMatriculados: Aluno[] = [];
+
+  totalAlunos: number = 0;
+  sizeAlunos: number = 5;
+  currentPageAlunos: number = 0;
+  
+  totalPostagens: number = 0;
+  sizePostagens: number = 3;
+  currentPagePostagens: number = 0;
+
+  // Paginação
+  paginaTurmas: Page<Turma> | null = null;
+  currentPage: number = 0;
+  totalPages: number = 0;
+  size: number = 7;
+  totalElements: number = 0;
+  turmas: Turma[] = [];
 
   constructor(
     private router: Router,
     private muralService: MuralService,
     private turmaService: TurmaService,
     private professorService: ProfessorService,
-    private usuarioService: UsuarioService
   ) {
     this.userName = localStorage.getItem('userName') || 'Usuário';
     this.userId = Number(localStorage.getItem('userId')) || 0;
     this.userRole = localStorage.getItem('role') || '';
-    this.isProfessor = this.userRole === 'ROLE_PROFESSOR';
   }
 
   ngOnInit(): void {
     this.carregarDadosDoUsuario();
     this.carregarTurmas();
     this.carregarProfessores();
-
-    
+    this.isProfessor = this.userRole === 'ROLE_PROFESSOR';
+    this.isAluno = this.userRole === 'ROLE_ALUNO';
   }
 
-  private carregarDadosDoUsuario(): void {
-    const userName = localStorage.getItem('userName') || 'Usuário';
-    const userId = Number(localStorage.getItem('userId')); // Aqui garantimos que o userId seja convertido para número
-    const userRole = localStorage.getItem('role') || '';
-    
-    // Verificando se os dados do usuário estão no localStorage
-    console.log('🔍 Dados carregados do localStorage:', { userName, userId, userRole });
-  
-    // Verificando se o id e role são válidos
-    if (userId === 0 || !userRole) {
-      console.error('❌ Erro: Usuário não encontrado ou sem ID');
-      return;
-    }
-  
-    this.usuario = { id: userId, nome: userName, role: userRole }; // Atribui corretamente o usuario
-    console.log('🔑 Usuario carregado:', this.usuario);
-  }
-  
-  
-
-  private carregarTurmas(): void {
-    if (!this.usuario || !this.usuario.id) {
-      console.error('❌ Erro: Usuário não encontrado ou sem ID');
-      return;
-    }
-
-    const userId = this.usuario.id;
-
-    console.log(`👤 Enviando requisição para buscar turmas do aluno com ID: ${userId}`);
-
-    const pageable = { page: 0, size: 10 }; // Definindo o tamanho da página e página inicial
-
-    if (this.usuario.role === 'ROLE_ADMIN') {
-      this.turmaService.listarTodasTurmas(pageable).subscribe({
-        next: (res) => {
-          this.turmas = this.filtrarTurmas(res.content);
-          console.log('✅ Turmas carregadas para ADMIN:', this.turmas);
-        },
-        error: (err) => console.error('Erro ao carregar turmas para ADMIN:', err)
-      });
-    } else if (this.usuario.role === 'ROLE_PROFESSOR') {
-      this.turmaService.listarTurmasPorProfessor(userId, pageable).subscribe({
-        next: (res) => {
-          this.turmas = this.filtrarTurmas(res.content);
-          console.log('✅ Turmas carregadas para PROFESSOR:', this.turmas);
-        },
-        error: (err) => console.error('Erro ao carregar turmas para PROFESSOR:', err)
-      });
-    } else if (this.usuario.role === 'ROLE_ALUNO') {
-      this.turmaService.listarTurmasPorAluno(userId, pageable).subscribe({
-        next: (res) => {
-          console.log('✅ Turmas carregadas para o aluno:', res.content);  // Verifique a resposta do backend
-          this.turmas = res.content;  // Armazenando as turmas no componente
-        },
-        error: (err) => {
-          console.error('❌ Erro ao carregar turmas:', err);  // Tratando erro
-        }
-      });
-    }
-  }
-
-  private filtrarTurmas(turmas: Turma[]): Turma[] {
-    if (this.usuario.role === 'ROLE_ADMIN') {
-      return turmas;
-    } else if (this.usuario.role === 'ROLE_PROFESSOR') {
-      return turmas.filter(turma => turma.professorId === this.usuario.id);
-    } else if (this.usuario.role === 'ROLE_ALUNO') {
-      return turmas.filter(turma => turma.alunos && turma.alunos.includes(this.usuario.id));
-    }
-    return [];
-  }
-
-  private carregarProfessores(): void {
-    this.professorService.listarProfessores(0, 100).subscribe({
-      next: (res) => {
-        console.log('🔎 Resposta completa de listarProfessores():', res);
-        res.content.forEach((prof: Professor) => {
-          if (prof.id) {
-            this.professoresMap.set(prof.id, prof.nome);
-          }
-        });
-        console.log('✅ Professores carregados no Map:', Array.from(this.professoresMap.entries()));
-      },
-      error: (err) => console.error('Erro ao carregar professores:', err)
-    });
-  }
 
   selectTurma(turma: Turma): void {
     this.turmaSelecionada = turma;
@@ -148,26 +77,34 @@ export class BoardComponent implements OnInit {
     }
   }
 
-  private carregarPostagens(turmaId: number): void {
-    this.muralService.listarPostagens(turmaId).subscribe({
-      next: (res) => {
-        this.postagens = res;
-        console.log('✅ Postagens carregadas:', this.postagens);
-      },
-      error: (err) => console.error('Erro ao carregar postagens:', err)
-    });
-  }
+// Paginação do Mural
+mudarPaginaPostagens(event: PageEvent): void {
+  console.log(`📜 Mudando para página ${event.pageIndex} no mural`);
 
-  private carregarAlunos(turmaId: number): void {
-    const pageable = { page: 0, size: 100 };
-    this.turmaService.listarAlunosPorTurma(turmaId, pageable).subscribe({
-      next: (res) => {
-        this.alunosMatriculados = res.content || [];
-        console.log('✅ Alunos matriculados:', this.alunosMatriculados);
-      },
-      error: (err) => console.error('Erro ao carregar alunos da turma:', err)
-    });
+  // Atualiza SOMENTE a paginação do mural
+  this.currentPagePostagens = event.pageIndex;
+  this.sizePostagens = event.pageSize;
+
+  // Carrega SOMENTE as postagens da turma selecionada
+  if (this.turmaSelecionada) {
+    this.carregarPostagens();
   }
+}
+
+// Paginação dos Alunos
+mudarPaginaAlunos(event: PageEvent): void {
+  console.log(`📜 Mudando para página ${event.pageIndex} dos alunos`);
+
+  // Atualiza SOMENTE a paginação dos alunos
+  this.currentPageAlunos = event.pageIndex;
+  this.sizeAlunos = event.pageSize;
+
+  // Carrega SOMENTE os alunos da turma selecionada
+  if (this.turmaSelecionada) {
+    this.carregarAlunos(this.turmaSelecionada.id);
+  }
+}
+
 
   criarPostagem(): void {
     if (!this.novaPostagem.titulo || !this.novaPostagem.conteudo) {
@@ -195,16 +132,24 @@ export class BoardComponent implements OnInit {
   }
 
   excluirPostagem(id: number): void {
+    if (!this.turmaSelecionada?.id) {
+      console.error("❌ Nenhuma turma selecionada para excluir postagens.");
+      return;
+    }
+  
     if (confirm('Tem certeza que deseja excluir esta postagem?')) {
       this.muralService.excluirPostagem(id).subscribe({
         next: () => {
-          this.postagens = this.postagens.filter(post => post.id !== id);
           console.log(`✅ Postagem ${id} excluída.`);
+          
+          // Recarregar as postagens após excluir
+          this.carregarPostagens();
         },
-        error: (err) => console.error('Erro ao excluir postagem:', err)
+        error: (err) => console.error('❌ Erro ao excluir postagem:', err)
       });
     }
   }
+  
 
   voltarParaTurmas(): void {
     this.turmaSelecionada = undefined;
@@ -222,4 +167,168 @@ export class BoardComponent implements OnInit {
     }
     return this.professoresMap.get(professorId) || 'Não atribuído';
   }
+
+
+  private carregarDadosDoUsuario(): void {
+    const userName = localStorage.getItem('userName') || 'Usuário';
+    const userId = Number(localStorage.getItem('userId'));
+    const userRole = localStorage.getItem('role') || '';
+
+    if (userId === 0 || !userRole) {
+      console.error('❌ Erro: Usuário não encontrado ou sem ID');
+      return;
+    }
+
+    this.usuario = { id: userId, nome: userName, role: userRole };
+  }
+
+
+  private carregarTurmas(event?: PageEvent): void {
+    if (!this.usuario || !this.usuario.id) {
+      console.error('❌ Erro: Usuário não encontrado ou sem ID');
+      return;
+    }
+
+    const userId = this.usuario.id;
+
+    // Atualiza paginação caso `event` seja passado
+    if (event) {
+      this.currentPage = event.pageIndex;
+      this.size = event.pageSize;
+    }
+
+    console.log(`👤 Buscando turmas do usuário ID: ${userId} | Página: ${this.currentPage}, Tamanho: ${this.size}`);
+
+    const pageable = { page: this.currentPage, size: this.size };
+
+    if (this.usuario.role === 'ROLE_ADMIN') {
+      this.turmaService.listarTodasTurmas(pageable).subscribe({
+        next: (res: Page<Turma>) => {
+          console.log("📥 Dados recebidos do backend:", res);
+          
+          this.paginaTurmas = res;
+          this.turmas = this.filtrarTurmas(res.content);
+
+          this.currentPage = res.page.number;
+          this.size = res.page.size;
+          this.totalElements = res.page.totalElements;
+          this.totalPages = res.page.totalPages;
+
+          console.log(`✅ Turmas carregadas para ADMIN - Página ${this.currentPage + 1} de ${this.totalPages}`);
+        },
+        error: (err) => console.error('❌ Erro ao carregar turmas para ADMIN:', err)
+      });
+    } else if (this.usuario.role === 'ROLE_PROFESSOR') {
+      this.turmaService.listarTurmasPorProfessor(userId, pageable).subscribe({
+        next: (res: Page<Turma>) => {
+          console.log("📥 Dados recebidos do backend:", res);
+
+          this.paginaTurmas = res;
+          this.turmas = this.filtrarTurmas(res.content);
+
+          this.currentPage = res.page.number;
+          this.size = res.page.size;
+          this.totalElements = res.page.totalElements;
+          this.totalPages = res.page.totalPages;
+
+          console.log(`✅ Turmas carregadas para PROFESSOR - Página ${this.currentPage + 1} de ${this.totalPages}`);
+        },
+        error: (err) => console.error('❌ Erro ao carregar turmas para PROFESSOR:', err)
+      });
+    } else if (this.usuario.role === 'ROLE_ALUNO') {
+      this.turmaService.listarTurmasPorAluno(userId, pageable).subscribe({
+        next: (res: Page<Turma>) => {
+          console.log("📥 Dados recebidos do backend:", res);
+
+          this.paginaTurmas = res;
+          this.turmas = res.content;
+
+          this.currentPage = res.page.number;
+          this.size = res.page.size;
+          this.totalElements = res.page.totalElements;
+          this.totalPages = res.page.totalPages;
+
+          console.log(`✅ Turmas carregadas para o ALUNO - Página ${this.currentPage + 1} de ${this.totalPages}`);
+        },
+        error: (err) => console.error('❌ Erro ao carregar turmas para ALUNO:', err)
+      });
+    }
+}
+
+  private carregarProfessores(): void {
+    this.professorService.listarProfessores(0, 100).subscribe({
+      next: (res) => {
+        res.content.forEach((prof: Professor) => {
+          if (prof.id) {
+            this.professoresMap.set(prof.id, prof.nome);
+          }
+        });
+      },
+      error: (err) => console.error('Erro ao carregar professores:', err)
+    });
+  }
+
+  mudarPagina(event: PageEvent): void {
+    console.log(`📜 Mudando para página: ${event.pageIndex}`);
+    this.carregarTurmas(event);
+  }
+
+  
+  private filtrarTurmas(turmas: Turma[]): Turma[] {
+    if (this.usuario.role === 'ROLE_ADMIN') {
+      return turmas;
+    } else if (this.usuario.role === 'ROLE_PROFESSOR') {
+      return turmas.filter(turma => turma.professorId === this.usuario.id);
+    } else if (this.usuario.role === 'ROLE_ALUNO') {
+      return turmas.filter(turma => turma.alunos && turma.alunos.includes(this.usuario.id));
+    }
+    return [];
+  }
+
+  // Atualizando método de carregar alunos com paginação
+private carregarAlunos(turmaId: number): void {
+  const pageable = { page: this.currentPageAlunos, size: this.sizeAlunos };
+
+  this.turmaService.listarAlunosPorTurma(turmaId, pageable).subscribe({
+    next: (res) => {
+      this.alunosMatriculados = res.content || [];
+      this.totalAlunos = res.page.totalElements;
+      console.log('✅ Alunos matriculados:', this.alunosMatriculados);
+    },
+    error: (err) => console.error('❌ Erro ao carregar alunos da turma:', err)
+  });
+}
+
+private carregarPostagens(turmaId?: number, event?: PageEvent): void {
+  const id = turmaId ?? this.turmaSelecionada?.id;
+
+  if (!id) {
+    console.error("❌ Nenhuma turma selecionada para carregar postagens.");
+    return;
+  }
+
+  // Atualiza a paginação caso `event` seja passado
+  if (event) {
+    this.currentPagePostagens = event.pageIndex;
+    this.sizePostagens = event.pageSize;
+  }
+
+  const pageable = { page: this.currentPagePostagens, size: this.sizePostagens };
+
+  this.muralService.listarPostagens(id, pageable).subscribe({
+    next: (res: Page<Mural>) => {
+      console.log("📥 Postagens recebidas do backend:", res);
+
+      this.postagens = res.content;
+      this.currentPagePostagens = res.page.number;
+      this.sizePostagens = res.page.size;
+      this.totalPostagens = res.page.totalElements;
+      this.totalPages = res.page.totalPages;
+    },
+    error: (err) => console.error('❌ Erro ao carregar postagens:', err)
+  });
+}
+
+
+  
 }

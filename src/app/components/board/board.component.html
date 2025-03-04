@@ -1,101 +1,111 @@
-<div class="container-fluid display-table" style="width: 100%; padding: 0; margin: 0;">
-  <div class="row display-table-row">
-    <!-- Conteúdo Principal -->
-    <div class="col-md-10 col-sm-10 display-table-cell v-align" style="padding: 20px;">
-      <div class="user-dashboard">
-        <h1 class="mb-5">Minhas Turmas</h1>
+<div class="user-dashboard">
+  <h1 class="mb-5" *ngIf="!turmaSelecionada">Minhas Turmas</h1>
 
-        <!-- Lista de Turmas -->
-        <div *ngIf="!turmaSelecionada">
-          <div class="panel panel-default">
-            <div class="panel-heading"></div>
-            <div class="panel-body">
-              <div class="row">
-                <div class="col-12 mb-3" *ngFor="let turma of turmas">
-                  <div class="panel panel-primary" style="cursor: pointer;" (click)="selectTurma(turma)">
-                    <div class="panel-body">
-                      <h5 class="panel-title"><strong>{{ turma.nome }}</strong></h5>
-                      <p class="panel-text">
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+  <div *ngIf="!turmaSelecionada">
+    <!-- Lista de Turmas -->
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover table-striped">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Código</th>
+            <th>Semestre</th>
+            <th>Professor</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let turma of turmas" (click)="selectTurma(turma)" class="clickable-row">
+            <td>{{ turma.nome }}</td>
+            <td>{{ turma.codigo }}</td>
+            <td>{{ turma.semestre }}</td>
+            <td>{{ getProfessorNome(turma.professorId) }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-        <!-- Detalhes da Turma Selecionada -->
-        <div *ngIf="turmaSelecionada">
-          <h2>Turma: {{ turmaSelecionada.nome }}</h2>
+    <!-- Paginação das Turmas -->
+    <mat-paginator
+      [length]="totalElements"
+      [pageSize]="size"
+      [pageIndex]="currentPage"
+      [pageSizeOptions]="[5, 7, 10, 20]"
+      (page)="mudarPagina($event)">
+    </mat-paginator>
+  </div>
 
-          <!-- Exibir Nome do Professor -->
-          <h4 class="text-primary">
-            <strong>Professor: {{ getProfessorNome(turmaSelecionada.professorId) }}</strong>
-          </h4>
+  <!-- Detalhes da Turma Selecionada -->
+  <div *ngIf="turmaSelecionada">
+    <div class="turma-detalhes">
+      <h2>Turma: {{ turmaSelecionada.nome }}</h2>
+      <h4 class="text-primary"><strong>Professor: {{ getProfessorNome(turmaSelecionada.professorId) }}</strong></h4>
 
-          <!-- Exibir alunos cadastrados -->
-          <div *ngIf="alunosMatriculados.length > 0; else semAlunos">
-            <h4>Alunos Matriculados:</h4>
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th>Nome</th>
-                  <th>Email</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let aluno of alunosMatriculados">
-                  <td>{{ aluno.nome }}</td>
-                  <td>{{ aluno.email }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <ng-template #semAlunos>
-            <p class="text-muted">Nenhum aluno matriculado.</p>
-          </ng-template>
+      <!-- Alunos Matriculados -->
+      <div>
+        <h4>Alunos Matriculados:</h4>
+        <table class="table table-striped" *ngIf="alunosMatriculados.length > 0; else semAlunos">
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Email</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let aluno of alunosMatriculados">
+              <td>{{ aluno.nome }}</td>
+              <td>{{ aluno.email }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <ng-template #semAlunos>
+          <p class="text-muted">Nenhum aluno matriculado.</p>
+        </ng-template>
 
-          <!-- Mural da Turma -->
-          <h2>Mural - {{ turmaSelecionada.nome }}</h2>
-
-          <!-- Criar Postagem (Apenas para Professores) -->
-          <div *ngIf="isProfessor">
-            <div class="panel panel-default">
-              <div class="panel-body">
-                <h5 class="panel-title">Criar Nova Postagem</h5>
-                <input type="text" class="form-control my-2" placeholder="Título" [(ngModel)]="novaPostagem.titulo">
-                <textarea class="form-control my-2" placeholder="Conteúdo" [(ngModel)]="novaPostagem.conteudo"></textarea>
-                <button class="btn btn-success btn-block" (click)="criarPostagem()">
-                  <i class="fa fa-plus"></i> Publicar
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Postagens Recentes -->
-          <h3>Postagens Recentes</h3>
-          <div *ngIf="postagens && postagens.length > 0; else semPostagens">
-            <div *ngFor="let postagem of postagens" class="panel panel-default my-2">
-              <div class="panel-body">
-                <h5 class="panel-title"><strong>{{ postagem.titulo }}</strong></h5>
-                <p class="panel-text">{{ postagem.conteudo }}</p>
-                <small class="text-muted">{{ postagem.dataCriacao | date:'short' }}</small>
-                <button *ngIf="isProfessor && postagem.id" class="btn btn-danger btn-sm float-right" (click)="excluirPostagem(postagem.id)">
-                  <i class="fa fa-trash"></i> Excluir
-                </button>
-              </div>
-            </div>
-          </div>
-
-
-          <ng-template #semPostagens>
-            <p class="text-muted">Nenhuma postagem disponível.</p>
-          </ng-template>
-
-          <button class="btn btn-secondary" (click)="voltarParaTurmas()">Voltar</button>
-        </div>
+        <!-- Paginação de Alunos -->
+        <mat-paginator
+          [length]="totalAlunos"
+          [pageSize]="sizeAlunos"
+          [pageIndex]="currentPageAlunos"
+          [pageSizeOptions]="[5, 10, 20]"
+          (page)="mudarPaginaAlunos($event)">
+        </mat-paginator>
       </div>
+
+      <!-- Mural da Turma -->
+      <h2>Mural</h2>
+      <div class="mural-container">
+        <div class="nova-postagem-container" *ngIf="isProfessor">
+          <input type="text" placeholder="Título da Postagem" [(ngModel)]="novaPostagem.titulo">
+          <textarea placeholder="Escreva sua postagem..." [(ngModel)]="novaPostagem.conteudo"></textarea>
+          <button (click)="criarPostagem()">Publicar</button>
+        </div>
+
+        <h3>Postagens Recentes</h3>
+        <div *ngIf="postagens.length > 0; else semPostagens">
+          <div *ngFor="let postagem of postagens" class="postagem-card">
+            <div class="postagem-header">
+              <span><strong>Título:</strong> {{ postagem.titulo }}</span>
+              <span class="postagem-data">{{ postagem.dataCriacao | date: 'short' }}</span>
+              <button *ngIf="isProfessor" class="excluir-postagem" (click)="excluirPostagem(postagem.id!)">❌</button>
+            </div>
+            <p class="postagem-conteudo">{{ postagem.conteudo }}</p>
+          </div>
+        </div>
+        <ng-template #semPostagens>
+          <p class="text-muted">Nenhuma postagem disponível.</p>
+        </ng-template>
+
+        <!-- Paginação das Postagens -->
+        <mat-paginator
+          [length]="totalPostagens"
+          [pageSize]="sizePostagens"
+          [pageIndex]="currentPagePostagens"
+          [pageSizeOptions]="[3, 5, 10]"
+          (page)="mudarPaginaPostagens($event)">
+        </mat-paginator>
+      </div>
+
+      <button class="btn btn-secondary" (click)="voltarParaTurmas()">Voltar para Lista de Turmas</button>
     </div>
   </div>
 </div>

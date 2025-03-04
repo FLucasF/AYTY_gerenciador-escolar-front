@@ -41,40 +41,19 @@ export class UsuarioService {
     );
   }
 
-  buscarUsuarioPorId(id: number): Observable<Usuario> {
-    return this.http.get<Usuario>(`${this.baseUrl}/${id}`).pipe(
-      map(user => {
-        if (user.role === 'ROLE_ALUNO') {
-          return user as Aluno;
-        } else if (user.role === 'ROLE_PROFESSOR') {
-          return user as Professor;
-        } else if (user.role === 'ROLE_ADMIN') {
-          return user as Administrador;
-        } else {
-          return user;
-        }
-      })
-    );
-  }
-
-  /**
-   * Atualiza um usuário baseado no seu tipo (Aluno, Professor ou Administrador)
-   */
-  atualizarUsuario(usuario: Usuario): Observable<Usuario> {
-    let updateUrl = '';
-
-    switch (usuario.role) {
-      case 'ROLE_ALUNO':
-        updateUrl = `${this.apiUrl}/alunos/${usuario.id}`;
-        return this.http.put<Aluno>(updateUrl, usuario as Aluno);
-      case 'ROLE_PROFESSOR':
-        updateUrl = `${this.apiUrl}/professores/${usuario.id}`;
-        return this.http.put<Professor>(updateUrl, usuario as Professor);
-      case 'ROLE_ADMIN':
-        updateUrl = `${this.apiUrl}/administradores/${usuario.id}`;
-        return this.http.put<Administrador>(updateUrl, usuario as Administrador);
-      default:
-        throw new Error(`Tipo de usuário desconhecido: ${usuario.role}`);
-    }
-  }
+  // buscarUsuarioPorId(id: number): Observable<Usuario> {
+  //   return this.http.get<Usuario>(`${this.baseUrl}/${id}`).pipe(
+  //     map(user => {
+  //       if (user.role === 'ROLE_ALUNO') {
+  //         return user as Aluno;
+  //       } else if (user.role === 'ROLE_PROFESSOR') {
+  //         return user as Professor;
+  //       } else if (user.role === 'ROLE_ADMIN') {
+  //         return user as Administrador;
+  //       } else {
+  //         return user;
+  //       }
+  //     })
+  //   );
+  // }
 }

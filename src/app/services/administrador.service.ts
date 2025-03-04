@@ -8,7 +8,7 @@ import { Page } from '../models/page.model';
   providedIn: 'root'
 })
 export class AdministradorService {
-  private baseUrl = 'http://localhost:8090/administradores'; // 🔹 Ajuste sua URL da API se necessário
+  private baseUrl = 'http://localhost:8090/administradores';
 
   constructor(private http: HttpClient) {}
 
@@ -17,14 +17,14 @@ export class AdministradorService {
   }
 
   listarAdministradores(page: number = 0, size: number = 10): Observable<Page<Administrador>> {
-    return this.http.get<Page<Administrador>>(`${this.baseUrl}?page=${page}&size=${size}`);
+     return this.http.get<Page<Administrador>>(`${this.baseUrl}?page=${page}&size=${size}`);
   }
 
-  buscarAdministradorPorId(id: number): Observable<Administrador> { // 🔹 Método adicionado
+  buscarAdministradorPorId(id: number): Observable<Administrador> {
     return this.http.get<Administrador>(`${this.baseUrl}/${id}`);
   }
 
-  atualizarAdministrador(id: number, admin: Administrador): Observable<Administrador> { // 🔹 Método adicionado
+  atualizarAdministrador(id: number, admin: Administrador): Observable<Administrador> {
     return this.http.put<Administrador>(`${this.baseUrl}/${id}`, admin);
   }
 

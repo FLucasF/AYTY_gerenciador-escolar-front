@@ -1,94 +1,72 @@
-<body class="home">
-    <div class="container-fluid display-table">
-      <div class="row display-table-row">
-        <!-- Conteúdo Principal -->
-        <div class="col-md-10 col-sm-10 display-table-cell v-align" style="padding: 20px;">
-          <div class="user-dashboard">
-            <h1>Gerenciar Alunos - {{ turmaNome }}</h1>
-            <hr />
-  
-            <!-- Lista de Alunos Matriculados -->
-            <div class="panel panel-default">
-              <div class="panel-heading">
-                <h3 class="panel-title">Alunos Matriculados</h3>
-              </div>
-              <div class="panel-body">
-                <ul class="list-group">
-                  <li class="list-group-item" *ngFor="let aluno of paginaAlunos?.content">
-                    <span>{{ aluno.nome }}</span>
-                    <button class="btn btn-danger btn-sm float-right" 
-                            (click)="removerAlunoDaTurma(aluno.id!)"
-                            [disabled]="loadingAlunos">
-                      <i class="fa fa-trash"></i> Remover
-                    </button>
-                  </li>
-                </ul>
-  
-                <div *ngIf="paginaAlunos?.content?.length === 0" class="text-center text-muted mt-3">
-                  <p>Nenhum aluno matriculado.</p>
-                </div>
-              </div>
-            </div>
-  
-            <!-- Paginação -->
-            <div *ngIf="paginaAlunos && paginaAlunos.totalPages > 1" 
-                 class="pagination-container mt-3 d-flex justify-content-center">
-              <button (click)="mudarPaginaAlunos(currentPage - 1)" 
-                      [disabled]="currentPage === 0" 
-                      class="btn btn-secondary mx-1">
-                Anterior
-              </button>
-              <span class="mx-2">
-                Página {{ currentPage + 1 }} de {{ paginaAlunos.totalPages }}
-              </span>
-              <button (click)="mudarPaginaAlunos(currentPage + 1)" 
-                      [disabled]="currentPage + 1 >= paginaAlunos.totalPages" 
-                      class="btn btn-secondary mx-1">
-                Próxima
-              </button>
-            </div>
-  
-            <!-- Seção de Adição de Alunos -->
-            <div class="panel panel-default mt-4">
-              <div class="panel-heading">
-                <h3 class="panel-title">Adicionar Aluno</h3>
-              </div>
-              <div class="panel-body">
-                <div class="form-group">
-                  <select class="form-control" 
-                          [(ngModel)]="alunoSelecionadoParaAdicionar"
-                          [disabled]="loadingAlunos">
-                    <option [ngValue]="null">Selecione um aluno</option>
-                    <option *ngFor="let aluno of getAlunosDisponiveis()" 
-                            [ngValue]="aluno.id">
-                      {{ aluno.nome }} ({{ aluno.email }})
-                    </option>
-                  </select>
-                </div>
-  
-                <div *ngIf="loadingAlunos" class="text-center mt-2">
-                  <div class="spinner-border text-primary" role="status">
-                    <span class="sr-only">Carregando...</span>
-                  </div>
-                </div>
-  
-                <button class="btn btn-primary btn-block mt-3" 
-                        (click)="adicionarAlunoNaTurma()"
-                        [disabled]="!alunoSelecionadoParaAdicionar || loadingAlunos">
-                  <i class="fa fa-user-plus mr-2"></i>Matricular Aluno
-                </button>
-              </div>
-            </div>
-  
-            <!-- Botão de Fechar -->
-            <div class="modal-footer mt-4">
-                <button type="button" class="btn btn-secondary" (click)="voltarParaTurmas()">
-                    <i class="fa fa-times mr-2"></i> Fechar
-                  </button>
-                  
-            </div>
-          </div>
-        </div>
+<div class="user-dashboard">
+  <h1>Gerenciar Alunos - {{ turmaNome }}</h1>
+  <hr />
+
+  <!-- Lista de Alunos Matriculados -->
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">Alunos Matriculados</h3>
+    </div>
+    <div class="panel-body">
+      <ul class="list-group">
+        <li class="list-group-item" *ngFor="let aluno of paginaAlunos?.content">
+          <span>{{ aluno.nome }}</span>
+          <button class="btn btn-danger btn-sm float-right" 
+                  (click)="removerAlunoDaTurma(aluno.id!)"
+                  [disabled]="loadingAlunos">
+            <i class="fa fa-trash"></i> Remover
+          </button>
+        </li>
+      </ul>
+
+      <div *ngIf="paginaAlunos?.content?.length === 0" class="text-center text-muted mt-3">
+        <p>Nenhum aluno matriculado.</p>
       </div>
     </div>
-  </body>
+  </div>
+
+  <!-- Paginação -->
+  <mat-paginator
+    [length]="totalElements"
+    [pageIndex]="pageIndex"
+    [pageSize]="pageSize"
+    [pageSizeOptions]="[5, 10, 25, 50]"
+    (page)="carregarAlunosDaTurma($event)">
+  </mat-paginator>
+
+  <!-- Adicionar Aluno -->
+  <div class="panel panel-default mt-4">
+    <div class="panel-heading">
+      <h3 class="panel-title">Adicionar Aluno</h3>
+    </div>
+    <div class="panel-body">
+      <div class="form-group">
+        <select class="form-control" [(ngModel)]="alunoSelecionadoParaAdicionar" [disabled]="loadingAlunos">
+          <option [ngValue]="null">Selecione um aluno</option>
+          <option *ngFor="let aluno of todosAlunos" [ngValue]="aluno.id">
+            {{ aluno.nome }} ({{ aluno.email }})
+          </option>
+        </select>
+      </div>
+
+      <div *ngIf="loadingAlunos" class="text-center mt-2">
+        <div class="spinner-border text-primary" role="status">
+          <span class="sr-only">Carregando...</span>
+        </div>
+      </div>
+
+      <button class="btn btn-primary btn-block mt-3" 
+              (click)="adicionarAlunoNaTurma()"
+              [disabled]="!alunoSelecionadoParaAdicionar || loadingAlunos">
+        <i class="fa fa-user-plus mr-2"></i> Matricular Aluno
+      </button>
+    </div>
+  </div>
+
+  <!-- Botão Fechar -->
+  <div class="modal-footer mt-4">
+    <button type="button" class="btn btn-secondary" (click)="voltarParaTurmas()">
+      <i class="fa fa-times mr-2"></i> Fechar
+    </button>
+  </div>
+</div>

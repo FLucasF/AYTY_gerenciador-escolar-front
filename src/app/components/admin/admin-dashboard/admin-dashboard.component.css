@@ -182,6 +182,10 @@ body {
     cursor: pointer;
   }
   
+
+  .page-item.hidden {
+    visibility: hidden; /* Esconde o botão mas mantém o espaço reservado */
+  }
   
   
   /* Responsividade */

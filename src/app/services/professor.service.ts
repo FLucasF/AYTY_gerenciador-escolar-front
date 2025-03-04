@@ -8,7 +8,7 @@ import { Page } from '../models/page.model';
   providedIn: 'root'
 })
 export class ProfessorService {
-  private baseUrl = 'http://localhost:8090/professores'; // 🔹 Ajuste sua URL da API se necessário
+  private baseUrl = 'http://localhost:8090/professores';
 
   constructor(private http: HttpClient) {}
 
@@ -20,11 +20,11 @@ export class ProfessorService {
     return this.http.get<Page<Professor>>(`${this.baseUrl}?page=${page}&size=${size}`);
   }
 
-  buscarProfessorPorId(id: number): Observable<Professor> { // 🔹 Método adicionado
+  buscarProfessorPorId(id: number): Observable<Professor> {
     return this.http.get<Professor>(`${this.baseUrl}/${id}`);
   }
 
-  atualizarProfessor(id: number, professor: Professor): Observable<Professor> { // 🔹 Método adicionado
+  atualizarProfessor(id: number, professor: Professor): Observable<Professor> {
     return this.http.put<Professor>(`${this.baseUrl}/${id}`, professor);
   }
 

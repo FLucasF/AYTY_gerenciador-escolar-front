@@ -15,7 +15,7 @@ export class LoginComponent {
 
   constructor(private authService: AuthService, private router: Router) {}
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     console.log('🔍 Iniciando o login...');
 
     localStorage.clear(); // Limpa qualquer dado antes do login
@@ -27,48 +27,44 @@ export class LoginComponent {
     }
 
     const credentials = { email: this.email, senha: this.senha };
-    console.log('📨 Tentando fazer login com:', credentials);
 
-    this.authService.login(credentials).subscribe({
-      next: (response) => {
-        console.log('✅ Login realizado com sucesso:', response);
-        
-        // Handle response from login
-        this.authService.handleLoginResponse(response);
-        
-        // Verificando se o token foi armazenado corretamente
-        const accessToken = localStorage.getItem('accessToken');
-        console.log('🔑 Token de acesso armazenado:', accessToken);
+    try {
+      const response = await this.authService.login(credentials).toPromise();
+      console.log('✅ Login realizado com sucesso:', response);
 
-        setTimeout(() => {
-          const role = this.authService.getUserRole();
-          console.log('🔍 Role verificada após login:', role);
+      // Handle response from login
+      this.authService.handleLoginResponse(response);
 
-          if (!role) {
-            console.error('❌ Role não encontrada após login.');
-            return;
-          }
+      // Verificando se o token foi armazenado corretamente
+      const accessToken = localStorage.getItem('accessToken');
+      console.log('🔑 Token de acesso armazenado:', accessToken);
 
-          switch (role) {
-            case 'ROLE_ADMIN':
-              console.log('🔑 Redirecionando para Admin...');
-              this.router.navigate(['/admin']);
-              break;
-            case 'ROLE_PROFESSOR':
-            case 'ROLE_ALUNO':
-              console.log('🔑 Redirecionando para Board...');
-              this.router.navigate(['/board']);
-              break;
-            default:
-              console.warn('⚠️ Role desconhecida, redirecionando para login...');
-              this.router.navigate(['/login']);
-          }
-        }, 0);
-      },
-      error: (err) => {
-        console.error('❌ Erro no login:', err);
-        this.errorMessage = 'Erro no login. Verifique as credenciais.';
+      // Redirecionando conforme o papel do usuário
+      const role = this.authService.getUserRole();
+      console.log('🔍 Role verificada após login:', role);
+
+      if (!role) {
+        console.error('❌ Role não encontrada após login.');
+        return;
       }
-    });
+
+      switch (role) {
+        case 'ROLE_ADMIN':
+          console.log('🔑 Redirecionando para Admin...');
+          this.router.navigate(['/admin']);
+          break;
+        case 'ROLE_PROFESSOR':
+        case 'ROLE_ALUNO':
+          console.log('🔑 Redirecionando para Board...');
+          this.router.navigate(['/board']);
+          break;
+        default:
+          console.warn('⚠️ Role desconhecida, redirecionando para login...');
+          this.router.navigate(['/login']);
+      }
+    } catch (error) {
+      console.error('❌ Erro no login:', error);
+      this.errorMessage = 'Erro no login. Verifique as credenciais.';
+    }
   }
 }

@@ -55,7 +55,7 @@ export class AdminUserRegisterComponent implements OnInit {
       ]],
       senha: ['', [
         Validators.required,
-        Validators.minLength(6),
+        Validators.minLength(8),
         Validators.maxLength(20),
         Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/) //Verifica se a senha tem digito, caracter especial, letra maiuscula e minuscula
 
@@ -208,9 +208,7 @@ export class AdminUserRegisterComponent implements OnInit {
     if (request) {
       request.subscribe({
         next: (res) => {
-          console.log('✅ Usuário cadastrado com sucesso!', res);
           this.usuarioForm.reset();
-          // Reaplicar validadores para o estado inicial, se necessário
           this.atualizarValidadores();
         },
         error: (err) => console.error('❌ Erro ao cadastrar usuário:', err)

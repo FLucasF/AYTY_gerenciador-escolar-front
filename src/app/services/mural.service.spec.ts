@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { MuralService } from '../mural/mural.service';
+import { MuralService } from './mural.service';
 
 describe('MuralService', () => {
   let service: MuralService;

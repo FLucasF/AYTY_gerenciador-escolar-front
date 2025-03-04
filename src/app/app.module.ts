@@ -1,8 +1,7 @@
-// app.module.ts
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
-import { ReactiveFormsModule } from '@angular/forms';  // <-- Adicione essa linha
+import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 
@@ -22,6 +21,8 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatPaginatorModule } from '@angular/material/paginator';
+
 
 @NgModule({
   declarations: [
@@ -35,6 +36,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
     NavbarComponent,
   ],
   imports: [
+    MatPaginatorModule,
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,

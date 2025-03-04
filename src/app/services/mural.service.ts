@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Mural } from '../models/mural.model';
+import { Page } from '../models/page.model';
 
 @Injectable({
   providedIn: 'root'
@@ -11,9 +12,11 @@ export class MuralService {
 
   constructor(private http: HttpClient) {}
 
-  listarPostagens(turmaId: number): Observable<Mural[]> {
-    return this.http.get<Mural[]>(`${this.apiUrl}/turma/${turmaId}`);
-  }
+  listarPostagens(turmaId: number, pageable: any): Observable<Page<Mural>> {
+    return this.http.get<Page<Mural>>(`${this.apiUrl}/turma/${turmaId}`, { params: pageable });
+}
+
+  //faltou update
 
   criarPostagem(mural: Mural): Observable<Mural> {
     return this.http.post<Mural>(this.apiUrl, mural);
