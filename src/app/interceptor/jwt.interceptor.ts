@@ -13,14 +13,14 @@ export class JwtInterceptor implements HttpInterceptor {
     if (req.url.includes('/auth/')) {
       return next.handle(req).pipe(
         catchError((err: HttpErrorResponse) => {
-          console.error('❌ Erro na requisição (sem token):', err);
+          console.error('Erro na requisição (sem token):', err);
           return throwError(() => err);
         })
       );
     }
 
     const token = localStorage.getItem('accessToken');
-    console.log('📡 Interceptando requisição para:', req.url, 'Token?', !!token);
+    console.log('Interceptando requisição para:', req.url, 'Token?', !!token);
 
     if (token) {
       req = req.clone({
@@ -30,7 +30,7 @@ export class JwtInterceptor implements HttpInterceptor {
 
     return next.handle(req).pipe(
       catchError((err: HttpErrorResponse) => {
-        console.error('❌ Erro na requisição:', err);
+        console.error('Erro na requisição:', err);
         return throwError(() => err);
       })
     );

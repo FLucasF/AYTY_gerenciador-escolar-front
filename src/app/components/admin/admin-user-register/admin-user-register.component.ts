@@ -6,6 +6,7 @@ import { ProfessorService } from '../../../services/professor.service';
 import { AlunoService } from '../../../services/aluno.service';
 import { TurmaService } from '../../../services/turma.service';
 import { Turma } from '../../../models/turma.model';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-admin-user-register',
@@ -156,18 +157,21 @@ export class AdminUserRegisterComponent implements OnInit {
     this.atualizarValidadores();
   }
 
-  /**
-   * Envia os dados do formulário para cadastro.
-   */
   salvarUsuario(): void {
     if (this.usuarioForm.invalid) {
-      console.warn('Formulário inválido. Verifique os campos antes de enviar.');
+      Swal.fire({
+        title: 'Erro!',
+        text: 'Preencha todos os campos corretamente antes de enviar.',
+        icon: 'warning',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'OK'
+      });
       return;
     }
-
+  
     let request: Observable<any> | null = null;
     const dadosUsuario = this.usuarioForm.value;
-
+  
     switch (this.tipoUsuarioSelecionado) {
       case 'administrador':
         request = this.adminService.cadastrarAdministrador({
@@ -180,7 +184,7 @@ export class AdminUserRegisterComponent implements OnInit {
           role: 'ROLE_ADMIN'
         });
         break;
-
+  
       case 'professor':
         request = this.professorService.cadastrarProfessor({
           nome: dadosUsuario.nome,
@@ -192,7 +196,7 @@ export class AdminUserRegisterComponent implements OnInit {
           role: 'ROLE_PROFESSOR'
         });
         break;
-
+  
       case 'aluno':
         request = this.alunoService.cadastrarAluno({
           nome: dadosUsuario.nome,
@@ -204,14 +208,32 @@ export class AdminUserRegisterComponent implements OnInit {
         });
         break;
     }
-
+  
     if (request) {
       request.subscribe({
         next: (res) => {
+          Swal.fire({
+            title: 'Sucesso!',
+            text: 'Usuário cadastrado com sucesso.',
+            icon: 'success',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK'
+          });
+  
           this.usuarioForm.reset();
           this.atualizarValidadores();
         },
-        error: (err) => console.error('Erro ao cadastrar usuário:', err)
+        error: (err) => {
+          Swal.fire({
+            title: 'Erro!',
+            text: 'Não foi possível cadastrar o usuário. Tente novamente.',
+            icon: 'error',
+            confirmButtonColor: '#d33',
+            confirmButtonText: 'Fechar'
+          });
+  
+          console.error('Erro ao cadastrar usuário:', err);
+        }
       });
     }
   }

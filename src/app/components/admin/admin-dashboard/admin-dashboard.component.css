@@ -1,5 +1,6 @@
-/* Estilos Globais */
-
+/* =========================== */
+/* 🌟 Estilos Globais */
+/* =========================== */
 body {
   font-family: 'Lato', sans-serif;
   background: #f6f7fa;
@@ -13,19 +14,14 @@ header {
   box-shadow: 0 1px 12px rgba(0, 0, 0, 0.04);
 }
 
-.search input {
-  border: 1px solid #d4d9e3;
-  padding: 10px;
-  width: 100%;
-}
-
-#main-content {
+/* =========================== */
+/* 🌟 Layout Principal */
+/* =========================== */
+#main-content,
+.user-dashboard {
   margin: 20px auto;
-  /* Centraliza horizontalmente */
   max-width: 1200px;
-  /* Define um limite máximo de largura */
   width: 100%;
-  /* Ocupa 100% da largura disponível dentro do max-width */
   padding: 20px;
   background: #ffffff;
   border-radius: 10px;
@@ -33,20 +29,10 @@ header {
   text-align: center;
 }
 
-.user-dashboard {
-  margin: 20px auto;
-  max-width: 1200px;
-  /* mesmo valor usado no dashboard */
-  width: 100%;
-  padding: 20px;
-  background: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  text-align: center;
-}
-
-/* Títulos e Filtro */
-.user-dashboard h1 {
+/* =========================== */
+/* 🌟 Títulos e Filtros */
+/* =========================== */
+h1 {
   font-size: 24px;
   color: #333;
   margin-bottom: 20px;
@@ -60,7 +46,22 @@ header {
   font-weight: bold;
 }
 
-/* Botão de Adicionar Usuário */
+.form-group select,
+.form-control {
+  max-width: 80%;
+  text-align-last: center;
+  margin: 0 auto;
+  display: block;
+}
+
+/* =========================== */
+/* 🌟 Botões */
+/* =========================== */
+.btn {
+  border-radius: 5px;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
 .btn-success {
   width: 100%;
   font-size: 18px;
@@ -74,23 +75,21 @@ header {
   margin-right: 8px;
 }
 
-/* Tabela de Usuários (Desktop) */
-.desktop-table {
-  display: block;
+.btn-sm {
+  font-size: 14px;
 }
 
-.desktop-table table {
+/* =========================== */
+/* 🌟 Tabela de Usuários */
+/* =========================== */
+.desktop-table {
+  display: block;
   width: 100%;
-  margin: 0 auto;
   border-collapse: collapse;
 }
 
-/* Lista de Usuários (Mobile) */
 .mobile-list {
   display: none;
-}
-
-.mobile-list .list-group {
   list-style: none;
   padding: 0;
 }
@@ -104,13 +103,9 @@ header {
   text-align: center;
 }
 
-/* Botões dentro dos itens da lista */
-.mobile-list .list-group-item .btn {
-  margin: 5px;
-  font-size: 14px;
-}
-
-/* Paginação */
+/* =========================== */
+/* 🌟 Paginação */
+/* =========================== */
 .pagination-container {
   display: flex;
   justify-content: center;
@@ -140,16 +135,13 @@ header {
   background: #333333;
 }
 
-/* Centralização do painel */
-.panel-default {
-  max-width: 80%;
-  margin: 20px auto;
+.page-item.hidden {
+  visibility: hidden;
 }
 
-.panel-heading .panel-title {
-  text-align: center;
-}
-
+/* =========================== */
+/* 🌟 Modal */
+/* =========================== */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -186,81 +178,48 @@ header {
   cursor: pointer;
 }
 
-
-.page-item.hidden {
-  visibility: hidden;
-  /* Esconde o botão mas mantém o espaço reservado */
-}
-
-
-/* Responsividade */
+/* =========================== */
+/* 🌟 Responsividade */
+/* =========================== */
 @media (max-width: 768px) {
-
   #main-content {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 0;
-    margin: 0;
-    background: transparent;
-    border: none;
-    box-shadow: none;
-    border-radius: 0;
-  }
-
-  /* Ajusta o seletor de filtro */
-  .form-group select {
-    max-width: 80%;
-    text-align-last: center;
-    /* Para garantir a centralização da opção selecionada */
-    margin: 0 auto;
-    display: block;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 0;
+      margin: 0;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      border-radius: 0;
   }
 
   .pagination-container {
-    margin-top: 10px;
-    /* reduz a margem superior */
+      margin-top: 10px;
   }
 
   .page-item {
-    padding: 6px 10px;
-    /* diminui o padding */
-    font-size: 14px;
-    /* reduz o tamanho da fonte */
+      padding: 6px 10px;
+      font-size: 14px;
   }
 
   .page-item.prev,
   .page-item.next {
-    transform: translateY(-5px);
-    /* sobe as setas */
+      transform: translateY(-5px);
   }
 
-  .btn.btn-success.btn-block {
-    width: 70%;
-    /* define a largura em 80% do container */
-    margin: 0 auto;
-    /* centraliza horizontalmente */
-    display: block;
-    /* garante que o margin auto funcione */
+  .btn-success {
+      width: 70%;
+      margin: 0 auto;
+      display: block;
   }
 
   .desktop-table {
-    display: none;
+      display: none;
   }
 
   .mobile-list {
-    display: block;
-    margin: 0 auto;
-    /* centraliza horizontalmente */
-    max-width: 90%;
-  }
-
-  .panel-default {
-    max-width: 100%;
-    margin: 10px auto;
-  }
-
-  .table-responsive table {
-    width: 100%;
-    margin: 0;
+      display: block;
+      margin: 0 auto;
+      max-width: 90%;
   }
 }

@@ -8,6 +8,7 @@ import { Pageable } from '../../../models/pageable.model';
 import { Page } from '../../../models/page.model';
 import { Router } from '@angular/router';
 import { PageEvent } from '@angular/material/paginator';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-admin-turmas',
@@ -110,7 +111,8 @@ export class AdminTurmasComponent implements OnInit {
    * Carrega os professores e atualiza o Map para exibição.
    */
   loadProfessores(): void {
-    this.professorService.listarProfessores().subscribe({
+    const pageable = { page: 0, size: 10 };
+    this.professorService.listarProfessores(pageable).subscribe({
       next: (res) => {
         this.professores = res.content;
         this.updateProfessoresMap();
@@ -136,9 +138,16 @@ export class AdminTurmasComponent implements OnInit {
    */
   addTurma(): void {
     if (this.novaTurmaForm.invalid) {
-      alert('Todos os campos devem ser preenchidos corretamente!');
+      Swal.fire({
+        title: 'Erro!',
+        text: 'Todos os campos devem ser preenchidos corretamente!',
+        icon: 'warning',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'OK'
+      });
       return;
     }
+
     const novaTurma: Partial<Turma> = {
       nome: this.novaTurmaForm.get('nome')?.value,
       codigo: this.novaTurmaForm.get('codigo')?.value,
@@ -148,13 +157,19 @@ export class AdminTurmasComponent implements OnInit {
 
     this.turmaService.adicionarTurma(novaTurma).subscribe({
       next: () => {
+        Swal.fire({
+          title: 'Sucesso!',
+          text: 'Turma cadastrada com sucesso!',
+          icon: 'success',
+          confirmButtonColor: '#3085d6',
+          confirmButtonText: 'OK'
+        });
         this.loadTurmas();
         this.novaTurmaForm.reset();
       },
       error: (err) => console.error('Erro ao adicionar turma:', err)
     });
   }
-
   /**
    * Inicia a edição de uma turma, armazenando seus dados originais
    * e populando o formulário de edição.
@@ -175,26 +190,48 @@ export class AdminTurmasComponent implements OnInit {
    */
   saveEdit(): void {
     if (!this.turmaEditando?.id || this.editForm.invalid) {
-      console.error('Formulário inválido ou turma a ser editada não definida.');
+      Swal.fire({
+        title: 'Erro!',
+        text: 'Preencha os campos corretamente antes de salvar!',
+        icon: 'warning',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'OK'
+      });
       return;
     }
 
-    const dadosAtualizados: Partial<Turma> = {
-      nome: this.editForm.get('nome')?.value || this.turmaOriginal.nome,
-      codigo: this.editForm.get('codigo')?.value || this.turmaOriginal.codigo,
-      semestre: this.editForm.get('semestre')?.value || this.turmaOriginal.semestre,
-      professorId: this.editForm.get('professorId')?.value || this.turmaOriginal.professorId
-    };
+    Swal.fire({
+      title: 'Confirmar edição?',
+      text: 'Deseja salvar as alterações nesta turma?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sim, salvar!',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const dadosAtualizados: Partial<Turma> = this.editForm.value;
 
-    this.turmaService.atualizarTurma(this.turmaEditando.id, dadosAtualizados).subscribe({
-      next: (turmaAtualizada) => {
-        const index = this.turmas.findIndex(t => t.id === turmaAtualizada.id);
-        if (index !== -1) {
-          this.turmas[index] = turmaAtualizada;
-        }
-        this.turmaEditando = null;
-      },
-      error: (err) => console.error('Erro ao atualizar turma:', err)
+        this.turmaService.atualizarTurma(this.turmaEditando!.id, dadosAtualizados).subscribe({
+          next: (turmaAtualizada) => {
+            const index = this.turmas.findIndex(t => t.id === turmaAtualizada.id);
+            if (index !== -1) {
+              this.turmas[index] = turmaAtualizada;
+            }
+            this.turmaEditando = null;
+
+            Swal.fire({
+              title: 'Sucesso!',
+              text: 'Turma editada com sucesso!',
+              icon: 'success',
+              confirmButtonColor: '#3085d6',
+              confirmButtonText: 'OK'
+            });
+          },
+          error: (err) => console.error('Erro ao atualizar turma:', err)
+        });
+      }
     });
   }
 
@@ -202,19 +239,51 @@ export class AdminTurmasComponent implements OnInit {
    * Cancela a edição atual, limpando os dados da turma em edição.
    */
   cancelEdit(): void {
-    this.turmaEditando = null;
+    Swal.fire({
+      title: 'Cancelar edição?',
+      text: 'As alterações feitas não serão salvas.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sim, cancelar!',
+      cancelButtonText: 'Continuar editando'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.turmaEditando = null;
+      }
+    });
   }
-
   /**
    * Exclui uma turma após confirmação do usuário.
    */
   deleteTurma(id: number): void {
-    if (confirm('Tem certeza que deseja excluir esta turma?')) {
-      this.turmaService.excluirTurma(id).subscribe({
-        next: () => this.loadTurmas(),
-        error: (err) => console.error(`Erro ao excluir turma ${id}:`, err)
-      });
-    }
+    Swal.fire({
+      title: 'Tem certeza?',
+      text: 'Essa ação não pode ser desfeita!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sim, excluir!',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.turmaService.excluirTurma(id).subscribe({
+          next: () => {
+            Swal.fire({
+              title: 'Excluído!',
+              text: 'A turma foi removida com sucesso.',
+              icon: 'success',
+              confirmButtonColor: '#3085d6',
+              confirmButtonText: 'OK'
+            });
+            this.loadTurmas();
+          },
+          error: (err) => console.error(`Erro ao excluir turma ${id}:`, err)
+        });
+      }
+    });
   }
 
   /**

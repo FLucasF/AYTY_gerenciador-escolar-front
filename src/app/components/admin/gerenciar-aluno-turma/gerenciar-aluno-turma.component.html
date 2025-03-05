@@ -3,24 +3,26 @@
   <hr />
 
   <!-- Lista de Alunos Matriculados -->
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h3 class="panel-title">Alunos Matriculados</h3>
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">Alunos Matriculados</h3>
     </div>
-    <div class="panel-body">
+    <div class="card-body">
       <ul class="list-group">
-        <li class="list-group-item" *ngFor="let aluno of paginaAlunos?.content">
-          <span>{{ aluno.nome }}</span>
-          <button class="btn btn-danger btn-sm float-right" (click)="removerAlunoDaTurma(aluno.id!)"
-            [disabled]="loadingAlunos">
+        <li class="list-group-item d-flex align-items-center" *ngFor="let aluno of paginaAlunos?.content">
+          <div class="aluno-nome flex-grow-1">
+            {{ aluno.nome }}
+          </div>
+          <button class="btn btn-danger btn-sm ms-3" (click)="removerAlunoDaTurma(aluno.id!)" [disabled]="loadingAlunos">
             <i class="fa fa-trash"></i> Remover
           </button>
         </li>
       </ul>
+      
 
-      <div *ngIf="paginaAlunos?.content?.length === 0" class="text-center text-muted mt-3">
-        <p>Nenhum aluno matriculado.</p>
-      </div>
+      <p *ngIf="paginaAlunos?.content?.length === 0" class="text-center text-muted mt-3">
+        Nenhum aluno matriculado.
+      </p>
     </div>
   </div>
 
@@ -30,11 +32,11 @@
   </mat-paginator>
 
   <!-- Adicionar Aluno -->
-  <div class="panel panel-default mt-4">
-    <div class="panel-heading">
-      <h3 class="panel-title">Adicionar Aluno</h3>
+  <div class="card mt-4">
+    <div class="card-header">
+      <h3 class="card-title">Adicionar Aluno</h3>
     </div>
-    <div class="panel-body">
+    <div class="card-body">
       <div class="form-group">
         <select class="form-control" [(ngModel)]="alunoSelecionadoParaAdicionar" [disabled]="loadingAlunos">
           <option [ngValue]="null">Selecione um aluno</option>
@@ -45,22 +47,22 @@
       </div>
 
       <div *ngIf="loadingAlunos" class="text-center mt-2">
-        <div class="spinner-border text-primary" role="status">
+        <div class="spinner-border text-primary" role="status" aria-label="Carregando">
           <span class="sr-only">Carregando...</span>
         </div>
       </div>
 
       <button class="btn btn-primary btn-block mt-3" (click)="adicionarAlunoNaTurma()"
         [disabled]="!alunoSelecionadoParaAdicionar || loadingAlunos">
-        <i class="fa fa-user-plus mr-2"></i> Matricular Aluno
+        <i class="fa fa-user-plus"></i> Matricular Aluno
       </button>
     </div>
   </div>
 
   <!-- Botão Fechar -->
-  <div class="modal-footer mt-4">
+  <div class="text-center mt-4">
     <button type="button" class="btn btn-secondary" (click)="voltarParaTurmas()">
-      <i class="fa fa-times mr-2"></i> Fechar
+      <i class="fa fa-times"></i> Fechar
     </button>
   </div>
 </div>

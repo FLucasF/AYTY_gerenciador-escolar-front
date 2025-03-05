@@ -7,13 +7,13 @@ import { Professor } from '../models/professor.model';
 import { Administrador } from '../models/administrador.model';
 import { Page } from '../models/page.model';
 import { map } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UsuarioService {
-  private apiUrl = 'http://localhost:8090';
-  private baseUrl = `${this.apiUrl}/usuarios`;
+  private baseUrl = `${environment.apiBaseUrl}${environment.endpoints.usuario}`;
 
   constructor(private http: HttpClient) {}
 

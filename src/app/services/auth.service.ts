@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
+import { environment } from '../../environments/environment';
 
 interface LoginResponse {
   usuario: any;
@@ -15,7 +16,7 @@ interface LoginResponse {
 })
 
 export class AuthService {
-  private apiUrl = 'http://localhost:8090/auth';
+  private baseUrl = `${environment.apiBaseUrl}${environment.endpoints.auth}`;
 
   constructor(
     private http: HttpClient,
@@ -25,7 +26,7 @@ export class AuthService {
 
   login(credentials: any): Observable<LoginResponse> {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, credentials, { headers });
+    return this.http.post<LoginResponse>(`${this.baseUrl}/login`, credentials, { headers });
   }
 
   handleLoginResponse(response: any): void {
@@ -41,7 +42,7 @@ export class AuthService {
     localStorage.setItem('userEmail', response.email || '');
 
     const decoded = this.jwtHelper.decodeToken(response.accessToken);
-    console.log('🔍 Token decodificado:', decoded);
+    console.log('Token decodificado:', decoded);
 
     const userRole = response.role || (decoded?.role ? decoded.role.toUpperCase() : 'UNKNOWN');
     localStorage.setItem('role', userRole);

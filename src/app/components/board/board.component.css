@@ -18,6 +18,9 @@ body {
   color: #0e1a35;
 }
 
+/* =========================== */
+/* 🌟 Estilizando Tabelas */
+/* =========================== */
 .table-responsive {
   overflow-x: auto;
 }
@@ -26,6 +29,11 @@ body {
   width: 100%;
   margin: 0 auto;
   border-collapse: collapse;
+}
+
+.table th, .table td {
+  padding: 10px;
+  text-align: left;
 }
 
 .table th {
@@ -45,22 +53,20 @@ body {
 /* =========================== */
 /* 🌟 Estilizando o Mural */
 /* =========================== */
-.mural-container {
-  background: #f9f9f9;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.nova-postagem-container {
+.mural-container, 
+.nova-postagem-container, 
+.postagem-card {
   background: #fff;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.1);
+}
+
+.nova-postagem-container {
   margin-bottom: 20px;
 }
 
-.nova-postagem-container input,
+.nova-postagem-container input, 
 .nova-postagem-container textarea {
   width: 100%;
   padding: 10px;
@@ -70,7 +76,7 @@ body {
   transition: border-color 0.3s ease-in-out;
 }
 
-.nova-postagem-container input:focus,
+.nova-postagem-container input:focus, 
 .nova-postagem-container textarea:focus {
   border-color: #007bff;
   outline: none;
@@ -90,12 +96,11 @@ body {
   background: #0056b3;
 }
 
+/* =========================== */
+/* 🌟 Estilizando Postagens */
+/* =========================== */
 .postagem-card {
-  background: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
   margin-bottom: 15px;
-  padding: 15px;
   transition: transform 0.2s ease-in-out, box-shadow 0.3s ease;
 }
 
@@ -125,6 +130,13 @@ body {
   color: darkred;
 }
 
+.voltar-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+
 /* =========================== */
 /* 📱 Responsividade */
 /* =========================== */
@@ -132,7 +144,6 @@ body {
   .user-dashboard {
     padding: 20px;
   }
-
   .mural-container {
     padding: 15px;
   }

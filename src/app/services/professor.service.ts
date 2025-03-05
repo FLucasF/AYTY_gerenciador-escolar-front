@@ -1,25 +1,27 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Professor } from '../models/professor.model';
 import { Page } from '../models/page.model';
+import { environment } from '../../environments/environment';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProfessorService {
-  private baseUrl = 'http://localhost:8090/professores';
+  private baseUrl = `${environment.apiBaseUrl}${environment.endpoints.professor}`;
 
   constructor(private http: HttpClient) {}
 
   cadastrarProfessor(professor: Professor): Observable<Professor> {
     return this.http.post<Professor>(this.baseUrl, professor);
   }
-
-  listarProfessores(page: number = 0, size: number = 10): Observable<Page<Professor>> {
-    return this.http.get<Page<Professor>>(`${this.baseUrl}?page=${page}&size=${size}`);
+  listarProfessores(pageable: any): Observable<Page<Professor>> {
+    const params = new HttpParams({ fromObject: pageable });
+    return this.http.get<Page<Professor>>(`${this.baseUrl}`, { params });
   }
-
+  
   buscarProfessorPorId(id: number): Observable<Professor> {
     return this.http.get<Professor>(`${this.baseUrl}/${id}`);
   }

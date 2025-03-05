@@ -8,6 +8,7 @@ import { ProfessorService } from '../../../services/professor.service';
 import { AdministradorService } from '../../../services/administrador.service';
 import { Page } from '../../../models/page.model';
 import { PageEvent } from '@angular/material/paginator';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -34,7 +35,8 @@ export class AdminDashboardComponent implements OnInit {
     private alunoService: AlunoService,
     private professorService: ProfessorService,
     private administradorService: AdministradorService,
-    private router: Router
+    private router: Router,
+
   ) { }
 
   ngOnInit(): void {
@@ -74,23 +76,40 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   excluirUsuario(usuario: any): void {
-    if (confirm(`Tem certeza que deseja excluir ${usuario.nome}?`)) {
-      let request$: Observable<any>;
-      switch (usuario.tipo) {
-        case 'aluno': request$ = this.alunoService.excluirAluno(usuario.id); break;
-        case 'professor': request$ = this.professorService.excluirProfessor(usuario.id); break;
-        case 'administrador': request$ = this.administradorService.excluirAdministrador(usuario.id); break;
-        default: console.error('Erro: Tipo de usuário desconhecido'); return;
-      }
+    Swal.fire({
+      title: `Tem certeza que deseja excluir ${usuario.nome}?`,
+      text: "Essa ação não pode ser desfeita!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sim, excluir!',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        let request$: Observable<any>;
+        switch (usuario.tipo) {
+          case 'aluno': request$ = this.alunoService.excluirAluno(usuario.id); break;
+          case 'professor': request$ = this.professorService.excluirProfessor(usuario.id); break;
+          case 'administrador': request$ = this.administradorService.excluirAdministrador(usuario.id); break;
+          default: console.error('Erro: Tipo de usuário desconhecido'); return;
+        }
 
-      request$.subscribe({
-        next: () => {
-          console.log(`Usuário ${usuario.nome} excluído com sucesso!`);
-          this.carregarUsuarios();
-        },
-        error: (err) => console.error(`Erro ao excluir ${usuario.tipo}:`, err),
-      });
-    }
+        request$.subscribe({
+          next: () => {
+            Swal.fire({
+              title: 'Excluído!',
+              text: `${usuario.nome} foi removido com sucesso.`,
+              icon: 'success',
+              confirmButtonColor: '#3085d6',
+              confirmButtonText: 'OK'
+            });
+            this.carregarUsuarios();
+          },
+          error: (err) => console.error(`Erro ao excluir ${usuario.tipo}:`, err),
+        });
+      }
+    });
   }
 
   irParaEdicao(usuario: any): void {
@@ -125,7 +144,7 @@ export class AdminDashboardComponent implements OnInit {
     if (request) {
       request.subscribe({
         next: (dados) => {
-          console.log("✅ Dados completos do usurio carregados:", dados);
+          console.log("Dados completos do usurio carregados:", dados);
           this.usuarioEditando = dados;
           this.editForm.patchValue(dados);
         },
@@ -136,46 +155,77 @@ export class AdminDashboardComponent implements OnInit {
 
   salvarEdicao(): void {
     if (this.editForm.invalid) {
-      console.warn("Formulário invalido:", this.editForm.value);
-      alert('Por favor, preencha os campos corretamente');
+      Swal.fire({
+        title: 'Erro!',
+        text: 'Preencha os campos corretamente antes de salvar.',
+        icon: 'warning',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'OK'
+      });
       return;
     }
 
-    const dadosAtualizados = { ...this.usuarioOriginal, ...this.editForm.value };
+    Swal.fire({
+      title: 'Confirmar edição?',
+      text: 'Deseja salvar as alterações neste usuário?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sim, salvar!',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const dadosAtualizados = { ...this.usuarioOriginal, ...this.editForm.value };
 
-    if (!this.editForm.get('senha')?.dirty || !this.editForm.get('senha')?.value) {
-      dadosAtualizados.senha = this.usuarioOriginal.senha;
-    }
+        let request: Observable<any> | null = null;
+        switch (this.tipoUsuario) {
+          case 'administrador':
+            request = this.administradorService.atualizarAdministrador(this.usuarioEditando.id, dadosAtualizados);
+            break;
+          case 'professor':
+            request = this.professorService.atualizarProfessor(this.usuarioEditando.id, dadosAtualizados);
+            break;
+          case 'aluno':
+            request = this.alunoService.atualizarAluno(this.usuarioEditando.id, dadosAtualizados);
+            break;
+        }
 
-    console.log("Dados enviados:", dadosAtualizados);
-
-    let request: Observable<any> | null = null;
-    switch (this.tipoUsuario) {
-      case 'administrador':
-        request = this.administradorService.atualizarAdministrador(this.usuarioEditando.id, dadosAtualizados);
-        break;
-      case 'professor':
-        request = this.professorService.atualizarProfessor(this.usuarioEditando.id, dadosAtualizados);
-        break;
-      case 'aluno':
-        request = this.alunoService.atualizarAluno(this.usuarioEditando.id, dadosAtualizados);
-        break;
-    }
-    if (request) {
-      request.subscribe({
-        next: () => {
-          alert('✅ Usuário atualizado com sucesso!');
-          this.usuarioEditando = null;
-          this.carregarUsuarios();
-        },
-        error: (err) => console.error('Erro ao atualizar usuário:', err)
-      });
-    }
+        if (request) {
+          request.subscribe({
+            next: () => {
+              Swal.fire({
+                title: 'Sucesso!',
+                text: 'Usuário atualizado com sucesso!',
+                icon: 'success',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'OK'
+              });
+              this.usuarioEditando = null;
+              this.carregarUsuarios();
+            },
+            error: (err) => console.error('Erro ao atualizar usuário:', err)
+          });
+        }
+      }
+    });
   }
 
   cancelarEdicao(): void {
-    console.log("Cancelando edição");
-    this.usuarioEditando = null;
+    Swal.fire({
+      title: 'Cancelar edição?',
+      text: 'As alterações feitas não serão salvas.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sim, cancelar!',
+      cancelButtonText: 'Continuar editando'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.usuarioEditando = null;
+      }
+    });
   }
 
   private adicionarCamposEspecificos(): void {
@@ -204,21 +254,33 @@ export class AdminDashboardComponent implements OnInit {
     this.editForm = this.fb.group({
       nome: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
-      cpf: ['', [Validators.required, Validators.pattern(/^\d{11}$/)]]
+      cpf: ['', [Validators.required, Validators.pattern(/^\d{11}$/)]],
+      senha: ['', [
+        Validators.minLength(8),
+        Validators.maxLength(20),
+        Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/)
+      ]]
     });
   }
 
   filtrarUsuarios(): void {
-    console.log(`Filtrando usuários - Tipo selecionado: ${this.tipoUsuarioSelecionado}`);
-
+    console.log(`🔎 Filtrando usuários pelo tipo: ${this.tipoUsuarioSelecionado}`);
+    console.log("📌 Lista original de usuários:", this.usuarios);
+  
+    if (!this.usuarios || this.usuarios.length === 0) {
+      console.warn("⚠️ Lista de usuários vazia ou indefinida!");
+      return;
+    }
+  
     if (this.tipoUsuarioSelecionado === 'todos') {
-      this.usuariosFiltrados = [...this.usuarios];
+      this.usuariosFiltrados = [...this.usuarios]; // Clona a lista completa
     } else {
       this.usuariosFiltrados = this.usuarios.filter(user => user.tipo === this.tipoUsuarioSelecionado);
     }
-
-    console.log("🔎 Usuários filtrados:", this.usuariosFiltrados);
+  
+    console.log("✅ Lista filtrada:", this.usuariosFiltrados);
   }
+  
 
   definirTipo(role: string): string {
     console.log(`Convertendo role "${role}" para tipo...`);

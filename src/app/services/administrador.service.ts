@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Administrador } from '../models/administrador.model';
 import { Page } from '../models/page.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AdministradorService {
-  private baseUrl = 'http://localhost:8090/administradores';
+  private baseUrl = `${environment.apiBaseUrl}${environment.endpoints.administrador}`;
 
   constructor(private http: HttpClient) {}
 
@@ -16,9 +17,10 @@ export class AdministradorService {
     return this.http.post<Administrador>(this.baseUrl, admin);
   }
 
-  listarAdministradores(page: number = 0, size: number = 10): Observable<Page<Administrador>> {
-     return this.http.get<Page<Administrador>>(`${this.baseUrl}?page=${page}&size=${size}`);
-  }
+  listarAdministradores(pageable: any): Observable<Page<Administrador>> {
+    const params = new HttpParams({ fromObject: pageable });
+    return this.http.get<Page<Administrador>>(`${this.baseUrl}`, { params });
+  }  
 
   buscarAdministradorPorId(id: number): Observable<Administrador> {
     return this.http.get<Administrador>(`${this.baseUrl}/${id}`);

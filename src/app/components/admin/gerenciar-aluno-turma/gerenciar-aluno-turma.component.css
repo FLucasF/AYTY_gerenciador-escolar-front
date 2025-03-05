@@ -1,4 +1,6 @@
-/* Estilo geral */
+/* =========================== */
+/* 🌟 Estilos Gerais */
+/* =========================== */
 body {
     font-family: 'Lato', sans-serif;
     background: #f6f7fa;
@@ -6,7 +8,19 @@ body {
     padding: 0;
 }
 
-/* Sidebar */
+.user-dashboard {
+    padding: 30px;
+}
+
+.user-dashboard h1 {
+    font-size: 28px;
+    font-weight: bold;
+    color: #0e1a35;
+}
+
+/* =========================== */
+/* 🌟 Sidebar (Menu Lateral) */
+/* =========================== */
 #navigation {
     background: #0e1a35;
     height: 100vh;
@@ -34,7 +48,9 @@ body {
     vertical-align: top;
 }
 
-/* Menu lateral */
+/* =========================== */
+/* 🌟 Navegação Lateral */
+/* =========================== */
 .navi ul {
     padding: 0;
     list-style: none;
@@ -46,7 +62,7 @@ body {
     font-size: 16px;
     color: white;
     border-bottom: 1px solid #0d172e;
-    transition: all 0.3s ease;
+    transition: background 0.3s ease, border-left 0.3s ease;
 }
 
 .navi a:hover,
@@ -55,18 +71,9 @@ body {
     border-left: 5px solid #5584ff;
 }
 
-/* Painel principal */
-.user-dashboard {
-    padding: 30px;
-}
-
-.user-dashboard h1 {
-    font-size: 28px;
-    font-weight: bold;
-    color: #0e1a35;
-}
-
-/* Lista de alunos */
+/* =========================== */
+/* 🌟 Lista de Alunos */
+/* =========================== */
 .list-group-item {
     border: 1px solid #ddd;
     padding: 15px;
@@ -74,20 +81,26 @@ body {
     justify-content: space-between;
     align-items: center;
     background: #ffffff;
-    transition: all 0.3s ease;
+    transition: background 0.3s ease;
+    gap: 10px;
 }
 
 .list-group-item:hover {
     background: #f0f4ff;
 }
 
-.list-group-item .btn {
-    margin-left: 10px;
+.aluno-nome {
+    word-break: break-word;
+    overflow-wrap: break-word;
+    flex-grow: 1;
 }
 
-/* Botões */
+/* =========================== */
+/* 🌟 Botões */
+/* =========================== */
 .btn {
     border-radius: 5px;
+    transition: background 0.3s ease, transform 0.2s ease;
 }
 
 .btn-sm {
@@ -97,32 +110,31 @@ body {
 
 .btn-success {
     background-color: #28a745;
-    border: none;
+}
+
+.btn-warning {
+    background-color: #ffc107;
+}
+
+.btn-danger {
+    background-color: #dc3545;
 }
 
 .btn-success:hover {
     background-color: #218838;
 }
 
-.btn-warning {
-    background-color: #ffc107;
-    border: none;
-}
-
 .btn-warning:hover {
     background-color: #e0a800;
-}
-
-.btn-danger {
-    background-color: #dc3545;
-    border: none;
 }
 
 .btn-danger:hover {
     background-color: #c82333;
 }
 
-/* Paginação */
+/* =========================== */
+/* 🌟 Paginação */
+/* =========================== */
 .pagination-container {
     display: flex;
     justify-content: center;
@@ -137,7 +149,7 @@ body {
     background-color: #007bff;
     color: white;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: background 0.3s ease;
 }
 
 .pagination-container button:disabled {
@@ -147,4 +159,13 @@ body {
 
 .pagination-container button:hover:not(:disabled) {
     background-color: #0056b3;
+}
+
+/* =========================== */
+/* 📱 Responsividade */
+/* =========================== */
+@media (max-width: 768px) {
+    .user-dashboard {
+        padding: 20px;
+    }
 }

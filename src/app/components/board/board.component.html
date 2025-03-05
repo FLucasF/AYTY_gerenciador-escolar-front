@@ -2,8 +2,8 @@
   <h1 class="mb-5" *ngIf="!turmaSelecionada">Minhas Turmas</h1>
 
   <div *ngIf="!turmaSelecionada">
-    <!-- Lista de Turmas -->
-    <div class="table-responsive">
+    <!-- 🔹 Tabela/Listagem de Turmas -->
+    <div class="table-responsive desktop-table d-none d-md-block">
       <table class="table table-bordered table-hover table-striped">
         <thead>
           <tr>
@@ -24,47 +24,65 @@
       </table>
     </div>
 
-    <!-- Paginação das Turmas -->
+    <!-- 🔹 Listagem de Turmas (Mobile) -->
+    <div class="mobile-list d-block d-md-none">
+      <ng-container *ngFor="let turma of turmas">
+        <div class="list-group-item clickable-row" (click)="selectTurma(turma)">
+          <div><strong>Nome:</strong> {{ turma.nome }}</div>
+          <div><strong>Código:</strong> {{ turma.codigo }}</div>
+          <div><strong>Semestre:</strong> {{ turma.semestre }}</div>
+          <div><strong>Professor:</strong> {{ getProfessorNome(turma.professorId) }}</div>
+        </div>
+      </ng-container>
+    </div>
+
+    <!-- 🔹 Paginação das Turmas -->
     <mat-paginator [length]="totalElements" [pageSize]="size" [pageIndex]="currentPage"
       [pageSizeOptions]="[5, 7, 10, 20]" (page)="mudarPagina($event)">
     </mat-paginator>
   </div>
 
-  <!-- Detalhes da Turma Selecionada -->
+  <!-- 🔹 Detalhes da Turma Selecionada -->
   <div *ngIf="turmaSelecionada">
     <div class="turma-detalhes">
       <h2>Turma: {{ turmaSelecionada.nome }}</h2>
       <h4 class="text-primary"><strong>Professor: {{ getProfessorNome(turmaSelecionada.professorId) }}</strong></h4>
 
-      <!-- Alunos Matriculados -->
+      <!-- 🔹 Alunos Matriculados -->
       <div>
         <h4>Alunos Matriculados:</h4>
-        <table class="table table-striped" *ngIf="alunosMatriculados.length > 0; else semAlunos">
-          <thead>
-            <tr>
-              <th>Nome</th>
-              <th>Email</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let aluno of alunosMatriculados">
-              <td>{{ aluno.nome }}</td>
-              <td>{{ aluno.email }}</td>
-            </tr>
-          </tbody>
-        </table>
+
+        <!-- 🔹 Listagem de Alunos -->
+        <ng-container *ngIf="alunosMatriculados.length > 0; else semAlunos">
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr><th>Nome</th><th>Email</th></tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let aluno of alunosMatriculados">
+                  <td>{{ aluno.nome }}</td>
+                  <td>{{ aluno.email }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+      
+        </ng-container>
+
         <ng-template #semAlunos>
           <p class="text-muted">Nenhum aluno matriculado.</p>
         </ng-template>
 
-        <!-- Paginação de Alunos -->
+        <!-- 🔹 Paginação de Alunos -->
         <mat-paginator [length]="totalAlunos" [pageSize]="sizeAlunos" [pageIndex]="currentPageAlunos"
           [pageSizeOptions]="[5, 10, 20]" (page)="mudarPaginaAlunos($event)">
         </mat-paginator>
       </div>
 
-      <!-- Mural da Turma -->
-      <h2>Mural</h2>
+      <!-- 🔹 Mural da Turma -->
+      <h2 class="mt-2">Mural</h2>
       <div class="mural-container">
         <div class="nova-postagem-container" *ngIf="isProfessor">
           <input type="text" placeholder="Título da Postagem" [(ngModel)]="novaPostagem.titulo">
@@ -73,7 +91,7 @@
         </div>
 
         <h3>Postagens Recentes</h3>
-        <div *ngIf="postagens.length > 0; else semPostagens">
+        <ng-container *ngIf="postagens.length > 0; else semPostagens">
           <div *ngFor="let postagem of postagens" class="postagem-card">
             <div class="postagem-header">
               <span><strong>Título:</strong> {{ postagem.titulo }}</span>
@@ -82,18 +100,21 @@
             </div>
             <p class="postagem-conteudo">{{ postagem.conteudo }}</p>
           </div>
-        </div>
+        </ng-container>
+
         <ng-template #semPostagens>
           <p class="text-muted">Nenhuma postagem disponível.</p>
         </ng-template>
 
-        <!-- Paginação das Postagens -->
+        <!-- 🔹 Paginação das Postagens -->
         <mat-paginator [length]="totalPostagens" [pageSize]="sizePostagens" [pageIndex]="currentPagePostagens"
           [pageSizeOptions]="[3, 5, 10]" (page)="mudarPaginaPostagens($event)">
         </mat-paginator>
       </div>
 
-      <button class="btn btn-secondary" (click)="voltarParaTurmas()">Voltar para Lista de Turmas</button>
+      <div class="voltar-container">
+        <button class="btn btn-secondary" (click)="voltarParaTurmas()">Voltar para Lista de Turmas</button>
+      </div>
     </div>
   </div>
 </div>

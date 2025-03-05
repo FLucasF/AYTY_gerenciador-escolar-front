@@ -13,7 +13,7 @@ export class AuthGuard implements CanActivate {
     const token = localStorage.getItem('accessToken');
 
     if (!token || this.jwtHelper.isTokenExpired(token)) {
-      console.warn('🚫 Token inválido ou expirado, redirecionando...');
+      console.warn('Token inválido ou expirado, redirecionando...');
       this.router.navigate(['/login']);
       return false;
     }
