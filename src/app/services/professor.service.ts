@@ -17,6 +17,7 @@ export class ProfessorService {
   cadastrarProfessor(professor: Professor): Observable<Professor> {
     return this.http.post<Professor>(this.baseUrl, professor);
   }
+  
   listarProfessores(pageable: any): Observable<Page<Professor>> {
     const params = new HttpParams({ fromObject: pageable });
     return this.http.get<Page<Professor>>(`${this.baseUrl}`, { params });
