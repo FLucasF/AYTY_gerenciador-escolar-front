@@ -61,6 +61,44 @@ body {
   box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.1);
 }
 
+.info-turma {
+  display: block; /* Garante que ele ocupe toda a largura */
+  width: 100%; /* Ocupar a largura total para forçar a próxima linha */
+  text-align: right; /* Mantém o conteúdo alinhado à direita */
+  margin-bottom: 10px; /* Adiciona um espaço entre a turma e a lista */
+}
+
+.desktop-table {
+  display: block;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.mobile-list {
+  display: none;
+  list-style: none;
+  padding: 0;
+}
+
+.mobile-list .list-group-item {
+  background: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 15px;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+h3 {
+  color: #4b4b4b;
+}
+.mural-container {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
 .nova-postagem-container {
   margin-bottom: 20px;
 }
@@ -135,6 +173,12 @@ body {
   margin-top: 20px;
 }
 
+.postagem-conteudo {
+  font-size: 14px;
+  text-align: center;
+  line-height: 1.4;
+  color: #444;
+}
 
 /* =========================== */
 /* 📱 Responsividade */
