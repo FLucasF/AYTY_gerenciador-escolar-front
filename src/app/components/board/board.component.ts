@@ -113,75 +113,7 @@ export class BoardComponent implements OnInit {
 
 
 
-  criarPostagem(): void {
-    if (!this.novaPostagem.titulo || !this.novaPostagem.conteudo) {
-      Swal.fire('Atenção!', 'Preencha todos os campos antes de publicar!', 'warning');
-      return;
-    }
-
-    if (this.turmaSelecionada?.id) {
-      const muralRequest = {
-        titulo: this.novaPostagem.titulo,
-        conteudo: this.novaPostagem.conteudo,
-        turmaId: this.turmaSelecionada.id,
-        professorId: this.usuario.id
-      };
-
-      this.muralService.criarPostagem(muralRequest).subscribe({
-        next: (res) => {
-          this.postagens.unshift(res);
-          this.novaPostagem = { titulo: '', conteudo: '' };
-
-          Swal.fire({
-            title: 'Postagem criada!',
-            text: 'Sua postagem foi publicada com sucesso.',
-            icon: 'success',
-            timer: 2000,
-            showConfirmButton: false
-          });
-
-          console.log('Postagem criada:', res);
-        },
-        error: (err) => {
-          console.error('Erro ao criar postagem:', err);
-          Swal.fire('Erro!', 'Não foi possível criar a postagem.', 'error');
-        }
-      });
-    }
-  }
-
-
-  excluirPostagem(id: number): void {
-    if (!this.turmaSelecionada?.id) {
-      console.error("Nenhuma turma selecionada para excluir postagens.");
-      return;
-    }
-
-    Swal.fire({
-      title: 'Tem certeza?',
-      text: "Essa ação não pode ser desfeita!",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Sim, excluir!',
-      cancelButtonText: 'Cancelar'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.muralService.excluirPostagem(id).subscribe({
-          next: () => {
-            Swal.fire('Excluído!', 'A postagem foi removida.', 'success');
-            this.carregarPostagens();
-          },
-          error: (err) => {
-            console.error('Erro ao excluir postagem:', err);
-            Swal.fire('Erro!', 'Não foi possível excluir a postagem.', 'error');
-          }
-        });
-      }
-    });
-  }
-
+  
 
 
   voltarParaTurmas(): void {
@@ -292,22 +224,132 @@ export class BoardComponent implements OnInit {
     });
   }
 
+
+
+
+
+
+
+
+
+  novaImagem: File | null = null; // Adicionando a propriedade para armazenar a imagem
+
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+  
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0]; // Pega o primeiro arquivo selecionado
+      this.novaImagem = file; // Armazena o arquivo para envio posterior
+      console.log("Imagem selecionada:", file.name);
+    }
+  }
+  
+
+  criarPostagem(): void {
+    if (!this.novaPostagem.titulo || !this.novaPostagem.conteudo) {
+      Swal.fire('Atenção!', 'Preencha todos os campos antes de publicar!', 'warning');
+      return;
+    }
+  
+    if (this.turmaSelecionada?.id) {
+      const formData = new FormData();
+  
+      // Adiciona os dados do mural no FormData
+      const muralRequest = {
+        titulo: this.novaPostagem.titulo,
+        conteudo: this.novaPostagem.conteudo,
+        turmaId: this.turmaSelecionada.id,
+        professorId: this.usuario.id
+      };
+  
+      formData.append("mural", new Blob([JSON.stringify(muralRequest)], { type: "application/json" }));
+  
+      // Adiciona a imagem ao FormData (se existir)
+      if (this.novaImagem) {
+        formData.append("imagem", this.novaImagem);
+      }
+  
+      // Faz a requisição ao serviço
+      this.muralService.criarPostagem(formData).subscribe({
+        next: (res) => {
+          this.postagens.unshift(res);
+          this.novaPostagem = { titulo: '', conteudo: '' };
+          this.novaImagem = null; // Reseta a imagem selecionada
+  
+          Swal.fire({
+            title: 'Postagem criada!',
+            text: 'Sua postagem foi publicada com sucesso.',
+            icon: 'success',
+            timer: 2000,
+            showConfirmButton: false
+          });
+  
+          console.log('Postagem criada:', res);
+        },
+        error: (err) => {
+          console.error('Erro ao criar postagem:', err);
+          Swal.fire('Erro!', 'Não foi possível criar a postagem.', 'error');
+        }
+      });
+    }
+  }
+  
+  excluirPostagem(id: number): void {
+    if (!this.turmaSelecionada?.id) {
+      console.error("Nenhuma turma selecionada para excluir postagens.");
+      return;
+    }
+
+    Swal.fire({
+      title: 'Tem certeza?',
+      text: "Essa ação não pode ser desfeita!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sim, excluir!',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.muralService.excluirPostagem(id).subscribe({
+          next: () => {
+            Swal.fire('Excluído!', 'A postagem foi removida.', 'success');
+            this.carregarPostagens();
+          },
+          error: (err) => {
+            console.error('Erro ao excluir postagem:', err);
+            Swal.fire('Erro!', 'Não foi possível excluir a postagem.', 'error');
+          }
+        });
+      }
+    });
+  }
+
   private carregarPostagens(turmaId?: number): void {
     const id = turmaId ?? this.turmaSelecionada?.id;
-    if (!id) return;
-
+    if (!id) {
+      console.warn("Nenhuma turma selecionada para carregar postagens.");
+      return;
+    }
+  
     const pageable = { page: this.currentPagePostagens, size: this.sizePostagens };
-
+  
     this.muralService.listarPostagens(id, pageable).subscribe({
       next: (res) => {
         console.log("Postagens recebidas:", res);
-
-        this.postagens = res.content;
-        this.currentPagePostagens = res.page.number;
-        this.sizePostagens = res.page.size;
-        this.totalPostagens = res.page.totalElements;
+  
+        if (res && res.content) {
+          this.postagens = res.content;  // Armazena as postagens corretamente
+          this.currentPagePostagens = res.page.number;
+          this.sizePostagens = res.page.size;
+          this.totalPostagens = res.page.totalElements;
+        } else {
+          console.warn("Resposta inesperada da API. Estrutura dos dados pode ter mudado.");
+        }
       },
       error: (err) => console.error('Erro ao carregar postagens:', err)
     });
   }
+  
 }

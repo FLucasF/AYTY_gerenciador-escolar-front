@@ -82,39 +82,43 @@
       </div>
 
       <!-- 🔹 Mural da Turma -->
-      <h2 class="mt-2">Mural</h2>
-      <div class="mural-container">
-        <div class="nova-postagem-container" *ngIf="isProfessor">
-          <input type="text" placeholder="Título da Postagem" [(ngModel)]="novaPostagem.titulo">
-          <textarea placeholder="Escreva sua postagem..." [(ngModel)]="novaPostagem.conteudo"></textarea>
-          <button (click)="criarPostagem()">Publicar</button>
-        </div>
+<h2 class="mt-2">Mural</h2>
+<div class="mural-container">
+  <!-- 🔹 Adicionar postagem -->
+<div class="nova-postagem-container" *ngIf="isProfessor">
+  <input type="text" placeholder="Título da Postagem" [(ngModel)]="novaPostagem.titulo">
+  <textarea placeholder="Escreva sua postagem..." [(ngModel)]="novaPostagem.conteudo"></textarea>
 
-        <h3>Postagens Recentes</h3>
-        <ng-container *ngIf="postagens.length > 0; else semPostagens">
-          <div *ngFor="let postagem of postagens" class="postagem-card">
-            <div class="postagem-header">
-              <span><strong>Título:</strong> {{ postagem.titulo }}</span>
-              <span class="postagem-data">{{ postagem.dataCriacao | date: 'short' }}</span>
-              <button *ngIf="isProfessor" class="excluir-postagem" (click)="excluirPostagem(postagem.id!)">❌</button>
-            </div>
-            <p class="postagem-conteudo">{{ postagem.conteudo }}</p>
-          </div>
-        </ng-container>
+  <!-- Input para selecionar a imagem -->
+  <input type="file" (change)="onFileSelected($event)" accept="image/*">
 
-        <ng-template #semPostagens>
-          <p class="text-muted">Nenhuma postagem disponível.</p>
-        </ng-template>
+  <button (click)="criarPostagem()">Publicar</button>
+</div>
 
-        <!-- 🔹 Paginação das Postagens -->
-        <mat-paginator [length]="totalPostagens" [pageSize]="sizePostagens" [pageIndex]="currentPagePostagens"
-          [pageSizeOptions]="[3, 5, 10]" (page)="mudarPaginaPostagens($event)">
-        </mat-paginator>
+  <h3>Postagens Recentes</h3>
+  <ng-container *ngIf="postagens.length > 0; else semPostagens">
+    <div *ngFor="let postagem of postagens" class="postagem-card">
+      <div class="postagem-header">
+        <span><strong>Título:</strong> {{ postagem.titulo }}</span>
+        <span class="postagem-data">{{ postagem.dataCriacao | date: 'short' }}</span>
+        <button *ngIf="isProfessor" class="excluir-postagem" (click)="excluirPostagem(postagem.id!)">❌</button>
       </div>
 
-      <div class="voltar-container">
-        <button class="btn btn-secondary" (click)="voltarParaTurmas()">Voltar para Lista de Turmas</button>
-      </div>
+      <p class="postagem-conteudo">{{ postagem.conteudo }}</p>
+
+      <!-- 🔹 Exibir imagem caso a postagem tenha -->
+      <img *ngIf="postagem.imagemUrl" [src]="postagem.imagemUrl" alt="Imagem da postagem" class="postagem-imagem">
     </div>
-  </div>
+  </ng-container>
+
+  <ng-template #semPostagens>
+    <p class="text-muted">Nenhuma postagem disponível.</p>
+  </ng-template>
+
+  <!-- 🔹 Paginação das Postagens -->
+  <mat-paginator [length]="totalPostagens" [pageSize]="sizePostagens" [pageIndex]="currentPagePostagens"
+    [pageSizeOptions]="[3, 5, 10]" (page)="mudarPaginaPostagens($event)">
+  </mat-paginator>
+</div>
+
 </div>

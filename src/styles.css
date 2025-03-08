@@ -50,7 +50,7 @@
     margin: 0;
     padding: 0;
     height: 100vh; /* Garante que preencha toda a tela */
-    background: #f6f7fa; /* Mantém o fundo correto */
+    background: #f6f7fa00; /* Mantém o fundo correto */
     box-sizing: border-box; /* Evita que padding cause mudanças de tamanho */
 }
 
