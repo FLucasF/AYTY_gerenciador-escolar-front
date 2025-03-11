@@ -1,78 +1,147 @@
+/* ========================= */
+/* 🌟 Navbar - Estilo Geral */
+/* ========================= */
 .navbar {
-    background-color: #0e1a35 !important; /* Azul escuro */
-  }
-  
-  .navbar-brand,
-  .navbar-nav .nav-link {
-    color: #ffffff !important; /* Branco */
-    font-weight: 600;
-  }
-  
-  .navbar-nav .nav-link:hover,
-  .navbar-nav .nav-link.active {
-    color: #a3b1d1 !important; /* Azul mais claro */
-  }
-  
-  .navbar-toggler {
-    border: none;
-  }
-  
-  .navbar-toggler i {
-    color: #ffffff !important; /* Branco */
-  }
-  
-  .navbar-nav.text-danger .nav-link {
-    color: #dc3545 !important; /* Vermelho Bootstrap */
-  }
-  
-  .navbar-nav.text-danger .nav-link:hover {
-    color: #ff6b6b !important; /* Vermelho mais claro ao passar o mouse */
-  }
-  
-  /* Estilo do overlay para escurecer o fundo */
-  .menu-overlay {
-    position: fixed;
-    top: 0;
+  background-color: #0e1a35 !important; /* Azul escuro */
+}
+
+.navbar-brand,
+.navbar-nav .nav-link {
+  color: #ffffff !important; /* Branco */
+}
+
+.navbar-toggler {
+  border: none;
+}
+
+.navbar-toggler i {
+  color: #ffffff !important; /* Branco */
+}
+
+/* Ícones dentro da Navbar */
+.fas {
+  font-size: 15px;
+}
+
+/* ========================= */
+/* 🌟 Estilo dos Links da Navbar */
+/* ========================= */
+.navbar-nav .nav-link {
+  position: relative;
+  padding-bottom: 5px; /* Espaço para a linha */
+  transition: color 0.3s ease-in-out;
+}
+
+/* Efeito Hover */
+.navbar-nav .nav-link:hover {
+  color: #a3b1d1 !important; /* Azul mais claro */
+}
+
+/* ========================= */
+/* 🌟 Linha Indicadora - Rota Ativa */
+/* ========================= */
+.navbar-nav .nav-link.active-link {
+  color: #a3b1d1 !important; /* Azul mais claro */
+  font-weight: bold;
+}
+
+/* Linha indicadora abaixo do item ativo */
+.navbar-nav .nav-link.active-link::after {
+  content: "";
+  display: block;
+  width: 50%; /* Define a largura da linha para 50% do link */
+  height: 3px;
+  background-color: #a3b1d1; /* Cor da linha */
+  position: absolute;
+  bottom: -2px;
+  left: 10%; /* Ajuste fino para começar após a primeira palavra */
+  border-radius: 2px;
+  transition: width 0.3s ease-in-out;
+}
+
+
+/* ========================= */
+/* 🌟 Navbar - Links de Logout e Perigo */
+/* ========================= */
+.navbar-nav.text-danger .nav-link {
+  color: #dc3545 !important; /* Vermelho Bootstrap */
+}
+
+.navbar-nav.text-danger .nav-link:hover {
+  color: #ff6b6b !important; /* Vermelho mais claro ao passar o mouse */
+}
+
+/* ========================= */
+/* 🌟 Overlay - Menu Mobile */
+/* ========================= */
+.menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5); /* Fundo escuro semitransparente */
+  opacity: 0;
+  visibility: hidden;
+  z-index: 999; /* Abaixo do menu, acima do conteúdo */
+  transition: opacity 0.3s, visibility 0.3s;
+}
+
+.menu-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ========================= */
+/* 🌟 Responsividade - Navbar Mobile */
+/* ========================= */
+@media (max-width: 992px) {
+  .navbar-collapse {
+    position: absolute;
+    top: 100%;
     left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.5); /* Fundo escuro semitransparente */
-    opacity: 0;
-    visibility: hidden;
-    z-index: 999; /* Abaixo do menu, acima do conteúdo */
-    transition: opacity 0.3s, visibility 0.3s;
+    width: 100%;
+    background-color: #0e1a35 !important; /* Azul escuro */
+    z-index: 1000;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .navbar-nav {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    width: 100%;
+  }
+
+  .navbar-nav .nav-item {
+    width: 100%;
+    text-align: left;
+  }
+
+  .navbar-nav .nav-link {
+    position: relative;
+    display: inline-block; /* Permite que a largura da linha siga o tamanho do texto */
+    text-align: center; /* Mantém o texto alinhado */
+    padding-bottom: 5px; /* Espaço para a linha */
   }
   
-  .menu-overlay.active {
-    opacity: 1;
-    visibility: visible;
+  .navbar-nav .nav-link.active-link::after {
+    content: "";
+    display: block;
+    width: 70%; /* A linha cobre metade do texto */
+    height: 3px;
+    background-color: #a3b1d1;
+    position: absolute;
+    bottom: 2px; /* Aproxima mais da palavra */
+    left: 0; /* Garante que começa no primeiro caractere */
+    border-radius: 2px;
+    transition: width 0.3s ease-in-out;
   }
   
-  @media (max-width: 992px) {
-    .navbar-collapse {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      width: 100%;
-      background-color: #0e1a35 !important; /* Azul escuro */
-      z-index: 1000;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
   
-    .navbar-nav {
-      flex-direction: column !important;
-      align-items: flex-start !important;
-      width: 100%;
-    }
   
-    .navbar-nav .nav-item {
-      width: 100%;
-      text-align: left;
-    }
   
-    .navbar-nav .nav-link {
-      padding: 10px 15px;
-      width: 100%;
-    }
-  }
   
+  
+  
+  
+}

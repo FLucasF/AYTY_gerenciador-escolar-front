@@ -4,6 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
+import { AuthService } from './services/auth.service';
+
+import { provideAppInitializer, inject } from '@angular/core';
+
 
 import { AppComponent } from './app.component';
 import { LoginComponent } from './components/login/login.component';
@@ -54,4 +58,6 @@ import { MatPaginatorModule } from '@angular/material/paginator';
   ],
   bootstrap: [AppComponent]
 })
+
+
 export class AppModule { }

@@ -178,6 +178,15 @@ export class AdminDashboardComponent implements OnInit {
       if (result.isConfirmed) {
         const dadosAtualizados = { ...this.usuarioOriginal, ...this.editForm.value };
 
+
+        console.log("📤 Enviando dados para atualização...");
+        console.log("➡️ ID do usuário:", this.usuarioEditando.id);
+        console.log("➡️ Nome:", dadosAtualizados.nome);
+        console.log("➡️ Email:", dadosAtualizados.email);
+        console.log("➡️ CPF:", dadosAtualizados.cpf);
+        console.log("➡️ Tipo:", this.tipoUsuario);
+
+        
         let request: Observable<any> | null = null;
         switch (this.tipoUsuario) {
           case 'administrador':

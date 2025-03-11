@@ -64,29 +64,21 @@ body {
 .info-turma {
   display: block; /* Garante que ele ocupe toda a largura */
   width: 100%; /* Ocupar a largura total para forçar a próxima linha */
-  text-align: right; /* Mantém o conteúdo alinhado à direita */
+  text-align: left; /* Mantém o conteúdo alinhado à direita */
   margin-bottom: 10px; /* Adiciona um espaço entre a turma e a lista */
 }
 
-.desktop-table {
-  display: block;
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.mobile-list {
-  display: none;
-  list-style: none;
-  padding: 0;
-}
-
-.mobile-list .list-group-item {
-  background: #ffffff;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  padding: 15px;
-  margin-bottom: 15px;
-  text-align: center;
+.btn-voltar {
+  margin-top: 15px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  justify-content: center; /* Centraliza o conteúdo dentro do botão */
+  margin-left: auto;
+  margin-right: auto;
+  width: fit-content; /* Faz o botão ter apenas o tamanho necessário */
 }
 
 h3 {
@@ -134,25 +126,78 @@ h3 {
 }
 
 /* =========================== */
-/* 🌟 Estilizando Postagens */
+/* 🌟 Estilizando Imagens das Postagens */
 /* =========================== */
+/* 🔹 Configuração da postagem minimizada */
+/* 🔹 Configuração da postagem minimizada */
 .postagem-card {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.1);
   margin-bottom: 15px;
   transition: transform 0.2s ease-in-out, box-shadow 0.3s ease;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
 }
 
+/* 🔹 Conteúdo da postagem limitado a 3 linhas */
+.postagem-conteudo {
+  font-size: 14px;
+  line-height: 1.4;
+  color: #333;
+  word-wrap: break-word; /* 🔹 Garante que palavras grandes quebrem */
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3; /* 🔹 Exibe no máximo 3 linhas */
+  line-clamp: 3;
+  text-overflow: ellipsis; /* 🔹 Adiciona "..." ao ultrapassar 3 linhas */
+  max-height: calc(1.4em * 3); /* 🔹 Altura calculada com base no número de linhas */
+}
+
+/* 🔹 Efeito hover para indicar que é clicável */
 .postagem-card:hover {
   transform: scale(1.02);
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
 }
 
+
+
+
+
+
+
+
+/* 🔹 Header da Postagem */
 .postagem-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between; /* Título à esquerda e Data à direita */
   align-items: center;
+  width: 100%;
+  margin-bottom: 10px;
   font-weight: bold;
   color: #444;
 }
+
+/* 🔹 Ajuste do Título */
+.postagem-header span:first-child {
+  text-align: left;
+  flex: 1;
+}
+
+
+/* 🔹 Ajuste da Data */
+.postagem-data {
+  text-align: right;
+  font-size: 14px;
+  color: gray;
+  white-space: nowrap; /* Evita quebra de linha */
+}
+
+
 
 .excluir-postagem {
   background: none;
@@ -172,13 +217,100 @@ h3 {
   justify-content: center;
   margin-top: 20px;
 }
-
+/* 🔹 Conteúdo da Postagem Centralizado */
 .postagem-conteudo {
-  font-size: 14px;
   text-align: center;
+  font-size: 16px;
   line-height: 1.4;
-  color: #444;
+  color: #333;
+  margin-top: 15px;
 }
+
+
+/* ============================== */
+/* 🌟 Modal de Postagem Expandida */
+/* ============================== */
+/* ============================== */
+/* 🌟 Modal de Postagem Expandida */
+/* ============================== */
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+}
+
+.modal-postagem {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 800px;
+  height: 80vh;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* 🔹 Reaproveitando o CSS da postagem normal */
+.modal-postagem .postagem-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+  color: #444;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #ddd; /* Apenas para dar um destaque ao título */
+  padding-bottom: 5px;
+}
+
+/* 🔹 Conteúdo do Modal com Rolagem após 5 Linhas */
+.modal-postagem .postagem-conteudo {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #333;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  text-align: justify;
+  
+  max-height: calc(1.6em * 5); /* 🔹 Mostra até 5 linhas antes de ativar o scroll */
+  overflow-y: auto; /* 🔹 Adiciona rolagem se o texto for maior */
+  padding-right: 5px; /* 🔹 Evita que o texto encoste no scroll */
+}
+
+/* 🔹 Botão de Fechar */
+.fechar-modal {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 24px;
+  cursor: pointer;
+  color: red;
+}
+
+.fechar-modal:hover {
+  color: darkred;
+}
+
+/* 🔹 Ajuste da Imagem dentro do Modal */
+.modal-postagem .postagem-imagem {
+  max-width: 100%;
+  height: auto;
+  margin-top: 10px;
+  border-radius: 8px;
+}
+
+
 
 /* =========================== */
 /* 📱 Responsividade */

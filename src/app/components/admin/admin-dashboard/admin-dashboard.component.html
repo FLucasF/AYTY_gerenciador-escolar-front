@@ -41,13 +41,12 @@
         <td>{{ user.email }}</td>
         <td>{{ obterInformacaoExtra(user) }}</td>
         <td>
-          <button (click)="irParaEdicao(user)" class="btn btn-warning btn-sm">
-            <i class="fa fa-pencil"></i> Editar
-          </button>
-          <button (click)="excluirUsuario(user)" class="btn btn-danger btn-sm">
-            <i class="fa fa-trash"></i> Excluir
-          </button>
+          <span class="acoes-postagem">
+            <i class="fa-solid fa-user-pen" (click)="irParaEdicao(user)" title="Editar"></i>
+            <i class="fa-solid fa-trash-can" (click)="excluirUsuario(user)" title="Excluir"></i>
+          </span>
         </td>
+        
       </tr>
     </tbody>
   </table>
@@ -61,14 +60,10 @@
       <div>Nome: {{ user.nome }}</div>
       <div>Email: {{ user.email }}</div>
       <div>Informação Extra: {{ obterInformacaoExtra(user) }}</div>
-      <div class="actions">
-        <button (click)="irParaEdicao(user)" class="btn btn-warning btn-sm">
-          <i class="fa fa-pencil"></i> Editar
-        </button>
-        <button (click)="excluirUsuario(user)" class="btn btn-danger btn-sm">
-          <i class="fa fa-trash"></i> Excluir
-        </button>
-      </div>
+      <span class="acoes-postagem">
+        <i class="fa-solid fa-user-pen" (click)="irParaEdicao(user)" title="Editar"></i>
+        <i class="fa-solid fa-trash-can" (click)="excluirUsuario(user)" title="Excluir"></i>
+      </span>
     </li>
   </ul>
 </div>
@@ -80,9 +75,11 @@
   </div>
 
   <!-- Paginator -->
-  <mat-paginator [length]="totalElements" [pageIndex]="pageIndex" [pageSize]="pageSize"
-    [pageSizeOptions]="[5, 10, 25, 50]" (page)="mudarPagina($event)">
-  </mat-paginator>
+  <div class="paginator-container">
+    <mat-paginator [length]="totalElements" [pageIndex]="pageIndex" [pageSize]="pageSize"
+      [pageSizeOptions]="[5, 10]" showFirstLastButtons (page)="mudarPagina($event)">
+    </mat-paginator>
+  </div>
 </div>
 
 <!-- Modal de Edição -->

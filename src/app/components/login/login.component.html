@@ -1,35 +1,49 @@
-<section class="vh-100">
-  <div class="container py-5 h-100">
+<section class="vh-100 d-flex align-items-center justify-content-center">
+  <div class="container">
     <div class="row d-flex align-items-center justify-content-center h-100">
+      <!-- Imagem -->
       <div class="col-md-8 col-lg-7 col-xl-6">
-        <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.svg" class="img-fluid"
-          alt="Phone image">
+        <img src="assets/login-image.svg" class="img-fluid">
       </div>
-      <div class="col-md-7 col-lg-5 col-xl-5 offset-xl-1">
-        <form (ngSubmit)="onSubmit()">
-          <!-- Email input -->
-          <div class="form-outline mb-4">
-            <input type="email" id="form1Example13" class="form-control form-control-lg" [(ngModel)]="email"
-              name="email" required />
-            <label class="form-label" for="form1Example13">Email address</label>
-          </div>
 
-          <!-- Password input -->
-          <div class="form-outline mb-4">
-            <input type="password" id="form1Example23" class="form-control form-control-lg" [(ngModel)]="senha"
-              name="senha" required />
-            <label class="form-label" for="form1Example23">Password</label>
-          </div>
+      <!-- Formulário de Login -->
+      <div class="col-md-7 col-lg-5 col-xl-5">
+        <div class="login-container">
+        <!-- Título -->
+          <h2 class="title">Welcome</h2>
 
+          <form (ngSubmit)="onSubmit()">
+            <!-- Email -->
+            <div class="input-div">
+              <div class="i">
+                <i class="fas fa-user"></i>
+              </div>
+              <div class="div">
+                <h5>Email</h5>
+                <input type="email" id="form1Example13" class="input" [(ngModel)]="email" name="email" required>
+              </div>
+            </div>
 
-          <!-- Botão de Login Centralizado -->
-          <button type="submit" class="btn btn-primary btn-lg d-block mx-auto">Sign in</button>
+            <!-- Senha -->
+            <div class="input-div">
+              <div class="i">
+                <i class="fas fa-lock"></i>
+              </div>
+              <div class="div">
+                <h5>Password</h5>
+                <input type="password" id="form1Example23" class="input" [(ngModel)]="senha" name="senha" required>
+              </div>
+            </div>
 
-          <!-- Exibe mensagem de erro se houver -->
-          <div *ngIf="errorMessage" class="alert alert-danger mt-3">
-            {{ errorMessage }}
-          </div>
-        </form>
+            <!-- Botão de Login -->
+            <button type="submit" class="btn">Login</button>
+
+            <!-- Exibe mensagem de erro se houver -->
+            <div *ngIf="errorMessage" class="alert alert-danger mt-3 text-center">
+              {{ errorMessage }}
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   </div>

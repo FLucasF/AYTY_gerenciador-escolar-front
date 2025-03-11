@@ -1,7 +1,153 @@
-.divider:after,
-.divider:before {
-content: "";
-flex: 1;
-height: 1px;
-background: #eee;
+@import url("https://fonts.googleapis.com/css?family=Poppins:600&display=swap");
+
+:root {
+  --main-color: #38d39f;
+  --input-border: #d9d9d9;
+  --text-color: #333;
+}
+
+.vh-100 { 
+  background: url("../../../../public/assets/background.jpg") no-repeat center center fixed;
+
+}
+
+/* Adicionando o background */
+.login-section {
+  background-size: cover;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-size: cover;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+  background: linear-gradient(120deg, #a1c4fd, #c2e9fb);
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Container do formulário */
+.login-container {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 10px;
+  padding: 50px 40px;
+  text-align: center;
+  width: 100%;
+  max-width: 360px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Avatar */
+.avatar-img {
+  width: 100px;
+  margin-bottom: 15px;
+}
+
+
+/* Título */
+.title {
+  font-size: 22px;
+  color: var(--text-color);
+  margin-bottom: 20px;
+}
+
+/* Campos de input */
+.input-div {
+  display: flex;
+  align-items: center;
+  border-bottom: 2px solid var(--input-border);
+  margin-bottom: 20px;
+  padding: 10px 0;
+}
+
+.i {
+  font-size: 18px;
+  color: var(--main-color);
+  padding: 0 10px;
+}
+
+.div {
+  flex: 1;
+  position: relative;
+}
+
+h5 {
+  font-size: 14px;
+  color: gray;
+  position: absolute;
+  top: 10px;
+  left: 0;
+  transition: all 0.3s ease;
+}
+
+.input {
+  width: 100%;
+  background: none;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  padding: 5px 0;
+}
+
+/* Efeito ao digitar */
+.input:focus + h5,
+.input:not(:placeholder-shown) + h5 {
+  top: -10px;
+  font-size: 12px;
+  color: var(--main-color);
+}
+
+/* Botão de Login */
+.btn {
+  width: 100%;
+  padding: 12px;
+  background: var(--main-color);
+  border: none;
+  color: white;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn:hover {
+  background: #2fb88f;
+}
+
+/* Link "Forgot Password?" */
+a {
+  color: gray;
+  font-size: 14px;
+  display: block;
+  margin-bottom: 15px;
+}
+
+a:hover {
+  color: var(--main-color);
+}
+
+/* Responsividade */
+@media screen and (max-width: 768px) {
+  .login-container {
+    max-width: 300px;
+    padding: 40px 30px;
+  }
+
+  .avatar-img {
+    width: 80px;
+  }
+
+  .title {
+    font-size: 18px;
+  }
+
+  .btn {
+    font-size: 14px;
+  }
 }

@@ -12,25 +12,26 @@
       id="navbarSupportedContent">
       <ul class="navbar-nav me-auto d-flex flex-row mt-3 mt-lg-0">
         <li class="nav-item text-center mx-2 mx-lg-1" *ngIf="role === 'ROLE_ADMIN'">
-          <a class="nav-link" routerLink="/admin">
+          <a class="nav-link" routerLink="/admin" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }">
             <i class="fas fa-home fa-lg mb-1"></i>
             Dashboard
           </a>
         </li>
+        
         <li class="nav-item text-center mx-2 mx-lg-1" *ngIf="role === 'ROLE_ADMIN'">
-          <a class="nav-link" routerLink="/admin/cadastro">
+          <a class="nav-link" routerLink="/admin/cadastro" routerLinkActive="active-link">
             <i class="fas fa-user-plus fa-lg mb-1"></i>
             Cadastrar Usuário
           </a>
         </li>
         <li class="nav-item text-center mx-2 mx-lg-1" *ngIf="role === 'ROLE_ADMIN'">
-          <a class="nav-link" routerLink="/admin/turmas">
+          <a class="nav-link" routerLink="/admin/turmas" routerLinkActive="active-link">
             <i class="fas fa-users fa-lg mb-1"></i>
             Gerenciar Turmas
           </a>
         </li>
         <li class="nav-item text-center mx-2 mx-lg-1">
-          <a class="nav-link" routerLink="/board">
+          <a class="nav-link" routerLink="/board" routerLinkActive="active-link">
             <i class="fas fa-book fa-lg mb-1"></i>
             Minhas Turmas
           </a>

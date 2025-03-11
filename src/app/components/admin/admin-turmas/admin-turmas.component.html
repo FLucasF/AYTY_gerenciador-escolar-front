@@ -46,70 +46,66 @@
 
   <hr />
 
-  <!-- 🔹 Lista de Turmas -->
-  <div *ngIf="turmas.length > 0; else emptyState">
-    <div class="table-responsive desktop-table">
-      <table class="table table-striped table-hover">
-        <thead class="thead-dark">
-          <tr>
-            <th>Turma</th>
-            <th>Código</th>
-            <th>Semestre</th>
-            <th>Professor</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let turma of turmas">
-            <td>{{ turma.nome }}</td>
-            <td>{{ turma.codigo }}</td>
-            <td>{{ turma.semestre }}</td>
-            <td>{{ turma.professorId ? (professoresMap.get(turma.professorId) || 'Sem professor') : 'Sem professor' }}
-            </td>
-            <td>
-              <button class="btn btn-warning btn-sm" (click)="startEdit(turma)">
-                <i class="fa fa-pencil"></i> Editar
-              </button>
-              <button class="btn btn-primary btn-sm" (click)="navigateToManageStudents(turma.id)">
-                <i class="fa fa-users"></i> Gerenciar Alunos
-              </button>
-              <button class="btn btn-danger btn-sm" (click)="deleteTurma(turma.id)">
-                <i class="fa fa-trash"></i> Excluir
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- 🔹 Lista Mobile -->
-    <div class="mobile-list">
-      <ul class="list-group">
-        <li class="list-group-item" *ngFor="let turma of turmas">
-          <div><strong>{{ turma.nome }}</strong> ({{ turma.codigo }})</div>
-          <div>Semestre: {{ turma.semestre }}</div>
-          <div>Professor: {{ turma.professorId ? (professoresMap.get(turma.professorId) || 'Sem professor') : 'Sem
-            professor' }}</div>
-          <div class="actions">
-            <button class="btn btn-warning btn-sm" (click)="startEdit(turma)">
-              <i class="fa fa-pencil"></i> Editar
-            </button>
-            <button class="btn btn-primary btn-sm" (click)="navigateToManageStudents(turma.id)">
-              <i class="fa fa-users"></i> Alunos
-            </button>
-            <button class="btn btn-danger btn-sm" (click)="deleteTurma(turma.id)">
-              <i class="fa fa-trash"></i> Excluir
-            </button>
-          </div>
-        </li>
-      </ul>
-    </div>
-
-    <!-- Paginator -->
-    <mat-paginator [length]="totalElements" [pageIndex]="pageIndex" [pageSize]="pageSize"
-      [pageSizeOptions]="[5, 10, 25, 50]" (page)="onPageChange($event)">
-    </mat-paginator>
+  <!-- Lista de Turmas -->
+<div *ngIf="turmas.length > 0; else emptyState">
+  <div class="table-responsive desktop-table">
+    <table class="table table-striped table-hover">
+      <thead class="thead-dark">
+        <tr>
+          <th>Turma</th>
+          <th>Código</th>
+          <th>Semestre</th>
+          <th>Professor</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let turma of turmas">
+          <td>{{ turma.nome }}</td>
+          <td>{{ turma.codigo }}</td>
+          <td>{{ turma.semestre }}</td>
+          <td>{{ turma.professorId ? (professoresMap.get(turma.professorId) || 'Sem professor') : 'Sem professor' }}</td>
+          <td>
+            <span class="acoes-postagem">
+              <i class="fa-solid fa-user-pen" (click)="startEdit(turma)" title="Editar"></i>
+              <i class="fa-solid fa-users" (click)="navigateToManageStudents(turma.id)" title="Gerenciar Alunos"></i>
+              <i class="fa-solid fa-trash-can" (click)="deleteTurma(turma.id)" title="Excluir"></i>
+            </span>
+          </td>
+          
+        </tr>
+      </tbody>
+    </table>
   </div>
+
+  <!-- Lista Mobile -->
+  <div class="mobile-list">
+    <ul class="list-group">
+      <li class="list-group-item" *ngFor="let turma of turmas">
+        <div><strong>{{ turma.nome }}</strong> ({{ turma.codigo }})</div>
+        <div>Semestre: {{ turma.semestre }}</div>
+        <div>Professor: {{ turma.professorId ? (professoresMap.get(turma.professorId) || 'Sem professor') : 'Sem professor' }}</div>
+        <div class="actions">
+          <span class="icon-button" (click)="startEdit(turma)" title="Editar">
+            <i class="fa-solid fa-user-pen"></i>
+          </span>
+          <span class="icon-button" (click)="navigateToManageStudents(turma.id)" title="Gerenciar Alunos">
+            <i class="fa fa-users"></i>
+          </span>
+          <span class="icon-button" (click)="deleteTurma(turma.id)" title="Excluir">
+            <i class="fa fa-trash"></i>
+          </span>
+        </div>
+        
+      </li>
+    </ul>
+  </div>
+
+  <!-- Paginator -->
+  <mat-paginator [length]="totalElements" [pageIndex]="pageIndex" [pageSize]="pageSize"
+    [pageSizeOptions]="[5, 10, 25, 50]" (page)="onPageChange($event)">
+  </mat-paginator>
+</div>
 
   <!-- Estado vazio caso não existam turmas cadastradas -->
   <ng-template #emptyState>

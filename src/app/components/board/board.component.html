@@ -44,9 +44,12 @@
 
   <!-- 🔹 Detalhes da Turma Selecionada -->
   <div *ngIf="turmaSelecionada">
-    <div class="info-turma text-center">
-      <h2>Turma: {{ turmaSelecionada.nome }}</h2>
-      <h4 class="text-primary"><strong>Professor: {{ getProfessorNome(turmaSelecionada.professorId) }}</strong></h4>
+    <div class="info-turma-container">
+      <div class="info-turma">
+        <h2>Turma: {{ turmaSelecionada.nome }}</h2>
+        <h5 class="text-primary"><strong>Professor: {{ getProfessorNome(turmaSelecionada.professorId) }}</strong></h5>
+        <h5 class="text-primary"><strong>Código: {{ (turmaSelecionada.codigo) }}</strong></h5>
+      </div>
     </div>
 
     <div class="turma-detalhes">
@@ -105,20 +108,36 @@
         </div>
 
         <ng-container *ngIf="postagens.length > 0; else semPostagens">
-          <div *ngFor="let postagem of postagens" class="postagem-card">
+          <div *ngFor="let postagem of postagens" class="postagem-card" (click)="abrirModal(postagem)">
             <div class="postagem-header">
               <span><strong>Título:</strong> {{ postagem.titulo }}</span>
               <span class="postagem-data">{{ postagem.dataCriacao | date: 'short' }}</span>
-              <button *ngIf="isProfessor" class="excluir-postagem" (click)="excluirPostagem(postagem.id!)">❌</button>
+              <button *ngIf="isProfessor" class="excluir-postagem" (click)="excluirPostagem(postagem.id!); $event.stopPropagation()">❌</button>
             </div>
-
+        
             <p class="postagem-conteudo">{{ postagem.conteudo }}</p>
-
+        
             <!-- 🔹 Exibir imagem caso a postagem tenha -->
             <img *ngIf="postagem.imagemUrl" [src]="postagem.imagemUrl" alt="Imagem da postagem" class="postagem-imagem">
           </div>
         </ng-container>
+        
+        <!-- 🔹 Modal da Postagem Expandida -->
+        <div class="modal-backdrop" *ngIf="postagemSelecionada" (click)="fecharModal()"></div>
+        <div class="modal-postagem" *ngIf="postagemSelecionada">
+          <div class="modal-content">
+            <span class="fechar-modal" (click)="fecharModal()">×</span>
+            <h2>{{ postagemSelecionada.titulo }}</h2>
+            <p class="postagem-data">{{ postagemSelecionada.dataCriacao | date: 'short' }}</p>
+            <p class="postagem-conteudo">{{ postagemSelecionada.conteudo }}</p>
+        
+            <img *ngIf="postagemSelecionada.imagemUrl" [src]="postagemSelecionada.imagemUrl" alt="Imagem da postagem" class="postagem-imagem">
+          </div>
+        </div>
+        
 
+
+        
         <ng-template #semPostagens>
           <p class="text-muted text-center">Nenhuma postagem disponível.</p>
         </ng-template>
@@ -129,5 +148,10 @@
         </mat-paginator>
       </div>
     </div>
+
+    <!-- 🔹 Botão de Voltar -->
+    <button class="btn btn-secondary btn-voltar" (click)="voltarParaTurmas()">
+      <i class="fa fa-arrow-left"></i> Voltar para Turmas
+    </button>
   </div>
 </div>

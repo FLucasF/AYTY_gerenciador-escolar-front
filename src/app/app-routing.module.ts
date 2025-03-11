@@ -9,7 +9,7 @@ import { AdminTurmasComponent } from './components/admin/admin-turmas/admin-turm
 import { GerenciarAlunoTurmaComponent } from './components/admin/gerenciar-aluno-turma/gerenciar-aluno-turma.component';
 
 import { AuthGuard } from './guards/auth.guard'; //protege rotas
-import { RoleGuard } from './guards/role.guard'; //restinge acesso role
+import { RoleGuard } from './guards/role.guard'; //protege rotas
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },

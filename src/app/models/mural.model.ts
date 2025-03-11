@@ -5,5 +5,5 @@ export interface Mural {
   turmaId?: number;
   professorId?: number;
   dataCriacao?: string;
-  imagemUrl?: string; // ✅ Adicionando a URL da imagem no modelo
+  imagemUrl?: string;
 }
