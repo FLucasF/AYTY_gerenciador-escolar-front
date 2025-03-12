@@ -22,11 +22,4 @@ export class JwtInterceptor implements HttpInterceptor {
     }
     return next.handle(req);
   }
-
-
-  private handle401Error(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    // Simplesmente retorna o erro sem tentar fazer o refresh do token
-    this.authService.logout();
-    return throwError(() => new Error('Token expirado ou inválido'));
-  }
 }

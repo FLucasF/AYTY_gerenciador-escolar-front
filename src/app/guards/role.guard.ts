@@ -12,7 +12,7 @@ export class RoleGuard implements CanActivate {
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
     // Verifica se o usuário está autenticado (token presente e não expirado)
     if (!this.authService.isLoggedIn()) {
-      console.error('🚫 Usuário não autenticado ou token expirado, redirecionando para login...');
+      console.error('Usuário não autenticado ou token expirado, redirecionando para login');
       this.router.navigate(['/login']);
       return false;
     }
@@ -22,18 +22,18 @@ export class RoleGuard implements CanActivate {
     const userId = this.authService.getUserId();
 
     if (!userRole || !userId || userId === 0) {
-      console.error('🚫 Role ou ID do usuário inválidos, redirecionando...');
+      console.error('Role ou ID do usuário inválidos, redirecionando');
       this.router.navigate(['/login']);
       return false;
     }
   
     if (userRole !== expectedRole) {
-      console.error(`❌ Acesso negado! Esperava ${expectedRole}, mas encontrou ${userRole}.`);
+      console.error(`Acesso negado! Esperava ${expectedRole}, mas encontrou ${userRole}`);
       this.router.navigate(['/login']);
       return false;
     }
   
-    console.log('[RoleGuard] ✅ Acesso permitido para:', userRole);
+    console.log('Acesso permitido para:', userRole);
     return true;
   }
 }
