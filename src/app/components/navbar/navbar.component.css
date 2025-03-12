@@ -23,9 +23,6 @@
   font-size: 15px;
 }
 
-/* ========================= */
-/* 🌟 Estilo dos Links da Navbar */
-/* ========================= */
 .navbar-nav .nav-link {
   position: relative;
   padding-bottom: 5px; /* Espaço para a linha */
@@ -37,9 +34,7 @@
   color: #a3b1d1 !important; /* Azul mais claro */
 }
 
-/* ========================= */
-/* 🌟 Linha Indicadora - Rota Ativa */
-/* ========================= */
+
 .navbar-nav .nav-link.active-link {
   color: #a3b1d1 !important; /* Azul mais claro */
   font-weight: bold;
@@ -60,9 +55,6 @@
 }
 
 
-/* ========================= */
-/* 🌟 Navbar - Links de Logout e Perigo */
-/* ========================= */
 .navbar-nav.text-danger .nav-link {
   color: #dc3545 !important; /* Vermelho Bootstrap */
 }
@@ -71,9 +63,6 @@
   color: #ff6b6b !important; /* Vermelho mais claro ao passar o mouse */
 }
 
-/* ========================= */
-/* 🌟 Overlay - Menu Mobile */
-/* ========================= */
 .menu-overlay {
   position: fixed;
   top: 0;
@@ -92,9 +81,6 @@
   visibility: visible;
 }
 
-/* ========================= */
-/* 🌟 Responsividade - Navbar Mobile */
-/* ========================= */
 @media (max-width: 992px) {
   .navbar-collapse {
     position: absolute;

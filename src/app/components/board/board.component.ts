@@ -55,8 +55,8 @@ export class BoardComponent implements OnInit {
   const userRole = sessionStorage.getItem('role') || '';
 
 
-    console.log(`[BoardComponent] 📌 ID do usuário salvo no localStorage: ${userId}`);
-    console.log(`[BoardComponent] 📌 Role do usuário salvo no localStorage: ${userRole}`);
+    console.log(`ID do usuário salvo no localStorage: ${userId}`);
+    console.log(`Role do usuário salvo no localStorage: ${userRole}`);
 
     this.usuario = { id: userId, nome: userName, role: userRole };
     this.isProfessor = userRole === 'ROLE_PROFESSOR';
@@ -131,31 +131,31 @@ export class BoardComponent implements OnInit {
   private carregarTurmas(): void {
     const pageable = { page: this.currentPage, size: this.size };
   
-    console.log(`[BoardComponent] 🟡 Iniciando carregamento de turmas...`);
-    console.log(`[BoardComponent] 📌 Usuário:`, this.usuario);
-    console.log(`[BoardComponent] 📌 ID do usuário salvo no localStorage:`, localStorage.getItem('userId'));
-    console.log(`[BoardComponent] 📌 Role do usuário salvo no localStorage:`, localStorage.getItem('role'));
+    console.log(`Iniciando carregamento de turmas...`);
+    console.log(`Usuário:`, this.usuario);
+    console.log(`ID do usuário salvo no localStorage:`, localStorage.getItem('userId'));
+    console.log(`Role do usuário salvo no localStorage:`, localStorage.getItem('role'));
   
     if (!this.usuario.id || this.usuario.id === 0) {
-      console.error(`[BoardComponent] ❌ ERRO: O ID do usuário é inválido (0 ou indefinido)!`);
+      console.error(`ERRO: O ID do usuário é inválido (0 ou indefinido)!`);
       return;
     }
   
     if (this.usuario.role === 'ROLE_ADMIN') {
-      console.log(`[BoardComponent] 📢 O usuário é ADMIN, carregando TODAS as turmas...`);
+      console.log(`O usuário é ADMIN, carregando todas as turmas`);
       this.turmaService.listarTodasTurmas(pageable).subscribe({
         next: (res) => {
           console.log("✅ Turmas recebidas (ADMIN):", res);
           this.atualizarEstadoTurmas(res);
         },
-        error: (err) => console.error('❌ Erro ao carregar turmas (ADMIN):', err)
+        error: (err) => console.error('Erro ao carregar turmas (ADMIN):', err)
       });
   
     } else if (this.usuario.role === 'ROLE_PROFESSOR') {
-      console.log(`[BoardComponent] 📢 O usuário é PROFESSOR, carregando turmas com ID: ${this.usuario.id}...`);
+      console.log(`O usuário é PROFESSOR, carregando turmas com ID: ${this.usuario.id}...`);
   
       if (!this.usuario.id || this.usuario.id === 0) {
-        console.error(`[BoardComponent] ❌ ERRO: O ID do professor ainda está 0!`);
+        console.error(`ERRO: O ID do professor ainda está 0!`);
         return;
       }
   
@@ -164,37 +164,37 @@ export class BoardComponent implements OnInit {
           console.log("✅ Turmas do professor recebidas:", res);
           this.atualizarEstadoTurmas(res);
         },
-        error: (err) => console.error('❌ Erro ao carregar turmas do professor:', err)
+        error: (err) => console.error('Erro ao carregar turmas do professor:', err)
       });
   
     } else if (this.usuario.role === 'ROLE_ALUNO') {
-      console.log(`[BoardComponent] 📢 O usuário é ALUNO, carregando turmas com ID: ${this.usuario.id}...`);
+      console.log(`O usuário é ALUNO, carregando turmas com ID: ${this.usuario.id}...`);
       this.turmaService.listarTurmasPorAluno(this.usuario.id, pageable).subscribe({
         next: (res) => {
-          console.log("✅ Turmas do aluno recebidas:", res);
+          console.log("Turmas do aluno recebidas:", res);
           this.atualizarEstadoTurmas(res);
         },
-        error: (err) => console.error('❌ Erro ao carregar turmas do aluno:', err)
+        error: (err) => console.error('Erro ao carregar turmas do aluno:', err)
       });
   
     } else {
-      console.warn(`[BoardComponent] ⚠️ Role desconhecida: ${this.usuario.role}. Nenhuma busca será feita.`);
+      console.warn(`Role desconhecida: ${this.usuario.role}. Nenhuma busca será feita.`);
     }
   }
 
   private atualizarEstadoTurmas(res: any): void {
     if (!res || !res.content) {
-      console.error(`[BoardComponent] ❌ Erro: Resposta da API inválida ou sem conteúdo.`);
+      console.error(`Erro: Resposta da API inválida ou sem conteúdo.`);
       return;
     }
   
-    console.log(`[BoardComponent] ✅ Atualizando estado das turmas...`);
+    console.log(`Atualizando estado das turmas...`);
     this.turmas = res.content;
     this.currentPage = res.page.number;
     this.size = res.page.size;
     this.totalElements = res.page.totalElements;
   
-    console.log(`[BoardComponent] 📌 Total de turmas recebidas: ${this.turmas.length}`);
+    console.log(`Total de turmas recebidas: ${this.turmas.length}`);
   }
 
   private carregarProfessores(): void {
