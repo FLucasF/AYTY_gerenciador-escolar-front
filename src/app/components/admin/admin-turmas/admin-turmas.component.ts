@@ -112,14 +112,18 @@ export class AdminTurmasComponent implements OnInit {
    */
   loadProfessores(): void {
     const pageable = { page: 0, size: 10 };
+  
     this.professorService.listarProfessores(pageable).subscribe({
       next: (res) => {
+        console.log("Professores recebidos do backend:", res);
         this.professores = res.content;
         this.updateProfessoresMap();
+        console.log("Mapa de professores atualizado:", this.professoresMap);
       },
       error: (err) => console.error('Erro ao carregar professores:', err)
     });
   }
+  
 
   /**
    * Atualiza o Map de professores com base na lista carregada.

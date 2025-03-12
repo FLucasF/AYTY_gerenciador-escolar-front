@@ -17,9 +17,7 @@ import Swal from 'sweetalert2';
   styleUrls: ['./admin-dashboard.component.css'],
 })
 export class AdminDashboardComponent implements OnInit {
-  tipoUsuarioSelecionado: 'todos' | 'administrador' | 'professor' | 'aluno' = 'todos';
   usuarios: any[] = [];
-  usuariosFiltrados: any[] = [];
   pageIndex: number = 0;
   pageSize: number = 10;
   totalElements: number = 0;
@@ -63,16 +61,9 @@ export class AdminDashboardComponent implements OnInit {
         this.pageIndex = res.page.number;
         this.pageSize = res.page.size;
         this.totalElements = res.page.totalElements;
-
-        this.filtrarUsuarios();
       },
       error: (err) => console.error('Erro ao carregar usuarios:', err)
     });
-  }
-
-  irParaCadastro(): void {
-    console.log("Redirecionando para cadastro de usuario");
-    this.router.navigate(['/admin/cadastro']);
   }
 
   excluirUsuario(usuario: any): void {
@@ -237,28 +228,6 @@ export class AdminDashboardComponent implements OnInit {
     });
   }
 
-  private adicionarCamposEspecificos(): void {
-    if (this.editForm.contains('setor')) { this.editForm.removeControl('setor'); }
-    if (this.editForm.contains('siape')) { this.editForm.removeControl('siape'); }
-    if (this.editForm.contains('departamento')) { this.editForm.removeControl('departamento'); }
-    if (this.editForm.contains('curso')) { this.editForm.removeControl('curso'); }
-
-    if (this.tipoUsuario === 'administrador') {
-      this.editForm.addControl('setor', this.fb.control('', [Validators.required]));
-      this.editForm.addControl('siape', this.fb.control('', [Validators.required, Validators.pattern(/^\d{7}$/)]));
-    } else if (this.tipoUsuario === 'professor') {
-      this.editForm.addControl('departamento', this.fb.control('', [Validators.required]));
-      this.editForm.addControl('siape', this.fb.control('', [Validators.required, Validators.pattern(/^\d{7}$/)]));
-    } else if (this.tipoUsuario === 'aluno') {
-      this.editForm.addControl('curso', this.fb.control('', [Validators.required]));
-    }
-  }
-
-  mudarPagina(event: PageEvent): void {
-    console.log(`Mudando para página: ${event.pageIndex}`);
-    this.carregarUsuarios(event);
-  }
-
   inicializarFormulario(): void {
     this.editForm = this.fb.group({
       nome: ['', [Validators.required, Validators.minLength(3)]],
@@ -270,26 +239,7 @@ export class AdminDashboardComponent implements OnInit {
         Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/)
       ]]
     });
-  }
-
-  filtrarUsuarios(): void {
-    console.log(`🔎 Filtrando usuários pelo tipo: ${this.tipoUsuarioSelecionado}`);
-    console.log("📌 Lista original de usuários:", this.usuarios);
-  
-    if (!this.usuarios || this.usuarios.length === 0) {
-      console.warn("⚠️ Lista de usuários vazia ou indefinida!");
-      return;
-    }
-  
-    if (this.tipoUsuarioSelecionado === 'todos') {
-      this.usuariosFiltrados = [...this.usuarios]; // Clona a lista completa
-    } else {
-      this.usuariosFiltrados = this.usuarios.filter(user => user.tipo === this.tipoUsuarioSelecionado);
-    }
-  
-    console.log("✅ Lista filtrada:", this.usuariosFiltrados);
-  }
-  
+  } 
 
   definirTipo(role: string): string {
     console.log(`Convertendo role "${role}" para tipo...`);
@@ -317,4 +267,30 @@ export class AdminDashboardComponent implements OnInit {
     return 'Não disponível';
   }
 
+  private adicionarCamposEspecificos(): void {
+    if (this.editForm.contains('setor')) { this.editForm.removeControl('setor'); }
+    if (this.editForm.contains('siape')) { this.editForm.removeControl('siape'); }
+    if (this.editForm.contains('departamento')) { this.editForm.removeControl('departamento'); }
+    if (this.editForm.contains('curso')) { this.editForm.removeControl('curso'); }
+
+    if (this.tipoUsuario === 'administrador') {
+      this.editForm.addControl('setor', this.fb.control('', [Validators.required]));
+      this.editForm.addControl('siape', this.fb.control('', [Validators.required, Validators.pattern(/^\d{7}$/)]));
+    } else if (this.tipoUsuario === 'professor') {
+      this.editForm.addControl('departamento', this.fb.control('', [Validators.required]));
+      this.editForm.addControl('siape', this.fb.control('', [Validators.required, Validators.pattern(/^\d{7}$/)]));
+    } else if (this.tipoUsuario === 'aluno') {
+      this.editForm.addControl('curso', this.fb.control('', [Validators.required]));
+    }
+  }
+
+  mudarPagina(event: PageEvent): void {
+    console.log(`Mudando para página: ${event.pageIndex}`);
+    this.carregarUsuarios(event);
+  }
+
+  irParaCadastro(): void {
+    console.log("Redirecionando para cadastro de usuario");
+    this.router.navigate(['/admin/cadastro']);
+  }
 }

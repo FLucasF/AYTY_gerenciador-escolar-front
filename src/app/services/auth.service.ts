@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
+import { Observable, throwError, of } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
@@ -8,7 +8,7 @@ import { environment } from '../../environments/environment';
 
 export interface AuthenticationResponse {
   accessToken: string;
-  refreshToken: string; // Esse valor virá no payload, mas a gestão real é via cookie.
+  refreshToken: string; // Managed via cookie in the backend
   userId: number;
   role: string;
 }
@@ -18,7 +18,7 @@ export interface AuthenticationResponse {
 })
 export class AuthService {
   private baseUrl = `${environment.apiBaseUrl}${environment.endpoints.auth}`;
-  // Dados da sessão armazenados apenas em memória
+  // In-memory session data (we persist only the access token)
   private accessToken: string | null = null;
   private userId: number | null = null;
   private role: string | null = null;
@@ -27,29 +27,44 @@ export class AuthService {
     private http: HttpClient,
     private router: Router,
     private jwtHelper: JwtHelperService
-  ) {}
+  ) {
+    // Attempt to load the token from sessionStorage during initialization.
+    const storedToken = sessionStorage.getItem('accessToken');
+    const storedUserId = sessionStorage.getItem('userId');
+    const storedRole = sessionStorage.getItem('role');
+    if (storedToken && storedUserId && storedRole) {
+      this.accessToken = storedToken;
+      this.userId = Number(storedUserId);
+      this.role = storedRole;
+    }
+  }
 
-  /**
-   * Tenta restaurar a sessão usando o refresh token (o cookie é enviado automaticamente)
-   */
+  /** Attempts to restore session using the stored access token */
   initializeAuth(): Promise<boolean> {
     return new Promise((resolve) => {
-      this.refreshTokenRequest().subscribe({
-        next: (response: AuthenticationResponse) => {
-          console.log("✅ Sessão restaurada automaticamente!", response);
-          this.setSession(response.accessToken, response.userId, response.role);
-          resolve(true);
-        },
-        error: (err) => {
-          console.warn("🚫 Sessão expirada ou erro ao restaurar token", err);
-          this.logout();
-          resolve(false);
-        }
-      });
+      // If there is a token in sessionStorage and it's not expired, consider session restored.
+      if (this.accessToken && !this.jwtHelper.isTokenExpired(this.accessToken)) {
+        console.log("Sessão restaurada a partir do sessionStorage.");
+        resolve(true);
+      } else {
+        // Otherwise, try to refresh the token.
+        this.refreshTokenRequest().subscribe({
+          next: (response: AuthenticationResponse) => {
+            console.log("Sessão restaurada via refresh!", response);
+            this.setSession(response.accessToken, response.userId, response.role);
+            resolve(true);
+          },
+          error: (err) => {
+            console.warn("Sessão expirada ou erro ao restaurar token", err);
+            this.logout();
+            resolve(false);
+          }
+        });
+      }
     });
   }
 
-  /** Realiza o login do usuário */
+  /** Logs in the user */
   login(credentials: { email: string; senha: string }): Observable<AuthenticationResponse> {
     return this.http.post<AuthenticationResponse>(
       `${this.baseUrl}/login`,
@@ -67,7 +82,7 @@ export class AuthService {
     );
   }
 
-  /** Atualiza o access token disparando o endpoint de refresh */
+  /** Calls the refresh endpoint to update the access token */
   refreshTokenRequest(): Observable<AuthenticationResponse> {
     return this.http.post<AuthenticationResponse>(
       `${this.baseUrl}/refresh`,
@@ -86,11 +101,14 @@ export class AuthService {
     );
   }
 
-  /** Define os dados da sessão (em memória) */
+  /** Stores the session data in memory and persists the access token in sessionStorage */
   setSession(accessToken: string, userId: number, role: string): void {
     this.accessToken = accessToken;
     this.userId = userId;
     this.role = role;
+    sessionStorage.setItem('accessToken', accessToken);
+    sessionStorage.setItem('userId', userId.toString());
+    sessionStorage.setItem('role', role);
   }
 
   getAccessToken(): string | null {
@@ -114,10 +132,13 @@ export class AuthService {
       next: () => console.log("Logout realizado no backend"),
       error: err => console.error("Erro no logout:", err)
     });
-    // Limpa os dados da sessão em memória e redireciona
+    // Clear in-memory session data and sessionStorage, then navigate to login.
     this.accessToken = null;
     this.userId = null;
     this.role = null;
+    sessionStorage.removeItem('accessToken');
+    sessionStorage.removeItem('userId');
+    sessionStorage.removeItem('role');
     this.router.navigate(['/login']);
   }
 }
