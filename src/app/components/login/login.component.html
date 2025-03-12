@@ -3,7 +3,7 @@
     <div class="row d-flex align-items-center justify-content-center h-100">
       <!-- Imagem -->
       <div class="col-md-8 col-lg-7 col-xl-6">
-        <img src="assets/login-image.svg" class="img-fluid">
+        <img src="assets/imageLogin.png" class="img-fluid">
       </div>
 
       <!-- Formulário de Login -->
@@ -13,16 +13,17 @@
           <h2 class="title">Welcome</h2>
 
           <form (ngSubmit)="onSubmit()">
-            <!-- Email -->
+            
             <div class="input-div">
               <div class="i">
                 <i class="fas fa-user"></i>
               </div>
               <div class="div">
-                <h5>Email</h5>
-                <input type="email" id="form1Example13" class="input" [(ngModel)]="email" name="email" required>
+                <input type="email" required class="input" placeholder="Email" [(ngModel)]="email" name="email">
               </div>
             </div>
+            
+            
 
             <!-- Senha -->
             <div class="input-div">
@@ -30,13 +31,20 @@
                 <i class="fas fa-lock"></i>
               </div>
               <div class="div">
-                <h5>Password</h5>
-                <input type="password" id="form1Example23" class="input" [(ngModel)]="senha" name="senha" required>
+                <input type="password" placeholder="Password" id="form1Example23" class="input" [(ngModel)]="senha" name="senha" required>
               </div>
             </div>
 
-            <!-- Botão de Login -->
-            <button type="submit" class="btn">Login</button>
+            <button type="submit" class="animated-button">
+              <svg viewBox="0 0 24 24" class="arr-2" xmlns="http://www.w3.org/2000/svg">
+                <path d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"></path>
+              </svg>
+              <span class="text">Login</span>
+              <span class="circle"></span>
+              <svg viewBox="0 0 24 24" class="arr-1" xmlns="http://www.w3.org/2000/svg">
+                <path d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"></path>
+              </svg>
+            </button>
 
             <!-- Exibe mensagem de erro se houver -->
             <div *ngIf="errorMessage" class="alert alert-danger mt-3 text-center">

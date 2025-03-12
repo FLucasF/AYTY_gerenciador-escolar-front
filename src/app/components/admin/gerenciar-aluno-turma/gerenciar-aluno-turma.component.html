@@ -18,46 +18,54 @@
           </button>
         </li>
       </ul>
-      
-
       <p *ngIf="paginaAlunos?.content?.length === 0" class="text-center text-muted mt-3">
         Nenhum aluno matriculado.
       </p>
     </div>
   </div>
 
-  <!-- Paginação -->
+  <!-- Paginação para Alunos Matriculados -->
   <mat-paginator [length]="totalElements" [pageIndex]="pageIndex" [pageSize]="pageSize"
     [pageSizeOptions]="[5, 10, 25, 50]" (page)="carregarAlunosDaTurma($event)">
   </mat-paginator>
 
-  <!-- Adicionar Aluno -->
+  <!-- Lista de Alunos Disponíveis para Adicionar -->
   <div class="card mt-4">
     <div class="card-header">
       <h3 class="card-title">Adicionar Aluno</h3>
     </div>
     <div class="card-body">
-      <div class="form-group">
-        <select class="form-control" [(ngModel)]="alunoSelecionadoParaAdicionar" [disabled]="loadingAlunos">
-          <option [ngValue]="null">Selecione um aluno</option>
-          <option *ngFor="let aluno of todosAlunos" [ngValue]="aluno.id">
-            {{ aluno.nome }} ({{ aluno.email }})
-          </option>
-        </select>
-      </div>
-
-      <div *ngIf="loadingAlunos" class="text-center mt-2">
-        <div class="spinner-border text-primary" role="status" aria-label="Carregando">
-          <span class="sr-only">Carregando...</span>
-        </div>
-      </div>
-
-      <button class="btn btn-primary btn-block mt-3" (click)="adicionarAlunoNaTurma()"
-        [disabled]="!alunoSelecionadoParaAdicionar || loadingAlunos">
-        <i class="fa fa-user-plus"></i> Matricular Aluno
-      </button>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>Opções</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let aluno of availableAlunosPaginated">
+            <td>{{ aluno.nome }}</td>
+            <td>{{ aluno.email }}</td>
+            <td>
+              <button class="btn btn-primary btn-sm" (click)="adicionarAlunoNaTurma(aluno.id!)"
+                [disabled]="loadingAlunos">
+                <i class="fa fa-user-plus"></i> Adicionar
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p *ngIf="alunosDisponiveis?.length === 0" class="text-center text-muted mt-3">
+        Nenhum aluno disponível para adicionar.
+      </p>
     </div>
   </div>
+
+  <!-- Paginação para Alunos Disponíveis (local) -->
+  <mat-paginator [length]="alunosDisponiveis.length" [pageIndex]="availablePageIndex" [pageSize]="availablePageSize"
+    [pageSizeOptions]="[5, 10, 25, 50]" (page)="onAvailablePageChange($event)">
+  </mat-paginator>
 
   <!-- Botão Fechar -->
   <div class="text-center mt-4">

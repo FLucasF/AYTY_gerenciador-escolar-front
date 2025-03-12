@@ -17,18 +17,19 @@ import Swal from 'sweetalert2';
 export class GerenciarAlunoTurmaComponent implements OnInit {
   turmaId: number | null = null;
   turmaNome: string = '';
-  paginaAlunos: Page<Aluno> | null = null;
-  todosAlunos: Aluno[] = [];
-  alunoSelecionadoParaAdicionar: number | null = null;
+  paginaAlunos: Page<Aluno> | null = null; // Alunos matriculados na turma
+  todosAlunos: Aluno[] = []; // Todos os alunos cadastrados
+  alunosDisponiveis: Aluno[] = []; // Alunos disponíveis para adicionar (todosAlunos - alunos matriculados)
   loadingAlunos = true;
 
+  // Paginação para alunos matriculados (obtida do backend)
   pageIndex: number = 0;
   pageSize: number = 10;
   totalElements: number = 0;
 
-  currentPage: number = 0;
-  totalPages: number = 0;
-  size: number = 7;
+  // Paginação para alunos disponíveis (paginação local)
+  availablePageIndex: number = 0;
+  availablePageSize: number = 10;
 
   constructor(
     private route: ActivatedRoute,
@@ -39,7 +40,6 @@ export class GerenciarAlunoTurmaComponent implements OnInit {
 
   ngOnInit(): void {
     console.log('[GerenciarAlunoTurmaComponent] Iniciado!');
-
     this.route.params.subscribe(params => {
       this.turmaId = +params['id'];
 
@@ -81,31 +81,63 @@ export class GerenciarAlunoTurmaComponent implements OnInit {
         this.pageIndex = res.page.number;
         this.pageSize = res.page.size;
         this.totalElements = res.page.totalElements;
-        console.log(`[GerenciarAlunoTurmaComponent] Alunos carregados para a turma ${this.turmaId}`);
+        console.log(`[GerenciarAlunoTurmaComponent] Alunos matriculados carregados para a turma ${this.turmaId}`);
+
+        // Atualiza a lista de alunos disponíveis após carregar os matriculados
+        this.atualizarAlunosDisponiveis();
       },
-      error: (err) => console.error('Erro ao carregar alunos:', err)
+      error: (err) => console.error('Erro ao carregar alunos matriculados:', err)
     });
   }
 
   private carregarTodosAlunos(): void {
-    const pageable = { page: this.currentPage, size: this.size };
-    this.alunoService.listarAlunos(pageable).subscribe({
+    this.loadingAlunos = true;
+    // Carrega todos os alunos (ajuste os parâmetros conforme sua API)
+    this.alunoService.listarAlunos({ page: 0, size: 100 }).subscribe({
       next: (res) => {
         this.todosAlunos = res.content;
         this.loadingAlunos = false;
-        console.log(`[GerenciarAlunoTurmaComponent] Todos os alunos carregados.`);
+        console.log('[GerenciarAlunoTurmaComponent] Todos os alunos carregados.');
+        // Atualiza alunos disponíveis sempre que todosAlunos é carregado
+        this.atualizarAlunosDisponiveis();
       },
       error: (err) => {
-        console.error('Erro ao carregar alunos:', err);
+        console.error('Erro ao carregar todos os alunos:', err);
         this.loadingAlunos = false;
       }
     });
   }
 
-  adicionarAlunoNaTurma(): void {
-    if (!this.turmaId || !this.alunoSelecionadoParaAdicionar) return; // Retorna silenciosamente se não houver seleção
-  
-    this.turmaService.matricularAluno(this.turmaId, this.alunoSelecionadoParaAdicionar).subscribe({
+  // Atualiza a lista de alunos disponíveis filtrando os matriculados dos todosAlunos
+  private atualizarAlunosDisponiveis(): void {
+    if (!this.paginaAlunos) {
+      console.error('Lista de alunos matriculados não carregada ainda.');
+      return;
+    }
+    const matriculadosIds = this.paginaAlunos.content.map((aluno: Aluno) => aluno.id);
+    this.alunosDisponiveis = this.todosAlunos.filter(aluno => !matriculadosIds.includes(aluno.id));
+    // Reinicia a paginação local dos disponíveis
+    this.availablePageIndex = 0;
+  }
+
+  // Getter para retornar a lista paginada dos alunos disponíveis (paginação local)
+  get availableAlunosPaginated(): Aluno[] {
+    const start = this.availablePageIndex * this.availablePageSize;
+    const end = start + this.availablePageSize;
+    return this.alunosDisponiveis.slice(start, end);
+  }
+
+  // Manipula a mudança de página para alunos disponíveis
+  onAvailablePageChange(event: PageEvent): void {
+    this.availablePageIndex = event.pageIndex;
+    this.availablePageSize = event.pageSize;
+  }
+
+  // Adiciona um aluno à turma, recebendo o id do aluno
+  adicionarAlunoNaTurma(alunoId: number): void {
+    if (!this.turmaId || !alunoId) return;
+
+    this.turmaService.matricularAluno(this.turmaId, alunoId).subscribe({
       next: () => {
         Swal.fire({
           title: 'Sucesso!',
@@ -114,20 +146,23 @@ export class GerenciarAlunoTurmaComponent implements OnInit {
           confirmButtonColor: '#3085d6',
           confirmButtonText: 'OK'
         });
-  
-        console.log(`[GerenciarAlunoTurmaComponent] Aluno ${this.alunoSelecionadoParaAdicionar} matriculado!`);
+        console.log(`[GerenciarAlunoTurmaComponent] Aluno ${alunoId} matriculado!`);
         this.carregarAlunosDaTurma();
-        this.alunoSelecionadoParaAdicionar = null;
+        this.carregarTodosAlunos();
+      },
+      error: (err) => {
+        console.error('Erro ao adicionar aluno:', err);
+        Swal.fire('Erro!', 'Não foi possível adicionar o aluno. Tente novamente.', 'error');
       }
     });
-  } 
+  }
 
   removerAlunoDaTurma(alunoId: number): void {
     if (!this.turmaId) {
       console.error("Erro: ID da turma é nulo.");
       return;
     }
-  
+
     Swal.fire({
       title: 'Tem certeza?',
       text: 'Você realmente deseja remover este aluno da turma?',
@@ -139,7 +174,7 @@ export class GerenciarAlunoTurmaComponent implements OnInit {
       cancelButtonText: 'Cancelar'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.turmaService.removerAlunoDaTurma(this.turmaId as number, alunoId).subscribe({
+        this.turmaService.removerAlunoDaTurma(this.turmaId!, alunoId).subscribe({
           next: () => {
             Swal.fire({
               title: 'Removido!',
@@ -148,7 +183,6 @@ export class GerenciarAlunoTurmaComponent implements OnInit {
               confirmButtonColor: '#3085d6',
               confirmButtonText: 'OK'
             });
-  
             console.log(`[GerenciarAlunoTurmaComponent] Aluno ${alunoId} removido da turma ${this.turmaId}`);
             this.carregarAlunosDaTurma();
           },
@@ -160,7 +194,6 @@ export class GerenciarAlunoTurmaComponent implements OnInit {
               confirmButtonColor: '#d33',
               confirmButtonText: 'Fechar'
             });
-  
             console.error('Erro ao remover aluno:', err);
           }
         });
@@ -180,10 +213,9 @@ export class GerenciarAlunoTurmaComponent implements OnInit {
       cancelButtonText: 'Cancelar'
     }).then((result) => {
       if (result.isConfirmed) {
-        console.log(`[GerenciarAlunoTurmaComponent] Retornando para lista de turmas.`);
+        console.log('[GerenciarAlunoTurmaComponent] Retornando para lista de turmas.');
         this.router.navigate(['/admin/turmas']);
       }
     });
   }
-  
 }

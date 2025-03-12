@@ -8,8 +8,11 @@
 
 .vh-100 { 
   background: url("../../../../public/assets/background.jpg") no-repeat center center fixed;
-
+  background-size: cover;
+  width: 100vw;
+  height: 100vh;
 }
+
 
 /* Adicionando o background */
 .login-section {
@@ -19,6 +22,10 @@
   align-items: center;
   justify-content: center;
   background-size: cover;
+}
+
+img.img-fluid {
+  transform: translateX(-13%);
 }
 
 body {
@@ -41,12 +48,6 @@ body {
   max-width: 360px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   border: 2px solid rgba(255, 255, 255, 0.3);
-}
-
-/* Avatar */
-.avatar-img {
-  width: 100px;
-  margin-bottom: 15px;
 }
 
 
@@ -103,44 +104,105 @@ h5 {
   color: var(--main-color);
 }
 
-/* Botão de Login */
-.btn {
-  width: 100%;
-  padding: 12px;
-  background: var(--main-color);
-  border: none;
-  color: white;
+.animated-button {
+  position: relative;
+  display: inline-block; /* Mantém o tamanho do botão no conteúdo */
+  align-items: center;
+  gap: 4px;
+  padding: 16px 36px;
+  border: 4px solid;
+  border-color: transparent;
   font-size: 16px;
-  border-radius: 5px;
+  background-color: inherit;
+  border-radius: 100px;
+  font-weight: 600;
+  color: #0e1a35;
+  box-shadow: 0 0 0 2px #0e1a35;
   cursor: pointer;
-  transition: 0.3s;
+  overflow: hidden;
+  transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  justify-content: center; /* Centraliza o conteúdo interno */
+
+  
 }
 
-.btn:hover {
-  background: #2fb88f;
+.animated-button svg {
+  position: absolute;
+  width: 24px;
+  fill: #0e1a35;
+  z-index: 9;
+  transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
-/* Link "Forgot Password?" */
-a {
-  color: gray;
-  font-size: 14px;
-  display: block;
-  margin-bottom: 15px;
+.animated-button .arr-1 {
+  right: 5px;
 }
 
-a:hover {
-  color: var(--main-color);
+.animated-button .arr-2 {
+  left: -25%;
 }
+
+.animated-button .circle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  background-color: #0e1a35;
+  border-radius: 50%;
+  opacity: 0;
+  transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.animated-button .text {
+  position: relative;
+  z-index: 1;
+  transform: translateX(-12px);
+  transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.animated-button:hover {
+  box-shadow: 0 0 0 12px transparent;
+  color: #fff;
+  border-radius: 12px;
+}
+
+.animated-button:hover .arr-1 {
+  right: -25%;
+}
+
+.animated-button:hover .arr-2 {
+  left: 5px;
+}
+
+.animated-button:hover .text {
+  transform: translateX(12px);
+}
+
+.animated-button:hover svg {
+  fill: #fff;
+}
+
+.animated-button:active {
+  scale: 0.95;
+  box-shadow: 0 0 0 4px #0e1a35;
+}
+
+.animated-button:hover .circle {
+  width: 220px;
+  height: 220px;
+  opacity: 1;
+}
+
+
+
 
 /* Responsividade */
 @media screen and (max-width: 768px) {
   .login-container {
     max-width: 300px;
     padding: 40px 30px;
-  }
-
-  .avatar-img {
-    width: 80px;
   }
 
   .title {

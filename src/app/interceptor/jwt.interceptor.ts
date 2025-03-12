@@ -13,45 +13,20 @@ export class JwtInterceptor implements HttpInterceptor {
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const token = this.authService.getAccessToken();
-    const clonedRequest = token 
-      ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } })
-      : req;
-    return next.handle(clonedRequest).pipe(
-      catchError(error => {
-        if (error instanceof HttpErrorResponse && error.status === 401) {
-          return this.handle401Error(clonedRequest, next);
+    if (token) {
+      req = req.clone({
+        setHeaders: {
+          Authorization: `Bearer ${token}`
         }
-        return throwError(() => error);
-      })
-    );
+      });
+    }
+    return next.handle(req);
   }
 
+
   private handle401Error(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    if (this.isRefreshing) {
-      return this.refreshTokenSubject.pipe(
-        filter(token => token !== null),
-        take(1),
-        switchMap(token => next.handle(request.clone({ setHeaders: { Authorization: `Bearer ${token}` } })))
-      );
-    }
-
-    this.isRefreshing = true;
-    this.refreshTokenSubject.next(null);
-
-    return this.authService.refreshTokenRequest().pipe(
-      tap(response => {
-        console.log("🔄 Token atualizado via interceptor!", response);
-        this.authService.setSession(response.accessToken, response.userId, response.role);
-        this.refreshTokenSubject.next(response.accessToken);
-      }),
-      switchMap(response => next.handle(request.clone({ setHeaders: { Authorization: `Bearer ${response.accessToken}` } }))),
-      catchError(err => {
-        console.error("❌ Falha ao renovar o token:", err);
-        this.isRefreshing = false;
-        this.authService.logout();
-        return throwError(() => err);
-      }),
-      tap(() => this.isRefreshing = false)
-    );
+    // Simplesmente retorna o erro sem tentar fazer o refresh do token
+    this.authService.logout();
+    return throwError(() => new Error('Token expirado ou inválido'));
   }
 }

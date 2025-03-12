@@ -47,24 +47,29 @@ export class AdminDashboardComponent implements OnInit {
       this.pageIndex = event.pageIndex;
       this.pageSize = event.pageSize;
     }
-
+  
     this.usuarioService.listarUsuarios(this.pageIndex, this.pageSize).subscribe({
       next: (res: Page<any>) => {
         console.log("Dados recebidos do backend:", res);
-
-        this.usuarios = res.content.map(user => ({
-          ...user,
-          tipo: this.definirTipo(user.role),
-          informacaoExtra: this.obterInformacaoExtra(user)
-        }));
-
+  
+        this.usuarios = res.content.map(user => {
+          // Usa 'role' se existir; caso contrário, usa 'tipo'
+          const role = user.role || user.tipo;
+          return {
+            ...user,
+            tipo: this.definirTipo(role),
+            informacaoExtra: this.obterInformacaoExtra(user)
+          };
+        });
+  
         this.pageIndex = res.page.number;
         this.pageSize = res.page.size;
         this.totalElements = res.page.totalElements;
       },
-      error: (err) => console.error('Erro ao carregar usuarios:', err)
+      error: (err) => console.error('Erro ao carregar usuários:', err)
     });
   }
+  
 
   excluirUsuario(usuario: any): void {
     Swal.fire({
@@ -241,18 +246,24 @@ export class AdminDashboardComponent implements OnInit {
     });
   } 
 
-  definirTipo(role: string): string {
-    console.log(`Convertendo role "${role}" para tipo...`);
-    if (role === 'ALUNO' || role === 'ROLE_ALUNO') {
+  
+  definirTipo(roleOrTipo: string): string {
+    if (!roleOrTipo) {
+      return 'desconhecido';
+    }
+    const valor = roleOrTipo.toUpperCase();
+    if (valor === 'ALUNO' || valor === 'ROLE_ALUNO') {
       return 'aluno';
-    } else if (role === 'PROFESSOR' || role === 'ROLE_PROFESSOR') {
+    } else if (valor === 'PROFESSOR' || valor === 'ROLE_PROFESSOR') {
       return 'professor';
-    } else if (role === 'ADMINISTRADOR' || role === 'ROLE_ADMIN') {
+    } else if (valor === 'ADMINISTRADOR' || valor === 'ROLE_ADMIN') {
       return 'administrador';
     } else {
       return 'desconhecido';
     }
   }
+  
+  
 
   obterInformacaoExtra(user: any): string {
     if (user.tipo === 'aluno') {

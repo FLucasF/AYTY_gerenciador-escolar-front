@@ -122,20 +122,22 @@
           </div>
         </ng-container>
         
-        <!-- 🔹 Modal da Postagem Expandida -->
-        <div class="modal-backdrop" *ngIf="postagemSelecionada" (click)="fecharModal()"></div>
-        <div class="modal-postagem" *ngIf="postagemSelecionada">
-          <div class="modal-content">
-            <span class="fechar-modal" (click)="fecharModal()">×</span>
-            <h2>{{ postagemSelecionada.titulo }}</h2>
-            <p class="postagem-data">{{ postagemSelecionada.dataCriacao | date: 'short' }}</p>
-            <p class="postagem-conteudo">{{ postagemSelecionada.conteudo }}</p>
-        
-            <img *ngIf="postagemSelecionada.imagemUrl" [src]="postagemSelecionada.imagemUrl" alt="Imagem da postagem" class="postagem-imagem">
-          </div>
-        </div>
-        
+<!-- Modal da Postagem Expandida -->
+<div class="modal-backdrop" *ngIf="postagemSelecionada" (click)="fecharModal()"></div>
+<div class="modal-postagem" *ngIf="postagemSelecionada" [ngClass]="{'com-imagem': postagemSelecionada.imagemUrl, 'sem-imagem': !postagemSelecionada.imagemUrl}">
+  <div class="modal-content">
+    <span class="fechar-modal" (click)="fecharModal()">×</span>
+    <h2>{{ postagemSelecionada.titulo }}</h2>
+    <p class="postagem-data">{{ postagemSelecionada.dataCriacao | date: 'short' }}</p>
+    <p class="postagem-conteudo">
+      {{ postagemSelecionada.conteudo }}
+    </p>
+    <img *ngIf="postagemSelecionada.imagemUrl" [src]="postagemSelecionada.imagemUrl" alt="Imagem da postagem" class="postagem-imagem">
+  </div>
+</div>
 
+
+        
 
         
         <ng-template #semPostagens>

@@ -1,14 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, throwError, of } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { environment } from '../../environments/environment';
+import { Observable, throwError } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
 
 export interface AuthenticationResponse {
   accessToken: string;
-  refreshToken: string; // Managed via cookie in the backend
   userId: number;
   role: string;
 }
@@ -18,7 +17,6 @@ export interface AuthenticationResponse {
 })
 export class AuthService {
   private baseUrl = `${environment.apiBaseUrl}${environment.endpoints.auth}`;
-  // In-memory session data (we persist only the access token)
   private accessToken: string | null = null;
   private userId: number | null = null;
   private role: string | null = null;
@@ -28,52 +26,46 @@ export class AuthService {
     private router: Router,
     private jwtHelper: JwtHelperService
   ) {
-    // Attempt to load the token from sessionStorage during initialization.
+    // Tenta carregar o token armazenado no sessionStorage
     const storedToken = sessionStorage.getItem('accessToken');
     const storedUserId = sessionStorage.getItem('userId');
     const storedRole = sessionStorage.getItem('role');
     if (storedToken && storedUserId && storedRole) {
       this.accessToken = storedToken;
+      console.log("Token de acesso encontrado no sessionStorage.", this.accessToken);
       this.userId = Number(storedUserId);
       this.role = storedRole;
     }
   }
 
-  /** Attempts to restore session using the stored access token */
+  /** Restaura a sessão verificando o token de acesso */
   initializeAuth(): Promise<boolean> {
     return new Promise((resolve) => {
-      // If there is a token in sessionStorage and it's not expired, consider session restored.
-      if (this.accessToken && !this.jwtHelper.isTokenExpired(this.accessToken)) {
+      // Verifica se o token de acesso está presente e não expirado
+      const accessToken = sessionStorage.getItem('accessToken');
+      if (accessToken && !this.jwtHelper.isTokenExpired(accessToken)) {
         console.log("Sessão restaurada a partir do sessionStorage.");
         resolve(true);
       } else {
-        // Otherwise, try to refresh the token.
-        this.refreshTokenRequest().subscribe({
-          next: (response: AuthenticationResponse) => {
-            console.log("Sessão restaurada via refresh!", response);
-            this.setSession(response.accessToken, response.userId, response.role);
-            resolve(true);
-          },
-          error: (err) => {
-            console.warn("Sessão expirada ou erro ao restaurar token", err);
-            this.logout();
-            resolve(false);
-          }
-        });
+        console.warn("Sessão não restaurada. Redirecionando para login.");
+        resolve(false);
       }
     });
   }
-
-  /** Logs in the user */
+  
+  
+  /** Realiza o login do usuário */
   login(credentials: { email: string; senha: string }): Observable<AuthenticationResponse> {
     return this.http.post<AuthenticationResponse>(
       `${this.baseUrl}/login`,
-      credentials,
-      { withCredentials: true }
+      credentials
     ).pipe(
       tap(response => {
         console.log("[AuthService] Login bem-sucedido!", response);
         this.setSession(response.accessToken, response.userId, response.role);
+        console.log("Token de acesso:", this.accessToken);
+        console.log("ID do usuário:", this.userId);
+        console.log("Role do usuário:", this.role);
       }),
       catchError(error => {
         console.error("❌ Erro ao fazer login:", error);
@@ -82,57 +74,47 @@ export class AuthService {
     );
   }
 
-  /** Calls the refresh endpoint to update the access token */
-  refreshTokenRequest(): Observable<AuthenticationResponse> {
-    return this.http.post<AuthenticationResponse>(
-      `${this.baseUrl}/refresh`,
-      {},
-      { withCredentials: true }
-    ).pipe(
-      tap(response => {
-        console.log("🔄 Token atualizado!", response);
-        this.setSession(response.accessToken, response.userId, response.role);
-      }),
-      catchError(error => {
-        console.error("❌ Erro ao renovar token:", error);
-        this.logout();
-        return throwError(() => error);
-      })
-    );
-  }
-
-  /** Stores the session data in memory and persists the access token in sessionStorage */
   setSession(accessToken: string, userId: number, role: string): void {
     this.accessToken = accessToken;
     this.userId = userId;
     this.role = role;
+    
+    // Salvar no sessionStorage
     sessionStorage.setItem('accessToken', accessToken);
     sessionStorage.setItem('userId', userId.toString());
     sessionStorage.setItem('role', role);
   }
+  
+  
 
+  /** Obtém o token de acesso armazenado */
   getAccessToken(): string | null {
     return this.accessToken;
   }
 
+  /** Obtém o ID do usuário */
   getUserId(): number | null {
     return this.userId;
   }
 
+  /** Obtém a role do usuário */
   getUserRole(): string | null {
     return this.role;
   }
 
+  /** Verifica se o usuário está logado */
   isLoggedIn(): boolean {
     return this.accessToken !== null && !this.jwtHelper.isTokenExpired(this.accessToken);
   }
 
+  /** Realiza o logout */
   logout(): void {
     this.http.post(`${this.baseUrl}/logout`, {}, { withCredentials: true }).subscribe({
       next: () => console.log("Logout realizado no backend"),
       error: err => console.error("Erro no logout:", err)
     });
-    // Clear in-memory session data and sessionStorage, then navigate to login.
+  
+    // Limpar dados da sessão no sessionStorage
     this.accessToken = null;
     this.userId = null;
     this.role = null;
@@ -141,4 +123,5 @@ export class AuthService {
     sessionStorage.removeItem('role');
     this.router.navigate(['/login']);
   }
+  
 }

@@ -20,7 +20,9 @@ export class AppComponent {
       if (authenticated) {
         console.log('Sessão restaurada com sucesso!');
       } else {
-        console.warn('Sessão não restaurada. Redirecionando para login, se necessário.');
+        console.warn('Sessão não restaurada. Redirecionando para login...');
+        // Redirecionar para o login se a sessão não for restaurada
+        this.router.navigate(['/login']);
       }
     });
   }
@@ -28,5 +30,4 @@ export class AppComponent {
   isLoginPage(): boolean {
     return this.router.url === '/login';
   }
-  
 }

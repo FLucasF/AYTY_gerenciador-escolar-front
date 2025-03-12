@@ -152,7 +152,7 @@ h3 {
   overflow: hidden;
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3; /* 🔹 Exibe no máximo 3 linhas */
+  -webkit-line-clamp: 7; /* 🔹 Exibe no máximo 3 linhas */
   line-clamp: 3;
   text-overflow: ellipsis; /* 🔹 Adiciona "..." ao ultrapassar 3 linhas */
   max-height: calc(1.4em * 3); /* 🔹 Altura calculada com base no número de linhas */
@@ -163,13 +163,6 @@ h3 {
   transform: scale(1.02);
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
 }
-
-
-
-
-
-
-
 
 /* 🔹 Header da Postagem */
 .postagem-header {
@@ -197,8 +190,6 @@ h3 {
   white-space: nowrap; /* Evita quebra de linha */
 }
 
-
-
 .excluir-postagem {
   background: none;
   border: none;
@@ -206,10 +197,6 @@ h3 {
   font-size: 14px;
   cursor: pointer;
   transition: color 0.3s ease;
-}
-
-.excluir-postagem:hover {
-  color: darkred;
 }
 
 .voltar-container {
@@ -227,13 +214,38 @@ h3 {
 }
 
 
-/* ============================== */
-/* 🌟 Modal de Postagem Expandida */
-/* ============================== */
-/* ============================== */
-/* 🌟 Modal de Postagem Expandida */
-/* ============================== */
+.postagem-imagem {
+  max-width: 250px;
+  max-height: 250px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+.postagem-imagem {
+  max-width: 250px;
+  max-height: 250px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
 
+/* modal */
+
+.modal-postagem .postagem-imagem {
+  max-width: 300px;
+  max-height: 300px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Modal backdrop */
 .modal-backdrop {
   position: fixed;
   top: 0;
@@ -244,6 +256,7 @@ h3 {
   z-index: 1000;
 }
 
+/* Container do Modal */
 .modal-postagem {
   position: fixed;
   top: 50%;
@@ -252,57 +265,46 @@ h3 {
   width: 90%;
   max-width: 800px;
   height: 80vh;
-  background: white;
+  background: #fff;
   padding: 20px;
   border-radius: 10px;
-  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
   z-index: 1001;
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
 
-/* 🔹 Reaproveitando o CSS da postagem normal */
-.modal-postagem .postagem-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-weight: bold;
-  color: #444;
-  margin-bottom: 10px;
-  border-bottom: 1px solid #ddd; /* Apenas para dar um destaque ao título */
-  padding-bottom: 5px;
-}
-
-/* 🔹 Conteúdo do Modal com Rolagem após 5 Linhas */
+/* Conteúdo textual do Modal (padrão: sem limite) */
 .modal-postagem .postagem-conteudo {
   font-size: 16px;
   line-height: 1.6;
   color: #333;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
   text-align: justify;
-  
-  max-height: calc(1.6em * 5); /* 🔹 Mostra até 5 linhas antes de ativar o scroll */
-  overflow-y: auto; /* 🔹 Adiciona rolagem se o texto for maior */
-  padding-right: 5px; /* 🔹 Evita que o texto encoste no scroll */
+  max-height: none;
+  overflow-y: visible;
 }
 
-/* 🔹 Botão de Fechar */
+/* Se houver imagem, limite o texto a 5 linhas */
+.modal-postagem.limited .postagem-conteudo {
+  max-height: calc(1.6em * 5);
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+/* Botão de fechar */
 .fechar-modal {
   position: absolute;
   top: 10px;
   right: 15px;
   font-size: 24px;
   cursor: pointer;
-  color: red;
+  color: #000000;
 }
 
-.fechar-modal:hover {
-  color: darkred;
-}
 
-/* 🔹 Ajuste da Imagem dentro do Modal */
+
+/* Estilo da imagem no modal */
 .modal-postagem .postagem-imagem {
   max-width: 100%;
   height: auto;
@@ -310,6 +312,19 @@ h3 {
   border-radius: 8px;
 }
 
+
+/* Quando houver imagem, limita o texto a 5 linhas */
+.modal-postagem.com-imagem .postagem-conteudo {
+  max-height: calc(1.6em * 5);
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+/* Quando não houver imagem, remove o limite */
+.modal-postagem.sem-imagem .postagem-conteudo {
+  max-height: none;
+  overflow-y: visible;
+}
 
 
 /* =========================== */

@@ -50,9 +50,13 @@ export class BoardComponent implements OnInit {
     private turmaService: TurmaService,
     private professorService: ProfessorService
   ) {
-    const userId = Number(localStorage.getItem('userId')) || 0;
-    const userName = localStorage.getItem('userName') || 'Usuário';
-    const userRole = localStorage.getItem('role') || '';
+  const userId = Number(sessionStorage.getItem('userId')) || 0;
+  const userName = sessionStorage.getItem('userName') || 'Usuário';
+  const userRole = sessionStorage.getItem('role') || '';
+
+
+    console.log(`[BoardComponent] 📌 ID do usuário salvo no localStorage: ${userId}`);
+    console.log(`[BoardComponent] 📌 Role do usuário salvo no localStorage: ${userRole}`);
 
     this.usuario = { id: userId, nome: userName, role: userRole };
     this.isProfessor = userRole === 'ROLE_PROFESSOR';
