@@ -19,7 +19,7 @@ import Swal from 'sweetalert2';
 export class AdminDashboardComponent implements OnInit {
   usuarios: any[] = [];
   pageIndex: number = 0;
-  pageSize: number = 10;
+  pageSize: number = 5;
   totalElements: number = 0;
 
   editForm!: FormGroup;
@@ -37,11 +37,20 @@ export class AdminDashboardComponent implements OnInit {
 
   ) { }
 
+   /**
+   * Inicializa o componente, carrega os usuários e configura o formulário.
+   * Chamado ao iniciar o componente.
+   */
   ngOnInit(): void {
     this.carregarUsuarios();
     this.inicializarFormulario();
   }
 
+  /**
+   * Carrega os usuários de acordo com a página selecionada.
+   * 
+   * @param event - Objeto PageEvent para gerenciar a paginação (opcional).
+   */
   carregarUsuarios(event?: PageEvent): void {
     if (event) {
       this.pageIndex = event.pageIndex;
@@ -53,7 +62,8 @@ export class AdminDashboardComponent implements OnInit {
         console.log("Dados recebidos do backend:", res);
   
         this.usuarios = res.content.map(user => {
-          // Usa 'role' se existir; caso contrário, usa 'tipo'
+
+          //usa 'role' se existir, caso contrário, usa 'tipo'
           const role = user.role || user.tipo;
           return {
             ...user,
@@ -70,7 +80,11 @@ export class AdminDashboardComponent implements OnInit {
     });
   }
   
-
+/**
+   * Exclui um usuário selecionado e chama o serviço correspondente.
+   * 
+   * @param usuario - O usuário a ser excluído.
+   */
   excluirUsuario(usuario: any): void {
     Swal.fire({
       title: `Tem certeza que deseja excluir ${usuario.nome}?`,
@@ -108,6 +122,11 @@ export class AdminDashboardComponent implements OnInit {
     });
   }
 
+  /**
+   * Carrega os dados do usuário a ser editado.
+   * 
+   * @param usuario - O usuário cujos dados serão carregados.
+   */
   irParaEdicao(usuario: any): void {
     console.log("Iniciando edição para usuário:", usuario);
 
@@ -149,6 +168,10 @@ export class AdminDashboardComponent implements OnInit {
     }
   }
 
+  /**
+   * Salva as edições realizadas no formulário.
+   * Confirma a edição antes de enviar os dados para atualização.
+   */
   salvarEdicao(): void {
     if (this.editForm.invalid) {
       Swal.fire({
@@ -175,12 +198,12 @@ export class AdminDashboardComponent implements OnInit {
         const dadosAtualizados = { ...this.usuarioOriginal, ...this.editForm.value };
 
 
-        console.log("📤 Enviando dados para atualização...");
-        console.log("➡️ ID do usuário:", this.usuarioEditando.id);
-        console.log("➡️ Nome:", dadosAtualizados.nome);
-        console.log("➡️ Email:", dadosAtualizados.email);
-        console.log("➡️ CPF:", dadosAtualizados.cpf);
-        console.log("➡️ Tipo:", this.tipoUsuario);
+        console.log("Enviando dados para atualização...");
+        console.log("ID do usuário:", this.usuarioEditando.id);
+        console.log("Nome:", dadosAtualizados.nome);
+        console.log("Email:", dadosAtualizados.email);
+        console.log("CPF:", dadosAtualizados.cpf);
+        console.log("Tipo:", this.tipoUsuario);
 
         
         let request: Observable<any> | null = null;
@@ -216,6 +239,9 @@ export class AdminDashboardComponent implements OnInit {
     });
   }
 
+  /**
+   * Cancela a edição do usuário e limpa os dados.
+   */
   cancelarEdicao(): void {
     Swal.fire({
       title: 'Cancelar edição?',
@@ -233,6 +259,9 @@ export class AdminDashboardComponent implements OnInit {
     });
   }
 
+  /**
+   * Inicializa o formulário de edição com os campos básicos.
+   */
   inicializarFormulario(): void {
     this.editForm = this.fb.group({
       nome: ['', [Validators.required, Validators.minLength(3)]],
@@ -245,8 +274,13 @@ export class AdminDashboardComponent implements OnInit {
       ]]
     });
   } 
-
   
+  /**
+   * Define o tipo de usuário com base no valor de role ou tipo.
+   * 
+   * @param roleOrTipo - O valor que pode ser 'role' ou 'tipo'.
+   * @returns O tipo de usuário (aluno, professor, administrador ou desconhecido).
+   */
   definirTipo(roleOrTipo: string): string {
     if (!roleOrTipo) {
       return 'desconhecido';
@@ -262,9 +296,13 @@ export class AdminDashboardComponent implements OnInit {
       return 'desconhecido';
     }
   }
-  
-  
 
+  /**
+   * Obtém informações extras do usuário dependendo de seu tipo.
+   * 
+   * @param user - O objeto usuário.
+   * @returns A string contendo as informações extras do usuário.
+   */
   obterInformacaoExtra(user: any): string {
     if (user.tipo === 'aluno') {
       return `Curso: ${user.curso || 'Não informado'}`;
@@ -278,6 +316,9 @@ export class AdminDashboardComponent implements OnInit {
     return 'Não disponível';
   }
 
+  /**
+   * Adiciona campos específicos no formulário conforme o tipo de usuário selecionado.
+   */
   private adicionarCamposEspecificos(): void {
     if (this.editForm.contains('setor')) { this.editForm.removeControl('setor'); }
     if (this.editForm.contains('siape')) { this.editForm.removeControl('siape'); }
@@ -295,11 +336,19 @@ export class AdminDashboardComponent implements OnInit {
     }
   }
 
+  /**
+   * Método de paginação para carregar os usuários.
+   * 
+   * @param event - Evento de mudança de página (PageEvent).
+   */
   mudarPagina(event: PageEvent): void {
     console.log(`Mudando para página: ${event.pageIndex}`);
     this.carregarUsuarios(event);
   }
 
+  /**
+   * Redireciona para a página de cadastro de usuário.
+   */
   irParaCadastro(): void {
     console.log("Redirecionando para cadastro de usuario");
     this.router.navigate(['/admin/cadastro']);

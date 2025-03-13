@@ -28,17 +28,20 @@ export class AdminUserRegisterComponent implements OnInit {
     private turmaService: TurmaService
   ) { }
 
+   /**
+   * Inicializa o formulário, carrega as turmas e ajusta os validadores.
+   * Chamado ao iniciar o componente.
+   */
   ngOnInit(): void {
     this.carregarTurmas();
     this.inicializarFormulario();
-    // Sempre que o tipo de usuário mudar, atualize os validadores
-    // (caso esteja usando two-way binding com ngModel, você também pode chamar o método via (ngModelChange))
+    // Sempre que o tipo de usuário mudar, atualiza os validadores
     this.atualizarValidadores();
     console.log('Componente de cadastro de usuários carregado!');
   }
 
-  /**
-   * Inicializa o formulário com os controles.
+   /**
+   * Inicializa o formulário com os controles e validações.
    * Todos os campos são definidos, mas as validações serão ajustadas de acordo com o tipo selecionado.
    */
   private inicializarFormulario(): void {
@@ -58,7 +61,7 @@ export class AdminUserRegisterComponent implements OnInit {
         Validators.required,
         Validators.minLength(8),
         Validators.maxLength(20),
-        Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/) //Verifica se a senha tem digito, caracter especial, letra maiuscula e minuscula
+        Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/)
 
       ]],
       cpf: ['', [

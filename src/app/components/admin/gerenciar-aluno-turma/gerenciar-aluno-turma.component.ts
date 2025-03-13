@@ -17,9 +17,9 @@ import Swal from 'sweetalert2';
 export class GerenciarAlunoTurmaComponent implements OnInit {
   turmaId: number | null = null;
   turmaNome: string = '';
-  paginaAlunos: Page<Aluno> | null = null; // Alunos matriculados na turma
-  todosAlunos: Aluno[] = []; // Todos os alunos cadastrados
-  alunosDisponiveis: Aluno[] = []; // Alunos disponíveis para adicionar (todosAlunos - alunos matriculados)
+  paginaAlunos: Page<Aluno> | null = null;
+  todosAlunos: Aluno[] = [];
+  alunosDisponiveis: Aluno[] = [];
   loadingAlunos = true;
 
   // Paginação para alunos matriculados (obtida do backend)
@@ -38,8 +38,13 @@ export class GerenciarAlunoTurmaComponent implements OnInit {
     private alunoService: AlunoService
   ) { }
 
+
+  /**
+   * Método de inicialização do componente.
+   * Carrega os dados da turma e os alunos vinculados à turma selecionada.
+   */
   ngOnInit(): void {
-    console.log('[GerenciarAlunoTurmaComponent] Iniciado!');
+    console.log('Iniciado!');
     this.route.params.subscribe(params => {
       this.turmaId = +params['id'];
 
@@ -55,18 +60,52 @@ export class GerenciarAlunoTurmaComponent implements OnInit {
     });
   }
 
+  /**
+   * Carrega todos os alunos cadastrados.
+   * 
+   * Carrega a lista completa de alunos, incluindo os matriculados e os disponíveis para a turma.
+   */
+  private carregarTodosAlunos(): void {
+    this.loadingAlunos = true;
+    // Carrega todos os alunos (ajuste os parâmetros conforme sua API)
+    this.alunoService.listarAlunos({ page: 0, size: 100 }).subscribe({
+      next: (res) => {
+        this.todosAlunos = res.content;
+        this.loadingAlunos = false;
+        console.log('[GerenciarAlunoTurmaComponent] Todos os alunos carregados.');
+        // Atualiza alunos disponíveis sempre que todosAlunos é carregado
+        this.atualizarAlunosDisponiveis();
+      },
+      error: (err) => {
+        console.error('Erro ao carregar todos os alunos:', err);
+        this.loadingAlunos = false;
+      }
+    });
+  }
+
+
+   /**
+   * Carrega os dados da turma (nome da turma).
+   * 
+   * Utiliza o serviço `TurmaService` para buscar a turma com base no ID obtido.
+   */
   private carregarTurma(): void {
     if (!this.turmaId) return;
 
     this.turmaService.buscarTurmaPorId(this.turmaId).subscribe({
       next: (turma: Turma) => {
         this.turmaNome = turma.nome;
-        console.log(`[GerenciarAlunoTurmaComponent] Turma carregada: ${turma.nome}`);
+        console.log(`Turma carregada: ${turma.nome}`);
       },
       error: (err) => console.error('Erro ao carregar turma:', err)
     });
   }
 
+   /**
+   * Carrega os alunos matriculados na turma.
+   * 
+   * @param event - Parâmetros de paginação, se a mudança de página ocorrer.
+   */
   carregarAlunosDaTurma(event?: PageEvent): void {
     if (!this.turmaId) return;
 
@@ -90,25 +129,12 @@ export class GerenciarAlunoTurmaComponent implements OnInit {
     });
   }
 
-  private carregarTodosAlunos(): void {
-    this.loadingAlunos = true;
-    // Carrega todos os alunos (ajuste os parâmetros conforme sua API)
-    this.alunoService.listarAlunos({ page: 0, size: 100 }).subscribe({
-      next: (res) => {
-        this.todosAlunos = res.content;
-        this.loadingAlunos = false;
-        console.log('[GerenciarAlunoTurmaComponent] Todos os alunos carregados.');
-        // Atualiza alunos disponíveis sempre que todosAlunos é carregado
-        this.atualizarAlunosDisponiveis();
-      },
-      error: (err) => {
-        console.error('Erro ao carregar todos os alunos:', err);
-        this.loadingAlunos = false;
-      }
-    });
-  }
-
-  // Atualiza a lista de alunos disponíveis filtrando os matriculados dos todosAlunos
+  
+ /**
+   * Atualiza a lista de alunos disponíveis para adicionar à turma.
+   * 
+   * Filtra os alunos não matriculados a partir da lista de todos os alunos.
+   */
   private atualizarAlunosDisponiveis(): void {
     if (!this.paginaAlunos) {
       console.error('Lista de alunos matriculados não carregada ainda.');
@@ -120,20 +146,32 @@ export class GerenciarAlunoTurmaComponent implements OnInit {
     this.availablePageIndex = 0;
   }
 
-  // Getter para retornar a lista paginada dos alunos disponíveis (paginação local)
+  /**
+   * Retorna a lista de alunos disponíveis paginada.
+   * 
+   * @returns Lista de alunos disponíveis para exibição, conforme a paginação local.
+   */
   get availableAlunosPaginated(): Aluno[] {
     const start = this.availablePageIndex * this.availablePageSize;
     const end = start + this.availablePageSize;
     return this.alunosDisponiveis.slice(start, end);
   }
 
-  // Manipula a mudança de página para alunos disponíveis
+  /**
+   * Manipula a mudança de página para os alunos disponíveis.
+   * 
+   * @param event - Evento de mudança de página, contendo a nova página e tamanho da página.
+   */
   onAvailablePageChange(event: PageEvent): void {
     this.availablePageIndex = event.pageIndex;
     this.availablePageSize = event.pageSize;
   }
 
-  // Adiciona um aluno à turma, recebendo o id do aluno
+   /**
+   * Adiciona um aluno à turma.
+   * 
+   * @param alunoId - ID do aluno a ser adicionado à turma.
+   */
   adicionarAlunoNaTurma(alunoId: number): void {
     if (!this.turmaId || !alunoId) return;
 
@@ -157,6 +195,11 @@ export class GerenciarAlunoTurmaComponent implements OnInit {
     });
   }
 
+   /**
+   * Remove um aluno da turma.
+   * 
+   * @param alunoId - ID do aluno a ser removido da turma.
+   */
   removerAlunoDaTurma(alunoId: number): void {
     if (!this.turmaId) {
       console.error("Erro: ID da turma é nulo.");
@@ -201,6 +244,10 @@ export class GerenciarAlunoTurmaComponent implements OnInit {
     });
   }
 
+
+ /**
+   * Volta para a tela de turmas, com confirmação de perda de alterações não salvas.
+   */
   voltarParaTurmas(): void {
     Swal.fire({
       title: 'Deseja sair?',

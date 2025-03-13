@@ -38,7 +38,7 @@
 
     <!-- 🔹 Paginação das Turmas -->
     <mat-paginator [length]="totalElements" [pageSize]="size" [pageIndex]="currentPage"
-      [pageSizeOptions]="[5, 7, 10, 20]" (page)="mudarPagina($event)">
+      [pageSizeOptions]="[5, 7, 10]" (page)="mudarPagina($event)">
     </mat-paginator>
   </div>
 
@@ -112,34 +112,35 @@
             <div class="postagem-header">
               <span><strong>Título:</strong> {{ postagem.titulo }}</span>
               <span class="postagem-data">{{ postagem.dataCriacao | date: 'short' }}</span>
-              <button *ngIf="isProfessor" class="excluir-postagem" (click)="excluirPostagem(postagem.id!); $event.stopPropagation()">❌</button>
+              <button *ngIf="isProfessor" class="excluir-postagem"
+                (click)="excluirPostagem(postagem.id!); $event.stopPropagation()">❌</button>
             </div>
-        
+
             <p class="postagem-conteudo">{{ postagem.conteudo }}</p>
-        
+
             <!-- 🔹 Exibir imagem caso a postagem tenha -->
             <img *ngIf="postagem.imagemUrl" [src]="postagem.imagemUrl" alt="Imagem da postagem" class="postagem-imagem">
           </div>
         </ng-container>
-        
-<!-- Modal da Postagem Expandida -->
-<div class="modal-backdrop" *ngIf="postagemSelecionada" (click)="fecharModal()"></div>
-<div class="modal-postagem" *ngIf="postagemSelecionada" [ngClass]="{'com-imagem': postagemSelecionada.imagemUrl, 'sem-imagem': !postagemSelecionada.imagemUrl}">
-  <div class="modal-content">
-    <span class="fechar-modal" (click)="fecharModal()">×</span>
-    <h2>{{ postagemSelecionada.titulo }}</h2>
-    <p class="postagem-data">{{ postagemSelecionada.dataCriacao | date: 'short' }}</p>
-    <p class="postagem-conteudo">
-      {{ postagemSelecionada.conteudo }}
-    </p>
-    <img *ngIf="postagemSelecionada.imagemUrl" [src]="postagemSelecionada.imagemUrl" alt="Imagem da postagem" class="postagem-imagem">
-  </div>
-</div>
+
+        <!-- Modal da Postagem Expandida -->
+        <div class="modal-backdrop" *ngIf="postagemSelecionada" (click)="fecharModal()"></div>
+        <div class="modal-postagem" *ngIf="postagemSelecionada"
+          [ngClass]="{'com-imagem': postagemSelecionada.imagemUrl, 'sem-imagem': !postagemSelecionada.imagemUrl}">
+          <div class="modal-content">
+            <span class="fechar-modal" (click)="fecharModal()">×</span>
+            <h2>{{ postagemSelecionada.titulo }}</h2>
+            <p class="postagem-data">{{ postagemSelecionada.dataCriacao | date: 'short' }}</p>
+            <p class="postagem-conteudo">
+              {{ postagemSelecionada.conteudo }}
+            </p>
+            <img *ngIf="postagemSelecionada.imagemUrl" [src]="postagemSelecionada.imagemUrl" alt="Imagem da postagem"
+              class="postagem-imagem">
+          </div>
+        </div>
 
 
-        
 
-        
         <ng-template #semPostagens>
           <p class="text-muted text-center">Nenhuma postagem disponível.</p>
         </ng-template>

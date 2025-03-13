@@ -5,12 +5,13 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 import { environment } from '../../environments/environment';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
+import { AuthResponse } from '../models/auth-response';
 
-export interface AuthenticationResponse {
-  accessToken: string;
-  userId: number;
-  role: string;
-}
+// export interface AuthenticationResponse {
+//   accessToken: string;
+//   userId: number;
+//   role: string;
+// }
 
 @Injectable({
   providedIn: 'root'
@@ -38,8 +39,13 @@ export class AuthService {
     }
   }
 
-  /** Restaura a sessão verificando o token de acesso */
-  initializeAuth(): Promise<boolean> {
+/**
+   * Restaura a sessão verificando o token de acesso.
+   * Este método verifica se o token de acesso armazenado no sessionStorage está presente e válido.
+   * Caso o token esteja expirado ou não exista, o usuário será redirecionado para a tela de login.
+   * 
+   * @returns Promise<boolean> - Retorna uma Promise que resolve para `true` se a sessão for restaurada, ou `false` caso contrário.
+   */  initializeAuth(): Promise<boolean> {
     return new Promise((resolve) => {
       // Verifica se o token de acesso está presente e não expirado
       const accessToken = sessionStorage.getItem('accessToken');
@@ -53,10 +59,15 @@ export class AuthService {
     });
   }
   
-  
-  /** Realiza o login do usuário */
-  login(credentials: { email: string; senha: string }): Observable<AuthenticationResponse> {
-    return this.http.post<AuthenticationResponse>(
+ /**
+   * Realiza o login do usuário.
+   * Este método realiza uma requisição POST para autenticar o usuário, passando suas credenciais (email e senha).
+   * Se o login for bem-sucedido, ele armazena o token JWT e as informações do usuário no sessionStorage.
+   * 
+   * @param credentials - Objeto contendo o email e senha do usuário.
+   * @returns Observable<AuthResponse> - Retorna um Observable contendo a resposta com o token, ID e role do usuário.
+   */  login(credentials: { email: string; senha: string }): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(
       `${this.baseUrl}/login`,
       credentials
     ).pipe(
@@ -74,6 +85,14 @@ export class AuthService {
     );
   }
 
+   /**
+   * Armazena a sessão no sessionStorage.
+   * Este método armazena o token JWT, o ID e a role do usuário no sessionStorage para persistência de sessão.
+   * 
+   * @param accessToken - O token JWT de acesso.
+   * @param userId - O ID do usuário autenticado.
+   * @param role - A role do usuário (ex: 'admin', 'user').
+   */
   setSession(accessToken: string, userId: number, role: string): void {
     this.accessToken = accessToken;
     this.userId = userId;
@@ -84,30 +103,50 @@ export class AuthService {
     sessionStorage.setItem('userId', userId.toString());
     sessionStorage.setItem('role', role);
   }
-  
-  
 
-  /** Obtém o token de acesso armazenado */
+
+  /**
+   * Obtém o token de acesso armazenado no sessionStorage.
+   * 
+   * @returns string | null - Retorna o token de acesso armazenado ou `null` se o usuário não estiver autenticado.
+   */
   getAccessToken(): string | null {
     return this.accessToken;
   }
 
-  /** Obtém o ID do usuário */
+  /**
+   * Obtém o ID do usuário armazenado no sessionStorage.
+   * 
+   * @returns number | null - Retorna o ID do usuário ou `null` caso não esteja autenticado.
+   */
   getUserId(): number | null {
     return this.userId;
   }
 
-  /** Obtém a role do usuário */
+  /**
+   * Obtém a role do usuário armazenada no sessionStorage.
+   * 
+   * @returns string | null - Retorna a role do usuário ou `null` caso não esteja autenticado.
+   */
   getUserRole(): string | null {
     return this.role;
   }
 
-  /** Verifica se o usuário está logado */
+  /**
+   * Verifica se o usuário está logado.
+   * Este método verifica se o token JWT está presente e se não está expirado, indicando que o usuário está autenticado.
+   * 
+   * @returns boolean - Retorna `true` se o usuário estiver logado e o token não expirou, caso contrário, retorna `false`.
+   */
   isLoggedIn(): boolean {
     return this.accessToken !== null && !this.jwtHelper.isTokenExpired(this.accessToken);
   }
 
-  /** Realiza o logout */
+  /**
+   * Realiza o logout do usuário.
+   * Este método invalida a sessão tanto no frontend quanto no backend.
+   * Limpa as informações do sessionStorage e redireciona o usuário para a tela de login.
+   */
   logout(): void {
     this.http.post(`${this.baseUrl}/logout`, {}, { withCredentials: true }).subscribe({
       next: () => console.log("Logout realizado no backend"),
@@ -121,6 +160,7 @@ export class AuthService {
     sessionStorage.removeItem('accessToken');
     sessionStorage.removeItem('userId');
     sessionStorage.removeItem('role');
+
     this.router.navigate(['/login']);
   }
   
